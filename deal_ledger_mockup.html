@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deal Ledger — MMVP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Fraunces:ital,wght@0,500;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --paper:#EFF1EC;
+  --paper-2:#E5E8E1;
+  --ink:#14181C;
+  --ink-2:#4B5560;
+  --ink-3:#8B958E;
+  --line:#D6DBD1;
+
+  --brass:#B8863B;
+  --brass-deep:#8C6526;
+  --brass-soft:#F4E9D3;
+
+  --navy:#1E3A5F;
+  --navy-soft:#E4EAF1;
+
+  --settle:#2F6B4F;
+  --settle-soft:#E1EFE6;
+
+  --reject:#A13F2E;
+  --reject-soft:#F7E5E0;
+
+  --disp:'Noto Serif KR', serif;
+  --dispEn:'Fraunces', serif;
+  --body:'Pretendard','Apple SD Gothic Neo',sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:var(--body); background:var(--paper); color:var(--ink);
+  font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;cursor:pointer;background:none;border:none}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+
+.mock-bar{display:flex;align-items:center;gap:12px;padding:8px 20px;background:var(--ink);color:#C9CFC5;font-size:11.5px;font-family:var(--mono)}
+.mock-bar b{color:#fff;letter-spacing:.02em}
+
+.app{display:flex;height:calc(100vh - 33px)}
+
+/* ── 원장 스파인(nav) ── */
+.spine{width:236px;flex:0 0 auto;background:#141C24;color:#8FA0AC;padding:26px 0}
+.wordmark{padding:0 24px 26px;border-bottom:1px solid #253039;margin-bottom:18px}
+.wordmark .en{font-family:var(--dispEn);font-style:italic;font-size:19px;color:#fff;letter-spacing:.01em}
+.wordmark .tag{font-family:var(--mono);font-size:10px;color:#5E727E;letter-spacing:.08em;margin-top:4px;text-transform:uppercase}
+
+.spine a{
+  display:flex;align-items:baseline;gap:10px;padding:13px 24px;
+  color:#8FA0AC;text-decoration:none;cursor:pointer;position:relative;
+  border-left:2px solid transparent;
+}
+.spine a .no{font-family:var(--mono);font-size:11px;color:#5E727E}
+.spine a .lb{font-size:13px}
+.spine a:hover{color:#DCE3DF}
+.spine a.on{color:#fff;border-left-color:var(--brass);background:rgba(184,134,59,.08)}
+.spine a.on .no{color:var(--brass)}
+
+.spine .foot{padding:24px 24px 0;margin-top:10px;font-family:var(--mono);font-size:10px;color:#4A5A64;letter-spacing:.04em}
+
+/* ── 메인 ── */
+main{flex:1;overflow-y:auto;padding:48px 56px}
+[data-page]{display:none;max-width:600px}
+body[data-t="sell"] [data-page="sell"]{display:block}
+body[data-t="buy"] [data-page="buy"]{display:block}
+body[data-t="deal"] [data-page="deal"]{display:block;max-width:720px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;color:var(--brass-deep);letter-spacing:.1em;margin-bottom:10px}
+h1{font-family:var(--disp);font-size:26px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px}
+.sub{font-size:13px;color:var(--ink-2);margin-bottom:34px;max-width:480px}
+
+/* ── 원장 줄 형태 필드 ── */
+.ledger-field{display:grid;grid-template-columns:150px 1fr;align-items:end;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.ledger-field label{font-size:12px;color:var(--ink-2);font-weight:600;padding-bottom:9px}
+.ledger-field .hint{grid-column:2;font-size:11px;color:var(--ink-3);margin-top:6px}
+select, input[type=number]{
+  width:100%;border:none;border-bottom:1.5px solid transparent;background:transparent;
+  font:inherit;font-family:var(--mono);font-size:15px;color:var(--ink);padding:0 0 8px;
+}
+select{font-family:var(--body);font-size:14px}
+select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
+
+.btnrow{margin-top:32px;display:flex;gap:12px;align-items:center}
+.btn{padding:12px 26px;border-radius:2px;font-size:13.5px;font-weight:600;letter-spacing:.01em}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--brass-deep)}
+.btn.outline{border:1.4px solid var(--reject);color:var(--reject)}
+.btn.outline:hover{background:var(--reject-soft)}
+.btn-note{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+
+/* ── 티켓 카드(체결 화면) ── */
+.txid{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-bottom:22px}
+.txid b{color:var(--ink-2);font-weight:600}
+
+.ticket{background:var(--paper-2);border:1px solid var(--line);position:relative;padding:26px 28px;margin-bottom:22px}
+.ticket::before{
+  content:"";position:absolute;top:-1px;left:0;right:0;height:1px;
+  background-image:radial-gradient(circle,var(--paper) 2px,transparent 2px);
+  background-size:14px 1px;background-position:7px 0;
+}
+.ticket h3{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+
+.stamp{
+  position:absolute;top:20px;right:26px;width:100px;height:100px;
+  border:2px dashed var(--brass);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(-9deg);color:var(--brass-deep);
+}
+.stamp .a{font-family:var(--dispEn);font-style:italic;font-weight:600;font-size:14px;letter-spacing:.02em}
+.stamp .b{font-family:var(--mono);font-size:9px;letter-spacing:.1em;margin-top:2px}
+
+.kv{display:grid;grid-template-columns:110px 1fr;row-gap:10px;font-size:13.5px;max-width:380px}
+.kv .k{color:var(--ink-3);font-size:12px}
+.kv .v{font-family:var(--mono);font-weight:600;color:var(--ink)}
+.kv .v.settle{color:var(--settle)}
+
+.nlsum{background:var(--navy);color:#E9EEF3;padding:22px 26px;margin-bottom:22px}
+.nlsum .badge{font-family:var(--mono);font-size:10.5px;color:#9FB6CC;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.nlsum p{font-size:14px;line-height:1.85;font-family:var(--disp);font-weight:500}
+
+.tape h3{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;padding:0 0 14px}
+.tape-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.tape-item:last-child{border-bottom:none}
+.tape-item .tick{width:3px;align-self:stretch;flex:0 0 auto;border-radius:2px}
+.tick.REQUEST{background:var(--ink-3)}
+.tick.OFFER{background:var(--navy)}
+.tick.REJECT{background:var(--reject)}
+.tick.ACCEPT{background:var(--settle)}
+.tick.SETTLED{background:var(--brass)}
+.tape-item .t{font-family:var(--mono);font-size:11px;color:var(--ink-3);flex:0 0 56px}
+.tape-item .type{font-family:var(--mono);font-size:11px;font-weight:700;flex:0 0 66px}
+.type.REQUEST{color:var(--ink-3)}
+.type.OFFER{color:var(--navy)}
+.type.REJECT{color:var(--reject)}
+.type.ACCEPT{color:var(--settle)}
+.type.SETTLED{color:var(--brass-deep)}
+.tape-item .msg{flex:1;font-size:12.5px;color:var(--ink-2)}
+</style>
+</head>
+<body data-t="sell">
+
+<div class="mock-bar"><b>DEAL LEDGER</b> — MMVP mockup · rule-based negotiation pipeline</div>
+
+<div class="app">
+  <aside class="spine">
+    <div class="wordmark">
+      <div class="en">Deal Ledger</div>
+      <div class="tag">MMVP · Rule-based</div>
+    </div>
+    <a onclick="setTab('sell')" class="on" id="nav-sell"><span class="no">01</span><span class="lb">셀러 등록</span></a>
+    <a onclick="setTab('buy')" id="nav-buy"><span class="no">02</span><span class="lb">구매 요청 등록</span></a>
+    <a onclick="setTab('deal')" id="nav-deal"><span class="no">03</span><span class="lb">협상 결과 · 승인</span></a>
+    <div class="foot">L0 CONTRACT v1<br>5 FIELDS · 5 MSG TYPES</div>
+  </aside>
+
+  <main>
+
+    <!-- 01 셀러 등록 -->
+    <div data-page="sell">
+      <div class="eyebrow">STEP 01 / 03</div>
+      <h1>셀러 등록</h1>
+      <div class="sub">셀러 에이전트가 이 조건으로 규칙 기반 응답을 시작합니다.</div>
+
+      <div class="ledger-field">
+        <label>셀러</label>
+        <select id="s-id"><option>셀러 A</option><option>셀러 B</option></select>
+      </div>
+      <div class="ledger-field">
+        <label>품목ID</label>
+        <select id="s-item"><option>A4용지</option><option>토너</option><option>볼트</option></select>
+      </div>
+      <div class="ledger-field">
+        <label>수량</label>
+        <input type="number" id="s-qty" value="600">
+      </div>
+      <div class="ledger-field">
+        <label>제시가 (단가)</label>
+        <input type="number" id="s-offer" value="45">
+      </div>
+      <div class="ledger-field">
+        <label>최저 수용가</label>
+        <input type="number" id="s-floor" value="38">
+        <div class="hint">이 값 이하로는 REJECT — 바이어에게는 노출되지 않음</div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn primary" onclick="registerSeller()">등록</button>
+        <span class="btn-note" id="s-note">→ 등록 즉시 카탈로그에 반영됩니다</span>
+      </div>
+    </div>
+
+    <!-- 02 구매 요청 등록 -->
+    <div data-page="buy">
+      <div class="eyebrow">STEP 02 / 03</div>
+      <h1>구매 요청 등록</h1>
+      <div class="sub">바잉 에이전트가 이 조건으로 등록된 셀러들에게 REQUEST를 전송합니다.</div>
+
+      <div class="ledger-field">
+        <label>품목ID</label>
+        <select id="b-item"><option>A4용지</option><option>토너</option><option>볼트</option></select>
+      </div>
+      <div class="ledger-field">
+        <label>수량</label>
+        <input type="number" id="b-qty" value="500">
+      </div>
+      <div class="ledger-field">
+        <label>상한가 (단가)</label>
+        <input type="number" id="b-cap" value="42">
+      </div>
+
+      <div class="btnrow">
+        <button class="btn primary" onclick="sendRequest()">요청 등록</button>
+        <span class="btn-note" id="b-note">→ 등록된 셀러 전원에게 즉시 전송됩니다</span>
+      </div>
+    </div>
+
+    <!-- 03 협상 결과 · 승인 -->
+    <div data-page="deal">
+      <div class="eyebrow">STEP 03 / 03</div>
+      <h1>협상 결과 · 승인</h1>
+      <div class="sub">규칙 기반으로 처리된 결과입니다. 최종 승인은 사람이 진행합니다.</div>
+
+      <div class="txid">TXID <b id="d-txid">—</b></div>
+
+      <div class="ticket">
+        <div class="stamp" id="d-stamp" style="display:none"><span class="a">Settled</span><span class="b">체결완료</span></div>
+        <h3>채택된 조건</h3>
+        <div class="kv" id="d-kv">
+          <div class="k">상태</div><div class="v">아직 진행된 협상이 없습니다</div>
+        </div>
+      </div>
+
+      <div class="nlsum">
+        <div class="badge">AI 협상 요약 · 원문 로그 기반 생성</div>
+        <p id="d-summary">02번에서 구매 요청을 등록하면 여기에 자동으로 채워집니다.</p>
+      </div>
+
+      <div class="tape">
+        <h3>원문 로그</h3>
+        <div id="d-log"></div>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn primary" onclick="decide('approve')">승인</button>
+        <button class="btn outline" onclick="decide('reject')">거절</button>
+      </div>
+      <div class="btn-note" id="d-result" style="margin-top:10px"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const API = "http://127.0.0.1:8000/api";
+  let currentTxid = null;
+
+  function setTab(t){
+    document.body.dataset.t = t;
+    document.querySelectorAll('.spine a').forEach(a => a.classList.remove('on'));
+    document.getElementById('nav-' + t).classList.add('on');
+  }
+
+  async function registerSeller(){
+    const body = {
+      seller_id: document.getElementById('s-id').value,
+      item: document.getElementById('s-item').value,
+      qty: Number(document.getElementById('s-qty').value),
+      offer_price: Number(document.getElementById('s-offer').value),
+      floor_price: Number(document.getElementById('s-floor').value),
+    };
+    const res = await fetch(`${API}/sellers/register`, {
+      method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body)
+    });
+    document.getElementById('s-note').textContent = res.ok
+      ? `→ ${body.seller_id} 등록 완료`
+      : "→ 등록 실패, 서버 로그 확인 필요";
+  }
+
+  async function sendRequest(){
+    const body = {
+      item: document.getElementById('b-item').value,
+      qty: Number(document.getElementById('b-qty').value),
+      cap_price: Number(document.getElementById('b-cap').value),
+    };
+    const res = await fetch(`${API}/buyers/request`, {
+      method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      document.getElementById('b-note').textContent = "→ 요청 실패, 서버 로그 확인 필요";
+      return;
+    }
+    const data = await res.json();
+    currentTxid = data.txid;
+    setTab('deal');
+    await loadDeal(currentTxid);
+  }
+
+  async function loadDeal(txid){
+    const res = await fetch(`${API}/deals/${txid}`);
+    if(!res.ok) return;
+    const data = await res.json();
+    const d = data.deal;
+
+    document.getElementById('d-txid').textContent = d.txid;
+    document.getElementById('d-summary').textContent = data.summary;
+
+    const kv = document.getElementById('d-kv');
+    if(d.status === "SETTLED"){
+      kv.innerHTML = `
+        <div class="k">셀러</div><div class="v">${d.seller_id}</div>
+        <div class="k">품목</div><div class="v">${d.item}</div>
+        <div class="k">수량</div><div class="v">${d.qty}건</div>
+        <div class="k">확정 단가</div><div class="v">${d.price}원</div>
+        <div class="k">상태</div><div class="v settle">SETTLED · 승인 ${d.approval === 'PENDING' ? '대기' : d.approval}</div>
+      `;
+      document.getElementById('d-stamp').style.display = "flex";
+    } else {
+      kv.innerHTML = `<div class="k">상태</div><div class="v">FAILED — ${d.reason || '조건을 만족하는 셀러 없음'}</div>`;
+      document.getElementById('d-stamp').style.display = "none";
+    }
+
+    const logEl = document.getElementById('d-log');
+    logEl.innerHTML = data.log.map(e => `
+      <div class="tape-item">
+        <span class="tick ${e.type}"></span>
+        <span class="t">${e.ts.slice(11,19)}</span>
+        <span class="type ${e.type}">${e.type}</span>
+        <span class="msg">${e.from} → ${e.to} · ${JSON.stringify(e.payload)}</span>
+      </div>`).join("");
+  }
+
+  async function decide(action){
+    if(!currentTxid){ return; }
+    const res = await fetch(`${API}/deals/${currentTxid}/${action}`, { method: "POST" });
+    const data = await res.json();
+    document.getElementById('d-result').textContent = res.ok
+      ? `→ ${data.status} 처리됨, 리포트 저장: ${data.report_path}`
+      : "→ 처리 실패";
+  }
+</script>
+</body>
+</html>

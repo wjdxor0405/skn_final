@@ -1,0 +1,44 @@
+# ── 환경변수 / 비밀키 (절대 커밋 금지) ──
+.env
+*.env
+!.env.example
+
+# ── 런타임에 생성되는 데이터 (소스코드 아님, 커밋 대상 아님) ──
+data/
+reports/
+*.db
+*.sqlite
+*.sqlite3
+*.jsonl
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── 가상환경 ──
+.venv/
+venv/
+env/
+ENV/
+
+# ── IDE / 에디터 ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── 로그 ──
+*.log
