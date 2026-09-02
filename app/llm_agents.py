@@ -16,7 +16,9 @@ from openai import OpenAI
 from .schemas import SellerRegister, BuyerRequest
 
 _client: OpenAI | None = None
-MODEL = "gpt-4o-mini"  # 협상 판단은 비교적 단순한 추론이라 저가 모델로 충분
+# 사용할 OpenAI 모델. .env의 OPENAI_MODEL로 덮어쓸 수 있다(기본값: gpt-4o-mini).
+# 협상 판단은 비교적 단순한 추론이라 저가 모델로 충분.
+MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
 
 
 def _get_client() -> OpenAI:

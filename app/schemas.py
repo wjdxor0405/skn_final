@@ -51,19 +51,24 @@ class Envelope(BaseModel):
     model_config = {"populate_by_name": True}
 
 
-# ── 등록 시 입력 스키마 (5필드) ──
+# ── 등록 시 입력 스키마 ──
+# v3 확정안 D-02 반영: 사양·납기 필드 추가 (기존 5필드에서 확장)
 class SellerRegister(BaseModel):
     seller_id: str            # "셀러 A" / "셀러 B"
     item: Item
-    qty: int
+    qty: int                  # 재고
     offer_price: int          # 제시가
     floor_price: int          # 최저 수용가 (바이어에게 노출 금지)
+    spec: str = ""            # 사양 (예: "80g/2500매")
+    lead_time_days: int = 0   # 납기일수
 
 
 class BuyerRequest(BaseModel):
     item: Item
     qty: int
-    cap_price: int            # 상한가
+    cap_price: int                  # 상한가
+    spec: str = ""                  # 요구 사양 (빈 문자열이면 사양 불문)
+    max_lead_time_days: int = 999   # 허용 최대 납기일수 (기본값: 사실상 제한 없음)
 
 
 # ── LLM 어댑터 인터페이스 (지금은 템플릿, 나중에 이 인터페이스만 만족하면 교체 가능) ──

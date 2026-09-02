@@ -189,6 +189,14 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
         <input type="number" id="s-floor" value="38">
         <div class="hint">이 값 이하로는 REJECT — 바이어에게는 노출되지 않음</div>
       </div>
+      <div class="ledger-field">
+        <label>사양</label>
+        <input type="text" id="s-spec" value="80g/2500매">
+      </div>
+      <div class="ledger-field">
+        <label>납기일수</label>
+        <input type="number" id="s-lead" value="3">
+      </div>
 
       <div class="btnrow">
         <button class="btn primary" onclick="registerSeller()">등록</button>
@@ -213,6 +221,14 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       <div class="ledger-field">
         <label>상한가 (단가)</label>
         <input type="number" id="b-cap" value="42">
+      </div>
+      <div class="ledger-field">
+        <label>요구 사양</label>
+        <input type="text" id="b-spec" value="" placeholder="비워두면 사양 불문">
+      </div>
+      <div class="ledger-field">
+        <label>허용 최대 납기(일)</label>
+        <input type="number" id="b-lead" value="999">
       </div>
 
       <div class="btnrow">
@@ -258,7 +274,7 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
 </div>
 
 <script>
-  const API = "http://127.0.0.1:8000/api";
+  const API = "/api";  // 상대경로 — localhost든 AWS든 어디서 서빙되든 그대로 동작
   let currentTxid = null;
 
   function setTab(t){
@@ -274,6 +290,8 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       qty: Number(document.getElementById('s-qty').value),
       offer_price: Number(document.getElementById('s-offer').value),
       floor_price: Number(document.getElementById('s-floor').value),
+      spec: document.getElementById('s-spec').value,
+      lead_time_days: Number(document.getElementById('s-lead').value),
     };
     const res = await fetch(`${API}/sellers/register`, {
       method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body)
@@ -288,6 +306,8 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       item: document.getElementById('b-item').value,
       qty: Number(document.getElementById('b-qty').value),
       cap_price: Number(document.getElementById('b-cap').value),
+      spec: document.getElementById('b-spec').value,
+      max_lead_time_days: Number(document.getElementById('b-lead').value),
     };
     const res = await fetch(`${API}/buyers/request`, {
       method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body)
@@ -322,7 +342,8 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       `;
       document.getElementById('d-stamp').style.display = "flex";
     } else {
-      kv.innerHTML = `<div class="k">상태</div><div class="v">FAILED — ${d.reason || '조건을 만족하는 셀러 없음'}</div>`;
+      const failLabel = d.fail_type === "NO_MATCH" ? "무매칭 (조건 맞는 판매자 없음)" : "협상 결렬 (가격 미합의)";
+      kv.innerHTML = `<div class="k">상태</div><div class="v">FAILED · ${failLabel}<br><span style="font-weight:400;color:var(--ink-2)">${d.reason || ''}</span></div>`;
       document.getElementById('d-stamp').style.display = "none";
     }
 

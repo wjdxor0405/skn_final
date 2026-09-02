@@ -40,12 +40,15 @@ class SellerCatalogRow(Base):
     qty = Column(Integer, nullable=False)
     offer_price = Column(Integer, nullable=False)
     floor_price = Column(Integer, nullable=False)
+    spec = Column(String, nullable=False, default="")
+    lead_time_days = Column(Integer, nullable=False, default=0)
 
 
 class DealRow(Base):
     __tablename__ = "deals"
     txid = Column(String, primary_key=True)
     status = Column(String, nullable=False)
+    fail_type = Column(String, nullable=True)  # "NO_MATCH"(조건 맞는 셀러 자체 없음) / "NO_DEAL"(협상은 했으나 결렬)
     seller_id = Column(String, nullable=True)
     item = Column(String, nullable=False)
     qty = Column(Integer, nullable=False)
@@ -73,6 +76,8 @@ class CentralStore:
                 qty=offer.qty,
                 offer_price=offer.offer_price,
                 floor_price=offer.floor_price,
+                spec=offer.spec,
+                lead_time_days=offer.lead_time_days,
             )
             session.add(row)
             session.commit()
@@ -84,6 +89,7 @@ class CentralStore:
                 SellerRegister(
                     seller_id=r.seller_id, item=Item(r.item), qty=r.qty,
                     offer_price=r.offer_price, floor_price=r.floor_price,
+                    spec=r.spec, lead_time_days=r.lead_time_days,
                 )
                 for r in rows
             ]
@@ -96,6 +102,7 @@ class CentralStore:
                 SellerRegister(
                     seller_id=r.seller_id, item=Item(r.item), qty=r.qty,
                     offer_price=r.offer_price, floor_price=r.floor_price,
+                    spec=r.spec, lead_time_days=r.lead_time_days,
                 )
                 for r in rows
             ]
@@ -129,6 +136,7 @@ class CentralStore:
                 row = DealRow(txid=txid)
                 session.add(row)
             row.status = summary.get("status")
+            row.fail_type = summary.get("fail_type")
             row.seller_id = summary.get("seller_id")
             row.item = summary.get("item")
             row.qty = summary.get("qty")
@@ -144,9 +152,10 @@ class CentralStore:
             if row is None:
                 return None
             return {
-                "txid": row.txid, "status": row.status, "seller_id": row.seller_id,
-                "item": row.item, "qty": row.qty, "price": row.price,
-                "approval": row.approval, "reason": row.reason, "log_path": row.log_path,
+                "txid": row.txid, "status": row.status, "fail_type": row.fail_type,
+                "seller_id": row.seller_id, "item": row.item, "qty": row.qty,
+                "price": row.price, "approval": row.approval, "reason": row.reason,
+                "log_path": row.log_path,
             }
 
     def set_approval(self, txid: str, approval: str) -> None:

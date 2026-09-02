@@ -3,6 +3,12 @@ L3 — 중앙 서버 매칭 + 바로구매 성사
 지난 리뷰에서 지적된 "협상 라운드 상한 없으면 REJECT<->OFFER 무한루프 위험"을
 MAX_ROUNDS로 반영했다. 초과 시 해당 셀러는 자동으로 결렬 처리한다.
 
+[v3 확정안 반영]
+- 매칭 조건에 사양·납기 추가 (기존엔 수량만 체크)
+- 조건 미달 셀러는 협상 라운드에 들어가지도 못하고 "제외" 사유가 로그에 남는다
+  (v3가 "룰로도 걸러지는 감사 검증"이라 명시한 지점 — 재고초과/납기초과 주장을 사전 차단)
+- 실패를 2종류로 구분: NO_MATCH(조건 맞는 셀러 자체 없음) / NO_DEAL(협상은 했으나 결렬)
+
 에이전트 구현체는 NEGOTIATOR_MODE 환경변수로 전환된다:
   - "rule" (기본값): RuleBasedSellerAgent/RuleBasedBuyerAgent — API 비용 없음
   - "llm": OpenAISellerAgent/OpenAIBuyerAgent — OPENAI_API_KEY 필요
@@ -28,6 +34,39 @@ def _build_agents() -> tuple[SellerAgentPort, BuyerAgentPort]:
     return RuleBasedSellerAgent(), RuleBasedBuyerAgent()
 
 
+def _spec_matches(request_spec: str, seller_spec: str) -> bool:
+    """사양 매칭 — v3의 "fuzzy match" 자리. 지금은 대소문자 무시 부분일치로 단순 구현."""
+    if not request_spec:  # 사양 불문
+        return True
+    return request_spec.strip().lower() in seller_spec.strip().lower()
+
+
+def _screen_candidates(store: CentralStore, txid: str, request: BuyerRequest) -> list[SellerRegister]:
+    """
+    1차 스크리닝 — 협상 이전에 재고·사양·납기를 검사한다.
+    떨어진 셀러는 라운드에 들어가지 않고, 왜 떨어졌는지 로그에 즉시 남는다
+    (v3: "재고 10대인데 100대 가능하다고 응답" 같은 할루시네이션을 룰로 사전 차단).
+    """
+    passed: list[SellerRegister] = []
+    for seller in store.sellers_for(request.item):
+        reasons = []
+        if seller.qty < request.qty:
+            reasons.append(f"재고부족(보유 {seller.qty} < 요청 {request.qty})")
+        if not _spec_matches(request.spec, seller.spec):
+            reasons.append(f"사양불일치(요구 '{request.spec}' vs 보유 '{seller.spec}')")
+        if seller.lead_time_days > request.max_lead_time_days:
+            reasons.append(f"납기초과(제시 {seller.lead_time_days}일 > 허용 {request.max_lead_time_days}일)")
+
+        if reasons:
+            store.append(Envelope(**{
+                "from": "central", "to": seller.seller_id, "type": MsgType.REJECT, "txid": txid,
+                "payload": {"stage": "screening", "reason": ", ".join(reasons)},
+            }))
+        else:
+            passed.append(seller)
+    return passed
+
+
 def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
     txid = new_txid()
     seller_agent, buyer_agent = _build_agents()
@@ -35,10 +74,25 @@ def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
     # 1. REQUEST 브로드캐스트
     store.append(Envelope(**{
         "from": "buyer", "to": "*", "type": MsgType.REQUEST, "txid": txid,
-        "payload": {"item": request.item, "qty": request.qty, "cap_price": request.cap_price},
+        "payload": {
+            "item": request.item, "qty": request.qty, "cap_price": request.cap_price,
+            "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
+        },
     }))
 
-    candidates = [s for s in store.sellers_for(request.item) if s.qty >= request.qty]
+    # 2. 1차 스크리닝 (재고·사양·납기) — 통과 못 하면 라운드 자체에 안 들어감
+    candidates = _screen_candidates(store, txid, request)
+
+    if not candidates:
+        summary = {
+            "txid": txid, "status": "FAILED", "fail_type": "NO_MATCH",
+            "item": request.item, "qty": request.qty,
+            "reason": "조건(재고·사양·납기)을 만족하는 판매자가 없습니다. 조건 완화가 필요합니다.",
+        }
+        store.set_deal(txid, summary)
+        return summary
+
+    # 3. 스크리닝 통과 셀러끼리 가격 협상
     accepted: list[tuple[SellerRegister, int]] = []
 
     for seller in candidates:
@@ -81,8 +135,9 @@ def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
 
     if not accepted:
         summary = {
-            "txid": txid, "status": "FAILED", "item": request.item, "qty": request.qty,
-            "reason": "라운드 상한 내 조건을 만족하는 셀러 없음",
+            "txid": txid, "status": "FAILED", "fail_type": "NO_DEAL",
+            "item": request.item, "qty": request.qty,
+            "reason": "조건에 맞는 판매자는 있었으나, 라운드 상한 내 가격 합의에 실패했습니다.",
         }
         store.set_deal(txid, summary)
         return summary

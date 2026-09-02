@@ -28,18 +28,36 @@ class TemplateSummarizer:
         qty = request.payload.get("qty")
         cap = request.payload.get("cap_price")
 
-        # 셀러별 OFFER 시퀀스 정리
+        # 1차 스크리닝 단계에서 제외된 셀러 (재고·사양·납기 미달)
+        screening_rejects = [
+            e for e in log if e.type == MsgType.REJECT and e.payload.get("stage") == "screening"
+        ]
+
+        # 셀러별 OFFER 시퀀스 정리 (스크리닝을 통과해서 실제 라운드에 들어간 셀러만 존재)
         by_seller: dict[str, list[Envelope]] = {}
         for e in log:
             if e.type == MsgType.OFFER:
                 by_seller.setdefault(e.frm, []).append(e)
+
+        # ── 케이스 1: NO_MATCH — 라운드 자체에 아무도 못 들어감 ──
+        if not by_seller:
+            if screening_rejects:
+                excluded = "; ".join(
+                    f"{e.to}({e.payload.get('reason')})" for e in screening_rejects
+                )
+                return (
+                    f"{qty}건 요청에 대해 등록된 판매자 중 조건을 만족하는 곳이 없었습니다. "
+                    f"제외 사유 — {excluded}. 조건을 완화하거나 다른 판매자 등록이 필요합니다."
+                )
+            return "등록된 판매자가 없어 매칭을 시도하지 못했습니다."
 
         sentences: list[str] = []
         for seller_id, offers in by_seller.items():
             first = offers[0].payload["price"]
             last = offers[-1].payload["price"]
             was_rejected = any(
-                e.type == MsgType.REJECT and e.to == seller_id for e in log
+                e.type == MsgType.REJECT and e.to == seller_id and e.payload.get("stage") != "screening"
+                for e in log
             )
             if len(offers) == 1 and not was_rejected:
                 sentences.append(f"{seller_id}가 {qty}건에 대해 단가 {first}원으로 제시했습니다.")
@@ -70,7 +88,8 @@ class TemplateSummarizer:
             else:
                 sentences.append(f"{winner}가 {price}원에 최종 확정되었습니다.")
         else:
-            sentences.append("라운드 상한 내에 상한가를 만족하는 셀러가 없어 협상이 결렬되었습니다.")
+            # ── 케이스 2: NO_DEAL — 후보는 있었으나 가격 협상이 결렬 ──
+            sentences.append("조건을 만족하는 판매자는 있었으나, 라운드 상한 내에 상한가를 만족하는 제시가가 없어 협상이 결렬되었습니다.")
 
         return " ".join(sentences)
 

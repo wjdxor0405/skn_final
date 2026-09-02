@@ -20,6 +20,7 @@ from .schemas import SellerRegister, BuyerRequest
 from .store import store
 from .negotiate import run_negotiation
 from .report import write_report, summarizer
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="Deal Ledger MMVP")
 
@@ -30,6 +31,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 목업 화면(static/index.html)을 백엔드가 직접 서빙 — API와 같은 도메인/포트에서
+# 나가기 때문에 상대경로("/api")가 로컬이든 AWS든 어디서나 그대로 동작한다.
+app.mount("/static-assets", StaticFiles(directory="static"), name="static-assets")
+
+
+@app.get("/")
+def serve_mockup():
+    from fastapi.responses import FileResponse
+    return FileResponse("static/index.html")
 
 
 @app.post("/api/sellers/register")

@@ -69,6 +69,7 @@ uvicorn app.main:app --reload --port 8000
 ```
 OPENAI_API_KEY=sk-여기에-발급받은-실제-키
 NEGOTIATOR_MODE=llm
+OPENAI_MODEL=gpt-4o-mini   # 생략 가능. 다른 모델 쓰려면 이 값만 바꾸면 됨 (예: gpt-4o, gpt-4.1-mini)
 ```
 
 그다음 평소처럼 그냥 실행하면 됩니다 (별도로 `export`나 `$env:` 명령어 칠 필요 없음):
