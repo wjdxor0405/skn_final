@@ -1,6 +1,7 @@
 # Deal Ledger MMVP — 백엔드
 
-목업(`deal_ledger_mockup.html`) 3개 화면과 1:1로 연결되는 규칙 기반 협상 백엔드입니다.
+목업 화면과 1:1로 연결되는 규칙 기반 협상 백엔드입니다.
+카탈로그를 **Odoo(오픈소스 ERP/CRM)** 에서 읽고, 낙찰 결과를 Odoo 발주서로 되돌려 쓸 수 있습니다.
 
 ## 구조 (MMVP L0~L4와 대응)
 
@@ -12,31 +13,77 @@ app/
   negotiate.py  # L3 — 매칭·협상 진행, 라운드 상한(MAX_ROUNDS=3)으로 무한루프 방지
   report.py     # L4 — 로그에서만 파생되는 자연어 요약 + 리포트 파일 생성
   main.py       # 목업 화면과 연결되는 API 엔드포인트
+
+  odoo_client.py  # Odoo JSON-RPC 클라이언트 (표준 라이브러리만, 의존성 없음)
+  feasibility.py  # 납품 가능성 검증 — 재고·BOM·조달납기·제조 리드타임을 룰로만 판정
+scripts/
+  seed_odoo_demo.py  # Odoo에 제조업 데모 데이터를 넣는 스크립트 (멱등)
+```
+
+## 카탈로그 출처 — `CATALOG_SOURCE`
+
+| 값 | 카탈로그 주인 | 셀러 등록 | 낙찰 결과 |
+|---|---|---|---|
+| `sqlite` (기본) | 이 서비스 | 1번 화면에서 등록 | SQLite에만 기록 |
+| `odoo` | **Odoo** | Odoo에서 등록 (1번 화면은 409) | **Odoo 발주서 초안** + chatter에 협상 로그 |
+
+`odoo` 모드에서 읽고 쓰는 Odoo 모델:
+
+```
+읽기  product.product        품목·우리 재고
+      product.supplierinfo   공급처별 단가 · 최소주문량(MOQ) · 납기
+      mrp.bom(.line)         자재명세서 · 제조 리드타임
+쓰기  purchase.order         낙찰 결과를 초안으로 생성 (origin = 거래ID)
+      해당 발주서의 chatter   협상 라운드 전문
+      button_confirm/cancel  승인/거절 반영
 ```
 
 ## 실행 방법
 
 ```bash
 pip install -r requirements.txt
+cp env.example .env          # Windows: copy env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-서버가 뜨면 `deal_ledger_mockup.html`을 브라우저로 그냥 열면 됩니다(로컬 서버 불필요, `fetch`가 `http://127.0.0.1:8000`을 호출).
+브라우저로 `http://127.0.0.1:8000/` 을 열면 목업 화면이 뜹니다(백엔드가 직접 서빙합니다).
+
+`odoo` 모드로 쓰려면 Odoo를 먼저 띄우고 `.env`에 `CATALOG_SOURCE=odoo` 를 넣은 뒤,
+데모 데이터를 한 번 넣어줍니다:
+
+```bash
+python scripts/seed_odoo_demo.py
+```
 
 ## 화면 ↔ API 매핑
 
 | 화면 | 동작 | API |
 |---|---|---|
-| 1. 셀러 등록 | "등록" 클릭 | `POST /api/sellers/register` |
+| 0. 납품 가능성 검증 | "검증" / "검증 + 부족분 조달" 클릭 | `POST /api/feasibility`, `POST /api/feasibility/procure` |
+| 1. 셀러 등록 | "등록" 클릭 (`odoo` 모드에서는 사용 안 함) | `POST /api/sellers/register` |
 | 2. 구매 요청 등록 | "요청 등록" 클릭 → 즉시 협상까지 실행되고 3번 화면으로 자동 이동 | `POST /api/buyers/request` |
 | 3. 협상 결과·승인 | 결과 자동 표시, "승인/거절" 클릭 | `GET /api/deals/{txid}`, `POST /api/deals/{txid}/approve|reject` |
 
 ## 데모 시연 순서
 
+### `sqlite` 모드 (기본)
+
 1. 셀러 A, 셀러 B를 각각 다른 조건으로 1번 화면에서 등록 (예: A=41원, B=45원/최저38원)
 2. 2번 화면에서 구매 요청 등록 (예: 500개, 상한가 42원)
 3. 자동으로 3번 화면으로 이동 — 실제 라운드별 OFFER/REJECT/ACCEPT 로그와 자연어 요약이 채워짐
 4. 승인 클릭 → `reports/{txid}.txt` 파일 생성 확인
+
+### `odoo` 모드
+
+셀러 등록 단계가 없습니다 — 카탈로그의 주인이 Odoo입니다.
+
+1. 0번 화면에서 `FG-DESK-001` / 300개 / 7일 → **검증** → 왜 불가능한지 근거가 나옴
+2. 같은 화면에서 200개 / 30일 → **검증 + 부족분 조달** → 부족 자재마다 협상이 돌고 Odoo 발주서가 생김
+3. 결과의 `P000xx` 링크를 열면 Odoo 발주서 — **chatter에 협상 전 과정**이 남아 있음
+4. 2·3번 화면으로 개별 품목 협상도 가능. 승인/거절하면 Odoo 발주서가 확정/취소됨
+
+Odoo에서 공급처 단가·MOQ·납기를 바꾸면(Purchase > Products > 품목 > Purchase 탭)
+**코드 변경 없이 다음 협상부터 낙찰 결과가 달라집니다.**
 
 ## 이미 반영된 리뷰 사항
 
