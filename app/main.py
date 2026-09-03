@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .schemas import SellerRegister, BuyerRequest
-from . import feasibility
+from . import feasibility, intake
 from .odoo_client import odoo
 from .store import store, CatalogReadOnly, CATALOG_SOURCE
 from .negotiate import run_negotiation
@@ -118,6 +118,34 @@ def procure_shortages(req: FeasibilityRequest):
         deals.append({**summary,
                       **{k: deal.get(k) for k in ("po_name", "po_url", "po_error")}})
     return {"feasible": result["feasible"], "reasons": result["reasons"], "deals": deals}
+
+
+@app.get("/api/customers")
+def list_customers():
+    """고객사 목록 — 주문 접수 화면의 드롭다운용."""
+    if CATALOG_SOURCE != "odoo":
+        return []
+    return odoo.customers()
+
+
+class OrderIntake(BaseModel):
+    """고객사로부터 들어온 발주."""
+    customer_ref: str         # 고객사 ref (예: HODU-C-DAEHAN)
+    item: str                 # 완제품 코드
+    qty: int
+    due_days: int
+
+
+@app.post("/api/orders/intake")
+def order_intake(req: OrderIntake):
+    """
+    발주 접수 — 표준계약 범위면 협상 없이 자동 처리하고, 벗어나면 에이전트가 협상한다.
+    에이전트가 '언제 나서지 않는지'를 보여주는 엔드포인트다.
+    """
+    try:
+        return intake.run_intake(store, req.customer_ref, req.item, req.qty, req.due_days)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
 
 
 @app.post("/api/buyers/request")

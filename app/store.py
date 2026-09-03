@@ -137,8 +137,11 @@ def _chatter_body(txid: str, summary: dict, envelopes: list[Envelope]) -> str:
         )
     price = summary.get("price")
     price_txt = f"{price:,}원" if isinstance(price, (int, float)) else "-"
+    # 표준계약 경로는 협상 라운드가 없다 — 제목이 사실과 달라지지 않게 구분한다
+    standard = any(e.payload.get("route") == "STANDARD" for e in envelopes)
+    title = "표준계약 자동 처리 로그 (협상 없음)" if standard else "AI 에이전트 협상 로그"
     return (
-        f"<p><b>AI 에이전트 협상 로그</b> — 거래 {html.escape(txid)}</p>"
+        f"<p><b>{title}</b> — 거래 {html.escape(txid)}</p>"
         f"<p>낙찰: <b>{html.escape(str(summary.get('seller_id')))}</b> / "
         f"{summary.get('qty')}개 / 단가 {price_txt}</p>"
         f"<ul>{''.join(rows)}</ul>"

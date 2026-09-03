@@ -71,6 +71,50 @@ def _screen_candidates(store: CentralStore, txid: str, request: BuyerRequest) ->
     return passed
 
 
+def run_standard_order(store: CentralStore, request: BuyerRequest,
+                       seller_id: str, price: int, note: str) -> dict:
+    """
+    표준계약 범위 안의 발주 — **협상 라운드가 없다.**
+
+    기존 거래처와 이미 조건이 정해져 있으면 매번 값을 다시 다툴 이유가 없다.
+    그래서 이 경로는 REQUEST → OFFER → ACCEPT → SETTLED 네 줄만 남기고 끝난다.
+    로그 형식은 협상 경로와 같으므로 리포트·발주서 생성은 그대로 재사용된다.
+
+    에이전트가 "언제 안 나서는가"를 코드로 보여주는 자리이기도 하다.
+    """
+    txid = new_txid()
+    common = {"txid": txid}
+
+    store.append(Envelope(**{
+        "from": "buyer", "to": seller_id, "type": MsgType.REQUEST, **common,
+        "payload": {
+            "item": request.item, "qty": request.qty, "cap_price": request.cap_price,
+            "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
+            "route": "STANDARD",
+        },
+    }))
+    store.append(Envelope(**{
+        "from": seller_id, "to": "buyer", "type": MsgType.OFFER, **common,
+        "payload": {"price": price, "round": 0, "message": note},
+    }))
+    store.append(Envelope(**{
+        "from": "buyer", "to": seller_id, "type": MsgType.ACCEPT, **common,
+        "payload": {"price": price, "message": "표준계약 범위 내이므로 협상 없이 수용합니다."},
+    }))
+
+    summary = {
+        "txid": txid, "status": "SETTLED", "seller_id": seller_id,
+        "item": request.item, "qty": request.qty, "price": price,
+        "approval": "PENDING", "reason": note,
+    }
+    store.append(Envelope(**{
+        "from": "central", "to": "*", "type": MsgType.SETTLED, **common,
+        "payload": {"seller_id": seller_id, "price": price, "rounds": 0},
+    }))
+    store.set_deal(txid, summary)
+    return summary
+
+
 def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
     txid = new_txid()
     seller_agent, buyer_agent = _build_agents()

@@ -169,6 +169,55 @@ class OdooClient:
         return {"id": r["id"], "code": r["default_code"], "name": r["name"],
                 "spec": _plain(r.get("description")), "on_hand": r.get("qty_available") or 0.0}
 
+    def customers(self) -> list[dict]:
+        """고객사 목록. 반환 키: ref / name"""
+        rows = self.execute(
+            "res.partner", "search_read",
+            [["customer_rank", ">", 0], ["ref", "=like", "HODU-C-%"]],
+            fields=["ref", "name"], order="name",
+        )
+        return [{"ref": r["ref"], "name": r["name"]} for r in rows]
+
+    def standard_contract(self, customer_ref: str, product_code: str) -> dict | None:
+        """
+        고객사별 표준계약 — "이 고객이 분기당 몇 대를 주문하는 게 정상인가".
+
+        Odoo의 ir.config_parameter(자체 설정 키-값 저장소)에 둔다. 애드온 없이도
+        마스터 데이터를 Odoo에 두기 위해서다. 없으면 None (= 표준이 정의되지 않은 관계).
+        """
+        key = f"hodu.contract.{customer_ref}.{product_code}"
+        rows = self.execute("ir.config_parameter", "search_read",
+                            [["key", "=", key]], fields=["value"], limit=1)
+        if not rows:
+            return None
+        try:
+            data = json.loads(rows[0]["value"])
+        except (ValueError, TypeError):
+            return None
+        return {"period_qty": float(data.get("period_qty", 0)),
+                "tolerance": float(data.get("tolerance", 1.0))}
+
+    def last_purchase_for(self, product_code: str) -> dict | None:
+        """
+        이 품목을 마지막으로 사들인 조건 (확정된 발주서 기준).
+        반환 키: vendor / price
+
+        표준 경로에서 "기존 거래처와는 협상할 이유가 없다"를 구현하는 근거다 —
+        직전에 거래한 곳과 같은 조건으로 그냥 발주한다.
+        """
+        lines = self.execute(
+            "purchase.order.line", "search_read",
+            [["product_id.default_code", "=", product_code],
+             ["order_id.state", "in", ["purchase", "done"]]],
+            fields=["order_id", "price_unit"], order="id desc", limit=1,
+        )
+        if not lines:
+            return None
+        order = self.execute("purchase.order", "read", [lines[0]["order_id"][0]],
+                             fields=["partner_id"])[0]
+        return {"vendor": order["partner_id"][1],
+                "price": int(round(lines[0]["price_unit"]))}
+
     def manufacturable_products(self) -> list[dict]:
         """자재명세서(BOM)가 있는 품목 = 우리가 만들어 파는 완제품."""
         boms = self.execute("mrp.bom", "search_read", [], fields=["product_tmpl_id"])

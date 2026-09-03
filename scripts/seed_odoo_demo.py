@@ -8,6 +8,7 @@ P0_확정안_v3 §4 (품목 3종 / 셀러 3곳, 1곳 탈락 / 요청 3건) 을 �
 
 모든 레코드는 default_code / ref 접두사로 식별되므로 Odoo 기본 데모 데이터와 섞이지 않는다.
 """
+import json
 import os
 import xmlrpc.client
 
@@ -192,6 +193,49 @@ call("mrp.bom", "write", [bom], {"bom_line_ids": [
     (0, 0, {"product_id": product_id[c], "product_qty": q}) for c, q in BOM_LINES]})
 print(f"── BOM ──\n  {act:8} HODU-BOM-GPUSRV  GPU 서버랙 4U x1  = " +
       " + ".join(f"{c} x{q}" for c, q in BOM_LINES))
+
+# ─────────────────────────────────────────────────────────────
+# 6. 고객사와 표준계약
+#
+#    표준계약은 "이 고객은 분기당 몇 대를 주문하는 게 정상인가"다. 이 범위 안이면
+#    협상 없이 기존 조건으로 자동 처리하고, 벗어나는 이례적 발주에만 에이전트가 붙는다.
+#
+#    Odoo의 ir.config_parameter(자체 설정 키-값 저장소)에 둔다. 애드온을 만들지 않고도
+#    마스터 데이터를 Odoo에 두는 원칙을 지킬 수 있고, Odoo 모듈들도 설정을 여기 넣는다.
+#    키 형식: hodu.contract.<고객ref>.<품목코드>
+# ─────────────────────────────────────────────────────────────
+CUSTOMERS = [
+    {"ref": "HODU-C-DAEHAN", "name": "대한AI연구원",
+     "comment": "장기 거래처. 분기당 60대를 정기 발주."},
+    {"ref": "HODU-C-NURI", "name": "누리클라우드",
+     "comment": "장기 거래처. 분기당 40대."},
+    {"ref": "HODU-C-SEBIT", "name": "세빛테크놀로지",
+     "comment": "신규 고객. 표준계약이 없어 모든 발주가 예외로 분류된다."},
+]
+
+# (고객ref, 품목코드, 분기 표준수량, 허용배수)
+CONTRACTS = [
+    ("HODU-C-DAEHAN", "FG-GPUSRV-001", 60, 1.2),
+    ("HODU-C-NURI",   "FG-GPUSRV-001", 40, 1.2),
+    # 세빛테크놀로지는 일부러 비워둔다 — 신규 고객은 전부 예외 경로를 타야 한다
+]
+
+print("── 고객사 ──")
+for c in CUSTOMERS:
+    cid, act = upsert("res.partner", [["ref", "=", c["ref"]]], {
+        "name": c["name"], "ref": c["ref"], "company_type": "company",
+        "customer_rank": 1, "comment": c["comment"],
+    })
+    print(f"  {act:8} {c['name']:14} id={cid}")
+
+print("── 표준계약 ──")
+for cref, code, period_qty, tol in CONTRACTS:
+    key = f"hodu.contract.{cref}.{code}"
+    val = json.dumps({"period_qty": period_qty, "tolerance": tol}, ensure_ascii=False)
+    _, act = upsert("ir.config_parameter", [["key", "=", key]], {"key": key, "value": val})
+    name = next(c["name"] for c in CUSTOMERS if c["ref"] == cref)
+    print(f"  {act:8} {name:14} {code}  분기 {period_qty}대 × 허용 {tol} "
+          f"= {period_qty * tol:.0f}대까지 표준")
 
 # ─────────────────────────────────────────────────────────────
 # 6. 지난 도메인의 잔재 정리
