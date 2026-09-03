@@ -4,8 +4,11 @@ agents.py의 RuleBasedSellerAgent/RuleBasedBuyerAgent와 정확히 같은 인터
 (SellerAgentPort/BuyerAgentPort)를 구현해서, negotiate.py는 이 파일이
 있는지조차 몰라도 되게 만든다 — NEGOTIATOR_MODE 환경변수로만 전환된다.
 
-이번 단계에서는 정보 은닉(상대 상한가/최저가 비공개)은 하지 않는다 — 데모 목적상
-단순화. 대신 LLM 출력은 반드시 audit.py를 거쳐 규칙(floor/cap) 위반 여부를 검증한다.
+**셀러 프롬프트에 바이어 상한가를 넣지 않는다** — 알면 거기 붙여 부르므로 협상이
+성립하지 않는다(schemas.py 상단 규약). 바이어 프롬프트에는 자기 예산이 들어간다.
+LLM 출력은 audit.py를 거쳐 규칙(floor/cap) 위반 여부를 검증하는데, 검증 대상은
+**가격 판단뿐이고 message 본문은 검사하지 않는다** — 바이어 LLM이 자유 문장에
+자기 예산 액수를 적어버리는 것은 아직 막지 못한다(README "정보 은닉" 절).
 """
 
 from __future__ import annotations
