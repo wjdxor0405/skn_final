@@ -179,3 +179,23 @@ uvicorn app.main:app --reload --port 8000
 - 카탈로그·거래는 SQLite(`data/mmvp.db`)에 저장되어 서버 재시작에도 유지됨, 원문 로그는 거래별 텍스트 파일
 - 인증/권한 관리 없음 — 공모전 시연 범위에서 우선순위 낮음으로 확인된 부분
 - LLM 모드 사용 시 정보 은닉 미적용 (위 "정보 은닉 관련" 참고)
+## 라이선스와 오픈소스 사용 고지
+
+이 저장소의 코드는 **MIT 라이선스**입니다([`LICENSE`](LICENSE)).
+
+**Odoo (Community 판, LGPLv3)** 를 CRM·ERP로 함께 씁니다. 다만 **이 저장소에는 Odoo
+코드가 포함되어 있지 않습니다** — `app/odoo_client.py`가 Odoo가 기본 제공하는
+**JSON-RPC External API**를 표준 라이브러리(urllib)로 호출할 뿐이고, Odoo 모듈을
+작성하거나 Odoo 코드를 링크하지 않습니다. 그래서 LGPL의 조건이 이 코드로 전파되지
+않고, 고지 의무만 남습니다. Odoo를 이 서비스와 함께 **배포**하게 되면(예: 컨테이너
+이미지에 Odoo를 같이 담는 경우) LGPLv3 조건을 다시 확인해야 합니다.
+
+주요 파이썬 의존성과 라이선스:
+
+| 패키지 | 라이선스 |
+|---|---|
+| FastAPI, Pydantic, SQLAlchemy | MIT |
+| Starlette, Uvicorn, python-dotenv | BSD-3-Clause |
+| openai (`NEGOTIATOR_MODE=llm` 에서만 사용) | Apache-2.0 |
+
+전체 목록은 [`requirements.txt`](requirements.txt)에 있습니다.
