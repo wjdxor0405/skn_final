@@ -85,10 +85,19 @@ def run_standard_order(store: CentralStore, request: BuyerRequest,
     txid = new_txid()
     common = {"txid": txid}
 
+    # 표준 경로도 접수/발송을 나눈다 — 예산은 셀러에게 가지 않는다
     store.append(Envelope(**{
-        "from": "buyer", "to": seller_id, "type": MsgType.REQUEST, **common,
+        "from": "buyer", "to": "central", "type": MsgType.REQUEST, **common,
         "payload": {
             "item": request.item, "qty": request.qty, "cap_price": request.cap_price,
+            "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
+            "route": "STANDARD",
+        },
+    }))
+    store.append(Envelope(**{
+        "from": "central", "to": seller_id, "type": MsgType.REQUEST, **common,
+        "payload": {
+            "item": request.item, "qty": request.qty,
             "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
             "route": "STANDARD",
         },
@@ -119,11 +128,21 @@ def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
     txid = new_txid()
     seller_agent, buyer_agent = _build_agents()
 
-    # 1. REQUEST 브로드캐스트
+    # 1. 접수와 공고를 나눈다.
+    #    바이어는 중앙에 전체 조건(예산 포함)을 접수하고, 중앙은 예산을 뺀 공고를 낸다.
+    #    상한가는 바이어의 유보가격이다 — 셀러가 알면 거기 붙여 부르면 그만이라
+    #    협상이 성립하지 않는다. 중앙은 매칭·감사에 필요하므로 알아야 한다.
     store.append(Envelope(**{
-        "from": "buyer", "to": "*", "type": MsgType.REQUEST, "txid": txid,
+        "from": "buyer", "to": "central", "type": MsgType.REQUEST, "txid": txid,
         "payload": {
             "item": request.item, "qty": request.qty, "cap_price": request.cap_price,
+            "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
+        },
+    }))
+    store.append(Envelope(**{
+        "from": "central", "to": "*", "type": MsgType.REQUEST, "txid": txid,
+        "payload": {
+            "item": request.item, "qty": request.qty,
             "spec": request.spec, "max_lead_time_days": request.max_lead_time_days,
         },
     }))

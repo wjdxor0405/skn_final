@@ -19,7 +19,12 @@ class TemplateSummarizer:
     """L4 1차 구현 — LLM 없이 문자열 조합만으로 자연어 요약을 만든다."""
 
     def summarize(self, log: list[Envelope]) -> str:
-        request = next((e for e in log if e.type == MsgType.REQUEST), None)
+        # 상한가는 셀러에게 나가지 않는다. 바이어가 중앙에 접수한 메시지에만 있다.
+        # (to != "central" 인 옛 로그도 읽을 수 있게 폴백을 둔다)
+        request = next(
+            (e for e in log if e.type == MsgType.REQUEST and e.to == "central"),
+            next((e for e in log if e.type == MsgType.REQUEST), None),
+        )
         settled = next((e for e in log if e.type == MsgType.SETTLED), None)
         if not request:
             return "요청 정보를 찾을 수 없습니다."
