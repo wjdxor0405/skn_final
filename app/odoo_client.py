@@ -327,5 +327,37 @@ class OdooClient:
         self.execute("purchase.order", "button_cancel", [po_id])
 
 
-# 프로세스 전역 단일 인스턴스 (store.py 와 같은 패턴). 인증은 첫 호출 때 지연 수행된다.
-odoo = OdooClient()
+# ── 인스턴스 레지스트리 ────────────────────────────────────────────────────
+# 회사마다 자기 Odoo를 쓰는 구조가 목표다(기획 회의에서 "업체별로 ODOO 앱·DB가 각각
+# 필요"로 정리됨). 그래서 클라이언트를 전역 단일 객체로 두지 않고 이름으로 찾는다.
+#
+#   get_client()          우리 회사 — ODOO_URL / ODOO_DB / ODOO_USER / ODOO_PASSWORD
+#   get_client("hanbit")  다른 회사 — ODOO_HANBIT_URL / ODOO_HANBIT_DB / ...
+#                         지정하지 않은 항목은 우리 회사 설정을 물려받는다
+#
+# 같은 서버의 다른 DB를 가리키게 해도 된다. Odoo는 한 프로세스가 여러 DB를 호스팅하므로,
+# URL은 그대로 두고 ODOO_HANBIT_DB 만 다르게 주는 구성이 가장 싸다.
+#
+# 인증은 첫 호출 때 지연 수행되므로, 쓰지 않는 인스턴스는 연결도 열리지 않는다.
+_clients: dict[str, OdooClient] = {}
+
+
+def get_client(name: str = "default") -> OdooClient:
+    """이름으로 Odoo 인스턴스를 얻는다. 같은 이름은 같은 객체를 돌려준다."""
+    if name not in _clients:
+        if name == "default":
+            _clients[name] = OdooClient()
+        else:
+            prefix = f"ODOO_{name.upper()}_"
+            _clients[name] = OdooClient(
+                url=os.getenv(prefix + "URL") or None,
+                db=os.getenv(prefix + "DB") or None,
+                user=os.getenv(prefix + "USER") or None,
+                password=os.getenv(prefix + "PASSWORD") or None,
+            )
+    return _clients[name]
+
+
+def reset_clients() -> None:
+    """캐시된 인스턴스를 버린다 (테스트에서 환경변수를 바꿔 끼울 때 쓴다)."""
+    _clients.clear()

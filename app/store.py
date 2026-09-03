@@ -27,7 +27,7 @@ from sqlalchemy import create_engine, Column, String, Integer, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .schemas import Envelope, SellerRegister, Item, LEGACY_ITEMS
-from .odoo_client import odoo
+from .odoo_client import get_client
 
 log = logging.getLogger(__name__)
 
@@ -178,7 +178,7 @@ class CentralStore:
 
     def sellers_for(self, item: str) -> list[SellerRegister]:
         if CATALOG_SOURCE == "odoo":
-            return [_offer_to_seller(item, o) for o in odoo.vendor_offers(item)]
+            return [_offer_to_seller(item, o) for o in get_client().vendor_offers(item)]
         with SessionLocal() as session:
             rows = session.query(SellerCatalogRow).filter_by(item=item).all()
             return [_row_to_seller(r) for r in rows]
@@ -189,9 +189,9 @@ class CentralStore:
             # 품목 수만큼 조회가 나간다. 데모 규모(3종)에서는 문제없지만
             # 품목이 많아지면 supplierinfo를 한 번에 읽어 품목별로 묶는 편이 낫다.
             out: list[SellerRegister] = []
-            for product in odoo.purchasable_products(ODOO_ITEM_PREFIX):
+            for product in get_client().purchasable_products(ODOO_ITEM_PREFIX):
                 out += [_offer_to_seller(product["code"], o)
-                        for o in odoo.vendor_offers(product["code"])]
+                        for o in get_client().vendor_offers(product["code"])]
             return out
         with SessionLocal() as session:
             rows = session.query(SellerCatalogRow).all()
@@ -200,7 +200,7 @@ class CentralStore:
     def list_items(self) -> list[dict]:
         """선택 가능한 품목 목록 (화면의 드롭다운용)."""
         if CATALOG_SOURCE == "odoo":
-            return odoo.purchasable_products(ODOO_ITEM_PREFIX)
+            return get_client().purchasable_products(ODOO_ITEM_PREFIX)
         with SessionLocal() as session:
             codes = sorted({r.item for r in session.query(SellerCatalogRow).all()})
         # 아직 등록된 셀러가 없으면 화면의 드롭다운이 비어 셀러 등록 자체를 못 하게 된다.
@@ -248,7 +248,7 @@ class CentralStore:
 
             if CATALOG_SOURCE == "odoo" and summary.get("status") == "SETTLED" and not row.po_id:
                 try:
-                    po = odoo.create_draft_purchase_order(
+                    po = get_client().create_draft_purchase_order(
                         vendor=summary["seller_id"],
                         product_code=summary["item"],
                         qty=summary["qty"],
@@ -256,7 +256,7 @@ class CentralStore:
                         origin=txid,
                     )
                     row.po_id, row.po_name, row.po_error = po["id"], po["name"], None
-                    odoo.post_note("purchase.order", po["id"],
+                    get_client().post_note("purchase.order", po["id"],
                                    _chatter_body(txid, summary, self.get_log(txid)))
                 except Exception as e:  # noqa: BLE001 - 아래 주석 참고
                     # 협상 결과 자체는 이미 확정된 사실이다. Odoo 쓰기는 부가 작업이므로
@@ -295,12 +295,12 @@ class CentralStore:
             if CATALOG_SOURCE == "odoo" and row.po_id:
                 try:
                     if approval == "APPROVED":
-                        odoo.confirm_purchase_order(row.po_id)
+                        get_client().confirm_purchase_order(row.po_id)
                         note = "협상 결과가 <b>승인</b>되어 발주서를 확정했습니다."
                     else:
-                        odoo.cancel_purchase_order(row.po_id)
+                        get_client().cancel_purchase_order(row.po_id)
                         note = "협상 결과가 <b>거절</b>되어 발주서를 취소했습니다."
-                    odoo.post_note("purchase.order", row.po_id,
+                    get_client().post_note("purchase.order", row.po_id,
                                    f"<p>{note} (거래 {html.escape(txid)})</p>")
                     row.po_error = None
                 except Exception as e:  # noqa: BLE001 - 승인 기록 자체는 남아야 한다

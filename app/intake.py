@@ -19,7 +19,7 @@ from __future__ import annotations
 from .feasibility import check as feasibility_check
 from .feasibility import procurement_requests
 from .negotiate import run_negotiation, run_standard_order
-from .odoo_client import odoo
+from .odoo_client import get_client
 from .schemas import BuyerRequest
 from .store import CentralStore
 
@@ -32,7 +32,7 @@ def classify(customer_ref: str, product_code: str, qty: float) -> dict:
     비교 기준이 없으므로 EXCEPTION 으로 본다 — 처음 거래하는 상대와 조건을
     다투는 것이 오히려 정상이다.
     """
-    contract = odoo.standard_contract(customer_ref, product_code)
+    contract = get_client().standard_contract(customer_ref, product_code)
     if contract is None:
         return {
             "kind": "EXCEPTION",
@@ -74,7 +74,7 @@ def _incumbent_offer(store: CentralStore, request: BuyerRequest) -> dict | None:
     if not eligible:
         return None
 
-    last = odoo.last_purchase_for(request.item)
+    last = get_client().last_purchase_for(request.item)
     if last:
         for s in eligible:
             if s.seller_id == last["vendor"]:

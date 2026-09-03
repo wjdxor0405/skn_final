@@ -20,7 +20,7 @@ from __future__ import annotations
 import math
 import os
 
-from .odoo_client import odoo
+from .odoo_client import get_client
 
 # Odoo에는 "하루에 몇 개 만들 수 있는가"에 해당하는 단순한 필드가 없다.
 # (mrp.workcenter + 라우팅으로 표현하지만 데모 범위를 크게 벗어난다)
@@ -50,7 +50,7 @@ def _material_plan(code: str, required: float, on_hand: float) -> dict:
     if shortage <= 0:
         return plan
 
-    offers = odoo.vendor_offers(code)
+    offers = get_client().vendor_offers(code)
     if not offers:
         plan["blocked"] = True
         plan["note"] = "Odoo에 등록된 공급처가 없습니다."
@@ -82,14 +82,14 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
     조달과 생산은 **직렬**로 본다(자재가 와야 만들기 시작). 실제로는 일부 겹치지만,
     영업이 고객에게 약속하는 자리라 보수적으로 잡는 편이 맞다.
     """
-    product = odoo.product(product_code)
+    product = get_client().product(product_code)
     if product is None:
         raise ValueError(f"Odoo에 없는 품목입니다: {product_code!r}")
 
     on_hand = product["on_hand"]
     shortfall = max(0.0, qty - on_hand)
 
-    bom = odoo.bom_for(product_code)
+    bom = get_client().bom_for(product_code)
     is_manufactured = bom is not None
     materials = []
 

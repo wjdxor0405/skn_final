@@ -20,7 +20,7 @@ from pydantic import BaseModel
 
 from .schemas import SellerRegister, BuyerRequest
 from . import feasibility, intake
-from .odoo_client import odoo
+from .odoo_client import get_client
 from .store import store, CatalogReadOnly, CATALOG_SOURCE
 from .negotiate import run_negotiation
 from .report import write_report, summarizer
@@ -80,7 +80,7 @@ def list_finished_products():
     """완제품(BOM 보유) 목록 — 납품 가능성 검증 화면의 드롭다운용."""
     if CATALOG_SOURCE != "odoo":
         return []
-    return odoo.manufacturable_products()
+    return get_client().manufacturable_products()
 
 
 class FeasibilityRequest(BaseModel):
@@ -125,7 +125,7 @@ def list_customers():
     """고객사 목록 — 주문 접수 화면의 드롭다운용."""
     if CATALOG_SOURCE != "odoo":
         return []
-    return odoo.customers()
+    return get_client().customers()
 
 
 class OrderIntake(BaseModel):
