@@ -146,7 +146,7 @@ def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
     for seller in candidates:
         last_reject_price: int | None = None
         for round_no in range(1, MAX_ROUNDS + 1):
-            raw_price, seller_msg = seller_agent.decide(seller, round_no, request.cap_price, last_reject_price)
+            raw_price, seller_msg = seller_agent.decide(seller, round_no, last_reject_price)
             price, seller_audit_note = audit_seller_offer(raw_price, seller.floor_price)
 
             offer_payload = {"price": price, "round": round_no, "message": seller_msg}
@@ -171,7 +171,9 @@ def run_negotiation(store: CentralStore, request: BuyerRequest) -> dict:
                 accepted.append((seller, price))
                 break
             else:
-                reject_payload = {"reason": "상한가 초과", "cap_price": request.cap_price, "message": buyer_msg}
+                # 이 엔벨로프는 셀러에게 가는 메시지다 — 상한가 액수를 싣지 않는다.
+                # (리포트는 REQUEST 쪽 payload에서 상한가를 읽으므로 영향 없다)
+                reject_payload = {"reason": "상한가 초과", "message": buyer_msg}
                 if buyer_audit_note:
                     reject_payload["audit_note"] = buyer_audit_note
                 store.append(Envelope(**{

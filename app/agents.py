@@ -11,9 +11,15 @@ from .schemas import SellerRegister, BuyerRequest
 
 class SellerAgentPort(Protocol):
     def decide(
-        self, offer: SellerRegister, round_no: int, buyer_cap_price: int, last_reject_price: int | None
+        self, offer: SellerRegister, round_no: int, last_reject_price: int | None
     ) -> tuple[int, str]:
-        """(제시가, 협상 메시지)를 반환."""
+        """
+        (제시가, 협상 메시지)를 반환.
+
+        **바이어의 상한가를 인자로 받지 않는다.** 상대의 지불의사 최대치를 알면
+        거기 붙여 부르면 그만이라 협상이 성립하지 않는다. 셀러가 아는 것은
+        자기 제시가·최저수용가와, 자기가 제시했다가 거절당한 이력뿐이다.
+        """
         ...
 
 
@@ -44,7 +50,7 @@ class RuleBasedSellerAgent:
     """LLM 없이 if 조건문으로만 응답하는 1차 구현. 배관 검증용."""
 
     def decide(
-        self, offer: SellerRegister, round_no: int, buyer_cap_price: int, last_reject_price: int | None
+        self, offer: SellerRegister, round_no: int, last_reject_price: int | None
     ) -> tuple[int, str]:
         price = _seller_decide(offer, round_no, last_reject_price)
         if round_no == 1:
@@ -60,5 +66,7 @@ class RuleBasedBuyerAgent:
         if accept:
             message = "제안을 수락합니다."
         else:
-            message = f"상한가 {request.cap_price}원을 초과하여 거절합니다."
+            # 상한가 액수는 밝히지 않는다 — 이 메시지는 셀러에게 가는 것이고,
+            # 정확한 상한을 알려주면 다음 제안이 거기 붙는다
+            message = "제시가가 예산을 초과하여 거절합니다."
         return accept, message
