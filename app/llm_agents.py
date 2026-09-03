@@ -64,8 +64,8 @@ class OpenAISellerAgent:
             history = f"이전 라운드에서 {last_reject_price}원을 제시했으나 바이어가 거절했습니다.\n"
 
         prompt = (
-            f"당신은 B2B 거래에서 {offer.item.value}를 판매하는 협상 에이전트입니다.\n"
-            f"품목: {offer.item.value} / 수량: {offer.qty}\n"
+            f"당신은 B2B 거래에서 {offer.item}를 판매하는 협상 에이전트입니다.\n"
+            f"품목: {offer.item} / 수량: {offer.qty}\n"
             f"당신의 원래 제시가: {offer.offer_price}원\n"
             f"당신의 최저 수용가(이 밑으로는 절대 팔면 안 됨): {offer.floor_price}원\n"
             f"현재 라운드: {round_no}\n"
@@ -90,8 +90,8 @@ class OpenAISellerAgent:
 class OpenAIBuyerAgent:
     def decide(self, request: BuyerRequest, offer_price: int, seller_message: str) -> tuple[bool, str]:
         prompt = (
-            f"당신은 B2B 거래에서 {request.item.value}를 구매하는 협상 에이전트입니다.\n"
-            f"품목: {request.item.value} / 수량: {request.qty}\n"
+            f"당신은 B2B 거래에서 {request.item}를 구매하는 협상 에이전트입니다.\n"
+            f"품목: {request.item} / 수량: {request.qty}\n"
             f"당신의 예산 상한(이 이상은 절대 승인하면 안 됨): {request.cap_price}원\n"
             f"셀러의 제안: {offer_price}원\n"
             f'셀러 메시지: "{seller_message}"\n\n'
