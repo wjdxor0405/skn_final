@@ -1,7 +1,9 @@
 """
 호두 프로젝트 — 제조업 데모 데이터 시딩 (멱등)
 
-시나리오: 사무용 가구 제조사가 원자재 3종을 3개 공급처에서 조달한다.
+시나리오: GPU 서버·워크스테이션 조립 SI 업체가 부품 3종을 3개 공급처에서 조달한다.
+수치는 기획 회의의 예시를 그대로 옮겼다 — "GPU 재고 10장인 상태에서 발주 100개를
+받아 90개가 부족해지면 시스템이 자동 감지해 추가 발주서를 생성".
 P0_확정안_v3 §4 (품목 3종 / 셀러 3곳, 1곳 탈락 / 요청 3건) 을 그대로 구현.
 
 모든 레코드는 default_code / ref 접두사로 식별되므로 Odoo 기본 데모 데이터와 섞이지 않는다.
@@ -86,14 +88,17 @@ for v in VENDORS:
 #    Odoo 19: type='consu' + is_storable=True 가 재고 추적 품목
 # ─────────────────────────────────────────────────────────────
 PRODUCTS = [
-    {"default_code": "RM-STEEL-001", "name": "냉연강판 SS400",
-     "description": "1.2T x 1219 x 2438", "list_price": 0.0, "purchase_ok": True, "sale_ok": False},
-    {"default_code": "RM-TOP-001", "name": "집성목 상판",
-     "description": "1200 x 600 x 25mm", "list_price": 0.0, "purchase_ok": True, "sale_ok": False},
-    {"default_code": "RM-BOLT-M8", "name": "육각볼트 M8",
-     "description": "M8 x 25, 아연도금", "list_price": 0.0, "purchase_ok": True, "sale_ok": False},
-    {"default_code": "FG-DESK-001", "name": "사무용 책상 1200",
-     "description": "1200 x 600, 스틸 프레임 + 집성목 상판", "list_price": 189000.0,
+    {"default_code": "RM-GPU-H100", "name": "GPU 가속기 H100 80GB",
+     "description": "PCIe 5.0, 80GB HBM3, 350W", "list_price": 0.0,
+     "purchase_ok": True, "sale_ok": False},
+    {"default_code": "RM-PSU-3000W", "name": "서버 전원공급장치 3000W",
+     "description": "3000W, 80+ Titanium, 이중화(1+1)", "list_price": 0.0,
+     "purchase_ok": True, "sale_ok": False},
+    {"default_code": "RM-RACK-4U", "name": "4U 랙 섀시",
+     "description": "4U, 19인치 랙마운트, GPU 슬롯 8", "list_price": 0.0,
+     "purchase_ok": True, "sale_ok": False},
+    {"default_code": "FG-GPUSRV-001", "name": "GPU 서버랙 4U",
+     "description": "4U 랙마운트 · H100 탑재 · 이중화 전원", "list_price": 52000000.0,
      "purchase_ok": False, "sale_ok": True},
 ]
 
@@ -113,22 +118,26 @@ for p in PRODUCTS:
 #    price=단가, min_qty=최소주문량, delay=납기일수
 #
 #    설계 의도 (P0 §4 요청 3건에 대응):
-#      RM-STEEL-001 : 3곳 모두 취급          → ① 전원 충족, 순수 가격 비교
-#      RM-TOP-001   : 3곳 취급하나 조건 상이  → ② 일부 탈락 (최소주문량/납기 필터)
-#      RM-BOLT-M8   : 2곳만 취급, 최소주문량 큼 → ③ 소량 요청 시 전원 불가
+#      RM-GPU-H100  : 3곳 모두 취급하나 납기가 3배 차이 → ① 납기가 낙찰을 가르는 사례
+#      RM-PSU-3000W : 3곳 취급, 조건 상이            → ② 일부 탈락 (최소주문량/납기 필터)
+#      RM-RACK-4U   : 2곳만 취급                    → ③ 소량 요청 시 후보가 줄어드는 사례
 # ─────────────────────────────────────────────────────────────
 SUPPLIERINFO = [
-    # (품목,          공급처,            단가,    최소주문량, 납기일)
-    ("RM-STEEL-001", "HODU-V-HANBIT",   42000,   100,  5),
-    ("RM-STEEL-001", "HODU-V-OFFERET",  44500,    50,  3),
-    ("RM-STEEL-001", "HODU-V-BUYERD",   39800,   500, 21),   # 최저가지만 MOQ·납기로 탈락 유도
+    # (품목,          공급처,             단가,      최소주문량, 납기일)
+    #
+    # GPU는 납기가 결과를 가른다:
+    #   납기 10일 이내 요구 → 바이어드(7일)만 통과. 최고가로 사게 된다
+    #   납기 30일 여유      → 셋 다 통과. 오퍼렛(최저가)이 낙찰
+    ("RM-GPU-H100",  "HODU-V-HANBIT",  38000000,   10, 14),
+    ("RM-GPU-H100",  "HODU-V-OFFERET", 36500000,   50, 30),   # 최저가지만 납기가 길다
+    ("RM-GPU-H100",  "HODU-V-BUYERD",  41000000,    5,  7),   # 최고가지만 가장 빠르다
 
-    ("RM-TOP-001",   "HODU-V-HANBIT",   28000,    50,  7),
-    ("RM-TOP-001",   "HODU-V-OFFERET",  26500,   200, 14),
-    ("RM-TOP-001",   "HODU-V-BUYERD",   31000,    20,  4),
+    ("RM-PSU-3000W", "HODU-V-HANBIT",    780000,   20,  5),
+    ("RM-PSU-3000W", "HODU-V-OFFERET",   745000,  100, 10),
+    ("RM-PSU-3000W", "HODU-V-BUYERD",    820000,   10,  3),
 
-    ("RM-BOLT-M8",   "HODU-V-HANBIT",     180,  1000, 10),
-    ("RM-BOLT-M8",   "HODU-V-OFFERET",    210,   500,  6),
+    ("RM-RACK-4U",   "HODU-V-HANBIT",   1250000,   10,  7),
+    ("RM-RACK-4U",   "HODU-V-OFFERET",  1180000,   50, 12),
 ]
 
 print("── 공급처 단가표 ──")
@@ -143,9 +152,9 @@ for code, vref, price, min_qty, delay in SUPPLIERINFO:
 
 # ─────────────────────────────────────────────────────────────
 # 4. 현재 재고
-#    책상 100개 소요량 대비 '집성목 상판'만 부족하도록 맞춘다 (데모 시나리오)
+#    서버 100대 소요량 대비 'GPU'만 부족하도록 맞춘다 — 기획 회의의 예시 수치 그대로
 # ─────────────────────────────────────────────────────────────
-STOCK = {"RM-STEEL-001": 120, "RM-TOP-001": 45, "RM-BOLT-M8": 3200}
+STOCK = {"RM-GPU-H100": 10, "RM-PSU-3000W": 400, "RM-RACK-4U": 150}
 
 wh = call("stock.warehouse", "search_read", [], fields=["lot_stock_id"], limit=1)
 loc = wh[0]["lot_stock_id"][0]
@@ -162,26 +171,45 @@ for code, qty in STOCK.items():
     print(f"  {code:14} {qty:>6,}")
 
 # ─────────────────────────────────────────────────────────────
-# 5. BOM — 책상 1개 = 강판 0.5 + 상판 1 + 볼트 8
-#    책상 100개 → 강판 50(재고 120 OK) / 상판 100(재고 45, 55 부족) / 볼트 800(재고 3200 OK)
+# 5. BOM — 서버 1대 = GPU 1 + 파워 2(이중화) + 섀시 1
+#    서버 100대 → GPU 100(재고 10, 90 부족) / 파워 200(재고 400 OK) / 섀시 100(재고 150 OK)
 # ─────────────────────────────────────────────────────────────
-BOM_LINES = [("RM-STEEL-001", 0.5), ("RM-TOP-001", 1.0), ("RM-BOLT-M8", 8.0)]
+BOM_LINES = [("RM-GPU-H100", 1.0), ("RM-PSU-3000W", 2.0), ("RM-RACK-4U", 1.0)]
 
-bom_ids = call("mrp.bom", "search", [["code", "=", "HODU-BOM-DESK"]], limit=1)
+bom_ids = call("mrp.bom", "search", [["code", "=", "HODU-BOM-GPUSRV"]], limit=1)
 if bom_ids:
     call("mrp.bom", "write", bom_ids, {"bom_line_ids": [(5, 0, 0)]})   # 기존 라인 비우고 다시 채움
     bom = bom_ids[0]
     act = "updated"
 else:
     bom = create_one("mrp.bom", {
-        "code": "HODU-BOM-DESK", "product_tmpl_id": tmpl_id["FG-DESK-001"],
+        "code": "HODU-BOM-GPUSRV", "product_tmpl_id": tmpl_id["FG-GPUSRV-001"],
         "product_qty": 1.0, "type": "normal"})
     act = "created"
-# 제조 리드타임 — 자재가 다 있어도 만드는 데 걸리는 날. 납기 판정의 구성요소다.
-call("mrp.bom", "write", [bom], {"produce_delay": 3})
+# 제조 리드타임 — 자재가 다 있어도 조립·검수에 걸리는 날. 납기 판정의 구성요소다.
+call("mrp.bom", "write", [bom], {"produce_delay": 5})
 call("mrp.bom", "write", [bom], {"bom_line_ids": [
     (0, 0, {"product_id": product_id[c], "product_qty": q}) for c, q in BOM_LINES]})
-print(f"── BOM ──\n  {act:8} HODU-BOM-DESK  사무용 책상 1200 x1  = " +
+print(f"── BOM ──\n  {act:8} HODU-BOM-GPUSRV  GPU 서버랙 4U x1  = " +
       " + ".join(f"{c} x{q}" for c, q in BOM_LINES))
+
+# ─────────────────────────────────────────────────────────────
+# 6. 지난 도메인의 잔재 정리
+#    이 스크립트가 만든 RM-/FG- 품목 중 지금 목록에 없는 것은 보관(archive)한다.
+#    삭제하지 않는 이유: 과거 발주서가 참조하고 있어서 지우면 이력이 깨진다.
+#    Odoo는 보관된 품목을 검색에서 기본 제외하므로 화면·드롭다운에서는 사라진다.
+# ─────────────────────────────────────────────────────────────
+current = {p["default_code"] for p in PRODUCTS}
+stale = call("product.product", "search_read",
+             ["|", ["default_code", "=like", "RM-%"], ["default_code", "=like", "FG-%"]],
+             fields=["default_code"])
+to_archive = [r["id"] for r in stale if r["default_code"] not in current]
+print("── 지난 도메인 정리 ──")
+if to_archive:
+    call("product.product", "write", to_archive, {"active": False})
+    print(f"  보관 {len(to_archive)}건: " +
+          ", ".join(r["default_code"] for r in stale if r["default_code"] not in current))
+else:
+    print("  정리할 것 없음")
 
 print("\n완료.")

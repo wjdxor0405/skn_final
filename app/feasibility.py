@@ -24,8 +24,8 @@ from .odoo_client import odoo
 
 # Odoo에는 "하루에 몇 개 만들 수 있는가"에 해당하는 단순한 필드가 없다.
 # (mrp.workcenter + 라우팅으로 표현하지만 데모 범위를 크게 벗어난다)
-# 기본값은 주 100개(= 일 20개) 기준이다.
-CAPACITY_PER_DAY = float(os.getenv("PRODUCTION_CAPACITY_PER_DAY", "20"))
+# 도메인에 따라 크게 달라지는 값이다. 기본값은 GPU 서버랙 조립 기준 일 10대(주 50대).
+CAPACITY_PER_DAY = float(os.getenv("PRODUCTION_CAPACITY_PER_DAY", "10"))
 
 # 부족분을 조달할 때 협상에 넘길 상한가 = 적격 공급처 최저가 × (1 + 이 값)
 PROCURE_CAP_MARGIN = float(os.getenv("PROCURE_CAP_MARGIN", "0.05"))
