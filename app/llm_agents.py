@@ -6,9 +6,9 @@ agents.py의 RuleBasedSellerAgent/RuleBasedBuyerAgent와 정확히 같은 인터
 
 **셀러 프롬프트에 바이어 상한가를 넣지 않는다** — 알면 거기 붙여 부르므로 협상이
 성립하지 않는다(schemas.py 상단 규약). 바이어 프롬프트에는 자기 예산이 들어간다.
-LLM 출력은 audit.py를 거쳐 규칙(floor/cap) 위반 여부를 검증하는데, 검증 대상은
-**가격 판단뿐이고 message 본문은 검사하지 않는다** — 바이어 LLM이 자유 문장에
-자기 예산 액수를 적어버리는 것은 아직 막지 못한다(README "정보 은닉" 절).
+자기 유보가격(셀러의 floor / 바이어의 cap)을 message에 쓰지 말라는 지시가 양쪽
+프롬프트에 들어 있다. 다만 **지시일 뿐 보장은 아니다** — audit.py가 검증하는 것은
+가격 판단이고 message 본문은 검사하지 않는다(README "정보 은닉" 절).
 """
 
 from __future__ import annotations
@@ -75,7 +75,8 @@ class OpenAISellerAgent:
             f"{history}\n"
             "바이어의 예산은 알 수 없습니다. 거절당한 적이 있으면 조금씩 양보하되,\n"
             "최저 수용가 밑으로는 절대 내려가지 마세요.\n"
-            "협상 상대에게 보낼 짧은 메시지도 함께 작성하세요."
+            "협상 상대에게 보낼 짧은 메시지도 함께 작성하세요. 단, 최저 수용가 액수는\n"
+            "메시지에 절대 쓰지 마세요 — 상대가 알면 거기까지 깎으면 그만입니다."
         )
 
         resp = _get_client().chat.completions.create(
@@ -99,7 +100,9 @@ class OpenAIBuyerAgent:
             f"셀러의 제안: {offer_price}원\n"
             f'셀러 메시지: "{seller_message}"\n\n'
             "예산 상한 이내이면 수락(accept: true)하고, 초과하면 거절(accept: false)하세요.\n"
-            "협상 상대에게 보낼 짧은 메시지도 함께 작성하세요."
+            "협상 상대에게 보낼 짧은 메시지도 함께 작성하세요. 단, 예산 상한 액수는\n"
+            "메시지에 절대 쓰지 마세요 — 상대가 알면 거기 붙여 부르면 그만입니다.\n"
+            "거절할 때는 액수 없이 예산을 초과했다는 사실만 알리세요."
         )
 
         resp = _get_client().chat.completions.create(
