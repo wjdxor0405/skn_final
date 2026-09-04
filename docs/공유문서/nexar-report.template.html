@@ -1,0 +1,412 @@
+<title>Nexar 스냅샷 인수인계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F2F6F5; --surface:#FFFFFF; --surface-2:#F7FAF9; --sunk:#EAF0EF;
+  --ink:#0F1817; --ink-2:#33403E; --muted:#657674; --line:#D9E3E1; --line-2:#E9EFEE;
+  --teal:#00897B; --copper:#C2621F; --focus:#00897B;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --cond:"IBM Plex Sans Condensed","IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1211; --surface:#161B1A; --surface-2:#1C2221; --sunk:#111615;
+  --ink:#E5ECEB; --ink-2:#BFCBC9; --muted:#8EA09D; --line:#28312F; --line-2:#1F2725;
+  --teal:#12A08D; --copper:#D2762F; --focus:#12A08D;
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1211; --surface:#161B1A; --surface-2:#1C2221; --sunk:#111615;
+  --ink:#E5ECEB; --ink-2:#BFCBC9; --muted:#8EA09D; --line:#28312F; --line-2:#1F2725;
+  --teal:#12A08D; --copper:#D2762F; --focus:#12A08D;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.68;
+  -webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:36px 22px 72px}
+p,li{max-width:66ch}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-color:var(--line)}
+a:hover{text-decoration-color:currentColor}
+a:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+
+/* 머리말 */
+.hero{border-bottom:2px solid var(--ink);padding-bottom:20px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--teal);margin:0 0 10px}
+h1{font-family:var(--cond);font-weight:700;font-size:clamp(30px,5.2vw,42px);line-height:1.06;
+  margin:0;letter-spacing:-.015em;text-wrap:balance}
+.lede{margin:14px 0 0;font-size:16.5px;color:var(--ink-2);max-width:60ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:20px}
+.chip{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--surface);
+  border:1px solid var(--line);border-radius:5px;padding:4px 9px;font-variant-numeric:tabular-nums}
+.chip b{color:var(--muted);font-weight:400}
+
+/* 절 */
+section{margin-top:52px;scroll-margin-top:16px}
+.snum{font-family:var(--mono);font-size:12px;color:var(--copper);letter-spacing:.06em}
+h2{font-family:var(--cond);font-weight:600;font-size:26px;line-height:1.15;margin:6px 0 0;
+  letter-spacing:-.01em;text-wrap:balance}
+h3{font-family:var(--sans);font-weight:600;font-size:15.5px;margin:30px 0 0;color:var(--ink)}
+h3+p,h3+ul,h3+ol,h3+.tablewrap,h3+figure{margin-top:8px}
+h2+p{margin-top:14px}
+ul,ol{padding-left:20px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+code{font-family:var(--mono);font-size:.885em;background:var(--sunk);padding:1px 5px;border-radius:4px}
+pre{font-family:var(--mono);font-size:12.5px;line-height:1.62;background:var(--sunk);color:var(--ink-2);
+  border:1px solid var(--line-2);border-radius:8px;padding:13px 15px;overflow-x:auto}
+pre code{background:none;padding:0}
+
+/* 표 */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface);margin-top:16px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{font:500 10.5px/1.5 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  background:var(--surface-2);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.real{color:var(--teal);font-weight:500}
+.synth{color:var(--copper);font-weight:500}
+
+/* 강조 블록 */
+.callout{border-left:3px solid var(--copper);background:var(--surface);padding:14px 17px;
+  border-radius:0 8px 8px 0;margin-top:18px}
+.callout p{margin:0;max-width:62ch}
+.callout p+p{margin-top:9px}
+.callout .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--copper);display:block;margin-bottom:5px}
+
+/* 그림 */
+figure{margin:20px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 17px}
+figcaption{font-size:12.5px;color:var(--muted);margin-top:12px;max-width:64ch}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:5px 11px;align-items:center}
+.bars .k{font-family:var(--mono);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.bars .v{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bars .t{height:11px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bars .t i{display:block;height:100%;background:var(--teal);border-radius:3px}
+.figtitle{font:600 13.5px/1.4 var(--sans);margin:0 0 13px}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:18px 0 0;counter-reset:s}
+.steps>li{counter-increment:s;position:relative;padding-left:38px;margin:0 0 16px;max-width:64ch}
+.steps>li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:1px;
+  font-family:var(--mono);font-size:12px;color:var(--copper);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;background:var(--surface)}
+.steps b{font-weight:600}
+.steps .cost{display:block;font-size:13px;color:var(--muted);margin-top:3px}
+
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="page">
+<header class="hero">
+  <p class="eyebrow">카탈로그 데이터 인수인계</p>
+  <h1>Nexar 스냅샷 — 무엇을 받았고, 무엇을 할 수 있나</h1>
+  <p class="lede">데모용으로 지어낸 단가·재고·납기를 실제 전자부품 유통 데이터로 바꿨습니다.
+    이 문서는 어떻게 모았는지, 그 안에 무엇이 있는지, 이걸로 무엇을 해볼 수 있는지를 정리합니다.</p>
+  <div class="meta" id="meta"></div>
+</header>
+
+<section id="s1">
+  <div class="snum">01</div>
+  <h2>어떻게 모았나</h2>
+  <p>Nexar(Octopart) API에서 받았습니다. 심사위원이 API 키 없이 실행할 수 있어야 해서
+    <b>라이브 호출이 아니라 응답을 JSON으로 떠서 저장소에 커밋</b>했습니다. 앱은 그 파일만 읽습니다.</p>
+
+  <div class="callout">
+    <span class="lbl">이 수집을 지배한 제약</span>
+    <p><b>무료 플랜 한도가 '조회한 파트 수'로 깎입니다.</b> 필드 수로는 안 깎입니다.
+      그래서 원본은 사실상 다시 못 받고, 대신 필드는 넉넉히 받는 것이 이득입니다.
+      이 비대칭이 아래 순서와 이후 설계를 전부 결정했습니다.</p>
+  </div>
+
+  <ol class="steps">
+    <li><b>스키마 조회로 필드 이름을 먼저 확정했습니다.</b>
+      GraphQL은 이름 하나만 틀려도 요청 전체가 실패합니다. introspection은 한도를 안 씁니다.
+      <span class="cost">여기서 MOQ 필드가 <code>moq</code>임을 확인했습니다. 작업지시서가 가리킨
+        <code>SupPartOffer</code>는 껍데기였고 실제 필드는 <code>SupOffer</code>에 있었습니다.</span></li>
+    <li><b>존재를 확인한 필드를 넉넉히 붙였습니다.</b> 재고·MOQ·납기 외에 주문 배수, 유통사 품번,
+      부품 사양, 시장가 기준선, 데이터시트 링크까지.
+      <span class="cost">한도가 안 깎이는 차원이라 지금 안 쓸 것도 받아뒀습니다.
+        나중에 필요해지면 재조회 없이 꺼내 씁니다.</span></li>
+    <li><b>통화 환산을 API에 맡겼습니다.</b> 요청에 통화를 넘기면 응답에 환산가와 적용 환율이 실려 옵니다.
+      <span class="cost">우리가 가정했던 환율은 실측과 3.4% 달랐고, 판매자 원 통화가 6종이라
+        단일 환율 가정 자체가 틀렸습니다.</span></li>
+    <li><b>1개 부품으로 응답 모양을 검증한 뒤</b> 28개를 한 번에 조회했습니다.
+      <span class="cost">지시서가 제안한 스모크 테스트보다 쌉니다 — 실제로 쓸 요청을 그대로 검증합니다.
+        총 소모 29파트.</span></li>
+    <li><b>변환은 아무것도 하지 않고 저장했습니다.</b> 응답 원본에 조회 이력(엔드포인트·시각·보낸 요청 전문)만 붙였습니다.
+      <span class="cost">요청을 함께 남기는 이유 — 응답은 요청에 대한 투영이라, 요청을 모르면
+        어떤 필드가 <i>없는</i> 것인지 <i>안 물어본</i> 것인지 구분할 수 없습니다.</span></li>
+  </ol>
+
+  <h3>조회할 부품은 이렇게 골랐습니다</h3>
+  <ul>
+    <li><b>판매자가 2곳 이상 붙을 것</b> — 1곳이면 협상 후보가 안 생겨서 이 프로젝트의 핵심 장면이 성립하지 않습니다</li>
+    <li><b>개당 $0.05 이상</b> — 초저가 수동소자(0402 저항·MLCC)는 원화 환산에서 1원 미만으로 뭉개집니다</li>
+    <li><b>데모 맥락에 붙는 부품</b> — GPU 서버랙 조립: 전원·열관리·네트워크·관리보드</li>
+  </ul>
+  <p>결과적으로 28개 전부 매칭됐고 <b>판매자가 1곳뿐인 품목은 0개</b>였습니다.
+    목록과 선정 기준은 <code>scripts/mpns.txt</code>에 있습니다.</p>
+</section>
+
+<section id="s2">
+  <div class="snum">02</div>
+  <h2>데이터가 어떤 모양인가</h2>
+  <p>파일 하나(<code>data/nexar_snapshot.json</code>)이고 5단 중첩입니다. 에디터로 열어 훑기는 어렵습니다.</p>
+  <pre><code>조회 1건 (MPN 하나당)      28건
+└── 부품                    28개    이름·제조사·분류·사양·데이터시트·시장가 기준선
+    └── 판매자           1,150개    같은 유통사가 여러 부품에 반복 등장 (고유 104곳)
+        └── 오퍼         1,461건    한 유통사가 포장 단위별로 여러 개를 낼 수 있다
+            └── 수량구간 5,744개    "N개 이상이면 단가 X"</code></pre>
+
+  <h3>결측이 많은 층이 있습니다</h3>
+  <p>오퍼 계층이 그렇습니다. 코드가 결측을 정규화하는 이유가 여기 있습니다.</p>
+  <figure>
+    <p class="figtitle">오퍼 필드 채움률 — 전체 1,461건 기준</p>
+    <div class="bars" id="cov"></div>
+    <figcaption><b>MOQ가 41% 없습니다.</b> 스키마가 정수라 <code>None</code>을 그대로 넣으면
+      검증에서 터지므로 0(제약 없음)으로 정규화합니다. 가격이 아예 없는 오퍼 11%는 협상 후보에서 빠집니다.</figcaption>
+  </figure>
+
+  <h3>무엇이 실데이터이고 무엇이 우리가 만든 값인가</h3>
+  <p>이 경계가 흐려지면 시연의 의미가 사라집니다.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>값</th><th>출처</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>단가 · 수량별 가격구간</td><td class="real">API 원본</td><td>구간이 전부 보존돼 있습니다</td></tr>
+        <tr><td>재고 · 최소주문량 · 공장 리드타임</td><td class="real">API 원본</td><td>결측률은 위 그래프 참고</td></tr>
+        <tr><td>판매자 · 인가 여부 · 국가</td><td class="real">API 원본</td><td>인가 판별은 <code>isAuthorized</code>만 유효</td></tr>
+        <tr><td>부품 사양 · 수명주기 · 데이터시트</td><td class="real">API 원본</td><td>사양 233종</td></tr>
+        <tr><td>1,000개 기준 시장가</td><td class="real">API 원본</td><td>3절에서 기준선으로 씁니다</td></tr>
+        <tr><td>원화 환산</td><td class="real">API 계산</td><td>통화 6종, 각각 다른 환율</td></tr>
+        <tr><td><b>셀러 최저 수용가</b> (<code>floor_price</code>)</td><td class="synth">합성</td>
+            <td><b>유일한 합성값.</b> 제시가 × 0.90</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <span class="lbl">중요</span>
+    <p><b>스냅샷 파일에는 합성값이 하나도 없습니다.</b> 파일은 API 응답 원본과 조회 이력뿐이고,
+      <code>floor_price</code> 합성·통화 환산·수량구간 선택·결측 정규화는 전부 앱이
+      <b>읽는 시점에</b> 합니다. 가정이 바뀌면 코드만 고치면 되고 재조회가 필요 없습니다.</p>
+    <p>실제로 이 구조 덕에 받고 나서 드러난 넷을 재조회 없이 고쳤습니다 — 환율 가정 오차,
+      다중 통화, 리드타임 필드의 의미, 유통사 필터.</p>
+  </div>
+
+  <h3>읽는 시점에 적용되는 판단 둘</h3>
+  <p><b>인가 유통사만 후보로 둡니다</b>(끌 수 있습니다). 비인가 유통사의 최저가가 인가의 1/4.4(중앙값)이고,
+    극단은 기가비트 이더넷 PHY 37원 · 파워 MOSFET 13원입니다. 같은 물건으로 보기 어렵습니다.
+    걸러도 28품목 전부 인가 유통사가 3곳 이상 남습니다.</p>
+  <p><b>재고에서 나가는 물량에는 공장 리드타임을 씌우지 않습니다.</b>
+    <code>factoryLeadDays</code>는 공장이 다시 만드는 시간이지 출하 납기가 아닙니다.
+    둘은 배타적이지도 않아서(오퍼 107건이 동시 보유) 그대로 쓰면 재고 8,324개를 가진
+    DigiKey가 "납기초과 280일"로 탈락합니다.</p>
+</section>
+
+<section id="s3">
+  <div class="snum">03</div>
+  <h2>이 데이터로 시뮬레이션을 한다면</h2>
+  <p>먼저 <b>이 데이터로 잴 수 있는 것과 없는 것</b>을 갈라야 합니다. 여기를 건너뛰면
+    합성 상수가 만든 결과를 실측으로 착각하게 됩니다.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>협상 단계</th><th>데이터</th><th>시뮬레이션에서</th></tr></thead>
+      <tbody>
+        <tr><td><b>스크리닝</b><br>재고·MOQ·납기·사양</td><td class="real">전부 실데이터</td>
+            <td>여기가 이 데이터가 값을 하는 자리입니다. 실제 제약이 실제로 후보를 거릅니다</td></tr>
+        <tr><td><b>후보 비교</b><br>누가 얼마에 파는가</td><td class="real">실데이터</td>
+            <td>유통사 간 가격차·수량구간이 전부 실측입니다</td></tr>
+        <tr><td><b>흥정</b><br>얼마까지 깎이는가</td><td class="synth">합성</td>
+            <td><code>floor_price</code>가 제시가의 고정 비율이라 <b>결과가 그 상수에서 나옵니다</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>먼저 알아야 할 두 가지 (설계를 바꿉니다)</h3>
+  <ul>
+    <li><b>규칙 기반 협상은 결정적입니다.</b> 난수가 없습니다. 같은 입력이면 같은 결과라
+      <b>반복 실행에 아무 의미가 없습니다</b>. 분포를 얻으려면 시나리오를 흔들어야 합니다.</li>
+    <li><b>도달 가능한 가격이 두 개뿐입니다.</b> 셀러 규칙이 거절당하면 제시가와 최저수용가의
+      중간으로 한 번 내리고, 그 값은 라운드가 늘어도 바뀌지 않습니다
+      (<code>(offer + floor) // 2</code>는 라운드에 의존하지 않습니다).
+      <code>MAX_ROUNDS=3</code>이지만 실질 가격은 <b>제시가 또는 그 95%</b> 둘뿐입니다.</li>
+  </ul>
+
+  <h3>그래서 이렇게 설계하는 것을 권합니다</h3>
+  <p><b>흔들 것</b> — 품목(28) × 요청 수량(로그 격자: 1·10·100·1K·10K) ×
+    상한가(시장가 대비 비율로 지정) × 허용 납기. 수량이 가장 값진 축입니다.
+    수량구간·MOQ·재고가 전부 실데이터라, 수량만 바꿔도
+    <b>28품목 중 22품목에서 이기는 유통사가 바뀝니다</b>.</p>
+  <p><b>잴 것</b> — 체결률, 낙찰 단가, 라운드 수, 스크리닝 탈락 사유 분포,
+    낙찰 유통사 집중도(특정 유통사가 독식하는가).</p>
+
+  <h3>기준선은 데이터 안에 있습니다</h3>
+  <p><code>medianPrice1000</code>(1,000개 기준 시장가)이 <b>실데이터</b>입니다.
+    "에이전트가 잘 협상했는가"를 합성값이 아니라 실제 시장가에 대고 잴 수 있습니다.</p>
+  <figure>
+    <p class="figtitle">1,000개 기준 최저 인가 유통사가 vs 시장가 중앙값</p>
+    <div class="bars" id="ratio"></div>
+    <figcaption>막대가 짧을수록 시장가보다 쌉니다. <b>중앙값 0.67</b> — 카탈로그의 최저가는
+      협상을 시작하기도 전에 이미 시장가 중앙값보다 33% 낮습니다.
+      즉 <b>"싸게 샀다"의 상당 부분은 협상이 아니라 후보 비교에서 나옵니다.</b>
+      시뮬레이션은 이 둘을 반드시 분리해서 보고해야 합니다.</figcaption>
+  </figure>
+  <p>비교할 기준선 셋을 권합니다 — ① 협상 없이 최저가 즉시 구매,
+    ② 시장가 중앙값에 구매, ③ 에이전트 협상. ①과 ③의 차이만이 협상의 기여분입니다.</p>
+
+  <div class="callout">
+    <span class="lbl">가장 정직한 실험</span>
+    <p><b><code>SNAPSHOT_FLOOR_RATIO</code>를 쓸어보십시오.</b> 0.80 ~ 0.98을 훑으면서 결론이
+      얼마나 바뀌는지 보는 것이, 이 데이터로 할 수 있는 가장 값진 실험입니다.
+      결론이 이 상수에 민감하다면 그건 데이터가 아니라 우리가 정한 숫자에 대한 결론입니다.</p>
+    <p>또한 지금은 <b>모든 판매자의 협상 여지가 똑같습니다</b>(전부 제시가의 90%).
+      "어떤 유통사가 더 양보하는가"는 <b>이 데이터로 답할 수 없습니다</b> —
+      답하려면 합성 모델을 하나 더 얹는 것이고, 그 사실을 결과에 명시해야 합니다.</p>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="snum">04</div>
+  <h2>다음에 모을 데이터 후보</h2>
+
+  <h3>ㄱ. 이미 파일 안에 있습니다 — 조회 불필요</h3>
+  <p>받아뒀지만 아직 안 쓰는 필드입니다. <b>비용 0</b>이라 여기부터 보는 것이 맞습니다.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>필드</th><th>무엇</th><th>쓰면</th></tr></thead>
+      <tbody>
+        <tr><td><code>Lifecycle Status</code><br><code>Projected EOL Date</code></td>
+            <td>부품 수명주기·단종 예정일</td>
+            <td><b>공급망 리스크 축.</b> 지금 28품목 전부 Production이고 EOL 예정일이 있는 게 3개입니다</td></tr>
+        <tr><td><code>orderMultiple</code></td><td>주문 배수 제약 (24%)</td>
+            <td>MOQ와 별개로 실재하는 제약. 스크리닝을 더 현실적으로</td></tr>
+        <tr><td><code>onOrderQuantity</code></td><td>입고 예정 수량 (3%)</td>
+            <td><b>납기 축을 살릴 유일한 후보.</b> 지금은 재고가 있으면 납기 0, 없으면 재고부족으로
+                먼저 걸려서 납기 조건이 아무것도 못 거릅니다</td></tr>
+        <tr><td><code>RoHS</code> · 사양 233종</td><td>규제·전기적 특성</td>
+            <td>사양 매칭을 문자열 대신 구조화된 값으로</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>ㄴ. 같은 API로 추가 조회 — 파트 수만큼 한도 소모</h3>
+  <ul>
+    <li><b>같은 부품을 주기적으로 다시 뜨기.</b> 지금은 <b>한 시점뿐</b>이라 가격·재고가 정지해 있습니다.
+      시간축이 생기면 가격 추세·품절 위험·"이 유통사가 계속 싼가"를 다룰 수 있습니다.
+      <b>결손 중 가장 큽니다.</b></li>
+    <li><b>품목 수 확대</b> — 카테고리 단위로 넓히면 "부품군에 따라 협상 여지가 다른가"를 볼 수 있습니다</li>
+    <li><b>지역 파라미터</b> — 요청에 국가를 넘기면 판매자 구성과 가격이 달라집니다.
+      이번엔 후보를 최대로 확보하려고 일부러 안 넘겼습니다</li>
+  </ul>
+
+  <h3>ㄷ. 다른 출처</h3>
+  <ul>
+    <li><b>유통사 자체 API</b>(DigiKey · Mouser · Farnell) — 같은 부품을 교차 검증할 수 있고,
+      Octopart 집계보다 최신입니다. 인가 여부 판단도 원천에서 확인됩니다</li>
+    <li><b>환율 시계열</b>(한국은행·ECB) — 지금은 조회 시점 환율 한 개가 박혀 있습니다.
+      시계열이 붙으면 "환율 때문에 비싸진 것"과 "가격이 오른 것"을 가릅니다</li>
+    <li><b>BOM</b> — <b>Octopart에는 없습니다.</b> 완제품→자재 전개는 계속 ERP 쪽 몫이거나,
+      공개 하드웨어 프로젝트의 BOM을 가져와야 합니다</li>
+  </ul>
+
+  <h3>ㄹ. 원리상 못 구하는 것</h3>
+  <p><b>판매자의 실제 유보가격</b>입니다. 어떤 공개 데이터에도 없습니다 —
+    공개되면 협상이 성립하지 않기 때문입니다. 그래서 <code>floor_price</code>가 합성이고,
+    앞으로 어떤 소스를 붙여도 이 값만은 가정으로 남습니다.
+    협상 상대의 실제 응답 로그도 같습니다.</p>
+</section>
+
+<section id="s5">
+  <div class="snum">05</div>
+  <h2>그 외 알아두면 좋은 것</h2>
+
+  <h3>한도를 쓸 때</h3>
+  <p>스키마 조회와 요청 미리보기는 <b>한도를 안 씁니다</b>. 마음껏 쓰세요.
+    실제 조회만 파트 수만큼 깎이고, 이번에 29파트를 썼습니다(검증 1 + 본조회 28).
+    <b>반복 실행을 피하고 한 번에 제대로 받는 것</b>이 이 API를 다루는 요령입니다.</p>
+
+  <h3>재현</h3>
+  <p>키 없이 앱을 돌리는 데는 아무것도 필요 없습니다 — 파일이 저장소에 있습니다.
+    <b>다시 뜰 때만</b> <code>.env</code>에 키 두 개를 넣으면 됩니다.
+    셸에서 <code>export</code>한 값은 도구가 새 셸을 띄우면 사라지므로 <code>.env</code>를 쓰세요.</p>
+
+  <h3>저장소에 미치는 영향</h3>
+  <p>원본 4.2MB이지만 git은 압축해서 <b>0.66MB</b>로 저장합니다.
+    <b>병합 전까지는 upstream 클론 크기에 영향이 없습니다</b> — 클론은 그 저장소의 ref에서
+    도달 가능한 것만 받습니다. 병합되면 그때부터 영구적이고, 나중에 파일을 지워도
+    히스토리에 남아 크기가 줄지 않습니다.</p>
+
+  <h3>협상·검증 코드에 손댄 부분</h3>
+  <p>작업지시서가 "손대지 말 것"으로 지정한 파일 둘을 고쳤습니다 — 수량구간을 살리려면
+    협상 쪽에서 수량을 넘겨야 했고, 납품 가능성 검증은 외부 ERP 없이 돌아야 했습니다.
+    <b>되돌아가도 에러가 안 나고 조용히 옛 동작으로 돌아가는 종류</b>라 회귀 검사를 붙였습니다.
+    병합할 때 충돌이 나면 인자를 살리는 쪽으로 풀어야 합니다.</p>
+  <p>붙이다가 하나 발견했습니다 — 납품 가능성 검증이 <b>판매자 재고를 보지 않아서</b>
+    커넥터 50만 개도 "가능"이라고 답하고 있었습니다. 이 모듈이 막으려던 바로 그 답입니다.
+    ERP 모드는 공급능력을 무제한으로 가정해서 드러나지 않던 구멍인데, 실데이터에는 재고가 있습니다.</p>
+
+  <h3>어디를 보면 되나</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>문서</th><th>무엇</th></tr></thead>
+      <tbody>
+        <tr><td><code>README.md</code></td><td>켜는 법, 실데이터/합성 경계, 시연 순서</td></tr>
+        <tr><td><code>docs/스냅샷-데이터-구조.md</code></td><td>파일 안에 무엇이 있고 어떤 필드가 얼마나 비어 있는가</td></tr>
+        <tr><td><code>docs/decisions/0002</code></td><td>왜 원본을 그대로 뜨고 해석을 미뤘는가</td></tr>
+        <tr><td><code>docs/decisions/0003</code></td><td>왜 인가 유통사만 후보로 두는가</td></tr>
+        <tr><td><code>docs/decisions/0004</code></td><td><b>범위 밖에서 고친 두 파일 — 병합 담당자가 읽어야 합니다</b></td></tr>
+        <tr><td><code>scripts/mpns.txt</code></td><td>조회한 부품 목록과 고른 기준</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<script id="d" type="application/json">__DATA__</script>
+<script>
+(function(){
+  "use strict";
+  const D = JSON.parse(document.getElementById("d").textContent);
+  const int = n => n.toLocaleString("ko-KR");
+
+  const meta = document.getElementById("meta");
+  const rows = [["조회", D.fetched_at.slice(0,16).replace("T"," ")],
+                ["품목", D.counts.items + "개"],
+                ["오퍼", int(D.counts.offers) + "건"],
+                ["수량구간", int(D.counts.prices) + "개"],
+                ["유통사", D.counts.sellers_auth + " 인가 / " + D.counts.sellers_all + " 전체"],
+                ["파일", "4.2MB (git 0.66MB)"]];
+  for (const [k, v] of rows){
+    const s = document.createElement("span"); s.className = "chip";
+    const b = document.createElement("b"); b.textContent = k + " ";
+    s.append(b, document.createTextNode(v)); meta.appendChild(s);
+  }
+
+  function bars(host, items, fmt){
+    const max = Math.max(...items.map(i => i[1]));
+    for (const [k, v] of items){
+      const a = document.createElement("span"); a.className = "k"; a.textContent = k;
+      const t = document.createElement("div"); t.className = "t";
+      const i = document.createElement("i"); i.style.width = (100 * v / max) + "%"; t.appendChild(i);
+      const c = document.createElement("span"); c.className = "v"; c.textContent = fmt(v);
+      host.append(a, t, c);
+    }
+  }
+  bars(document.getElementById("cov"), D.coverage, v => v.toFixed(1) + "%");
+  bars(document.getElementById("ratio"),
+       D.ratio.map(r => [r.mpn.length > 18 ? r.mpn.slice(0,17) + "…" : r.mpn, r.r]),
+       v => v.toFixed(2));
+
+  document.getElementById("foot").textContent =
+    "브랜치 feat/snapshot-catalog · 스냅샷 조회 " + D.fetched_at.slice(0,10) +
+    " · 이 문서의 수치는 모두 스냅샷과 실행 결과에서 나왔습니다.";
+})();
+</script>
