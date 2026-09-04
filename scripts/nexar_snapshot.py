@@ -165,19 +165,57 @@ SMOKE = """
 query { supSearchMpn(q: "LM358", limit: 3) { hits results { part { mpn manufacturer { name } } } } }
 """
 
-# MOQ 필드는 --introspect SupPartOffer 로 확인한 실제 이름으로 바꿀 것.
-# 확인 전에는 "" 로 두면 쿼리에서 빠지고, 로더는 MOQ 없이(=제약 없음) 돈다.
-# 실제 이름이 moq 가 아니어도 로더는 provenance.moq_field 를 읽어 따라간다.
-MOQ_FIELD = ""
+# --introspect SupPartOffer -> SupOffer 로 확인한 실제 이름. 스냅샷의 provenance 에
+# 기록되어 로더가 이 이름을 따라간다(app/snapshot_catalog.py).
+MOQ_FIELD = "moq"
 
-# --introspect 로 존재를 확인한 뒤에만 채울 것. 이름이 하나만 틀려도 쿼리 전체가 실패한다.
-# 한도는 파트 수로만 깎이므로, 여기 넣는 필드는 공짜다. 한 번 조회할 때 넉넉히 받아둔다.
-EXTRA_PART_FIELDS: list[str] = []
-EXTRA_OFFER_FIELDS: list[str] = []
+# 한도는 조회한 '파트 수'로만 깎이고 필드 수로는 깎이지 않는다. 원본을 보존해도
+# '안 물어본 필드'는 없으므로, 나중에 쓸 법한 것은 이번 한 번에 같이 받는다.
+# 아래는 전부 --introspect 로 존재를 확인한 이름이다. 확인하지 않은 이름을 넣으면
+# 쿼리 전체가 실패한다.
+EXTRA_PART_FIELDS: list[str] = [
+    "id",
+    "name",
+    "genericMpn",
+    "octopartUrl",                 # 출처 링크 — 실데이터임을 화면에서 보일 때
+    "estimatedFactoryLeadDays",
+    "totalAvail",                  # 전 유통사 재고 합
+    "avgAvail",
+    "akaMpns",                     # 대체 표기 MPN
+    "category { name path }",
+    "bestDatasheet { name url }",  # 사양 근거 문서
+    # 시장가 기준선. 협상에서 "이 값이 적정한가"의 근거가 된다.
+    "medianPrice1000 { quantity price currency convertedPrice convertedCurrency }",
+    # 사양 매칭(negotiate.py 의 _spec_matches)을 shortDescription 문자열 대신
+    # 구조화된 값으로 할 여지를 남긴다.
+    "specs { attribute { name shortname group } value displayValue units }",
+]
 
+EXTRA_SELLER_FIELDS: list[str] = [
+    "country",
+    "isBroker",                    # 브로커는 정품 유통과 신뢰도가 다르다
+    "isRfq",                       # 견적 필요 여부
+]
+
+EXTRA_OFFER_FIELDS: list[str] = [
+    "id",
+    "sku",                         # 유통사 품번 — 발주 단계에서 필요
+    "updated",                     # 데이터 신선도
+    "eligibleRegion",
+    "onOrderQuantity",             # 입고 예정 수량
+    "factoryPackQuantity",
+    "orderMultiple",               # 주문 배수 제약 — MOQ 와 별개로 실재하는 조건
+    "multipackQuantity",
+    "isCustomPricing",             # 견적 전용이면 표시가가 의미를 잃는다
+]
+
+# supMultiMatch 는 currency 인자를 받는다. 넘기면 각 가격에 convertedPrice/
+# conversionRate 가 붙는다 — 환산을 우리가 가정하지 않고 API 값을 쓸 수 있다.
+# country 는 기본적으로 넘기지 않는다. 판매자 구성을 좁힐 수 있는데, 이 프로젝트는
+# 한 품목에 판매자가 2곳 이상 붙어야 협상 후보가 생기기 때문이다.
 MULTI_MATCH = """
-query($queries: [SupPartMatchQuery!]!) {
-  supMultiMatch(queries: $queries) {
+query($queries: [SupPartMatchQuery!]!%(argdecl)s) {
+  supMultiMatch(queries: $queries%(argpass)s) {
     reference
     hits
     parts {
@@ -186,8 +224,9 @@ query($queries: [SupPartMatchQuery!]!) {
       manufacturer { name }
 %(part_extra)s
       sellers {
-        company { name }
+        company { id name homepageUrl isVerified }
         isAuthorized
+%(seller_extra)s
         offers {
           clickUrl
           inventoryLevel
@@ -195,7 +234,14 @@ query($queries: [SupPartMatchQuery!]!) {
           packaging
 %(moq)s
 %(offer_extra)s
-          prices { quantity price currency }
+          prices {
+            quantity
+            price
+            currency
+            convertedPrice
+            convertedCurrency
+            conversionRate
+          }
         }
       }
     }
@@ -209,23 +255,39 @@ def _block(fields: list[str], indent: int) -> str:
     return "\n".join(" " * indent + f for f in fields if f)
 
 
-def build_query() -> str:
+def build_query(currency: str | None = None, country: str | None = None) -> str:
     """
     비워둔 확장 슬롯이 빈 줄로 남지 않게 지운다. 이 쿼리는 스냅샷의 provenance 에
     그대로 저장되므로, 나중에 읽는 사람이 보기 좋아야 한다.
     """
+    decl, passed = "", ""
+    if currency:
+        decl += ", $currency: String"
+        passed += ", currency: $currency"
+    if country:
+        decl += ", $country: String"
+        passed += ", country: $country"
+
     filled = MULTI_MATCH % {
+        "argdecl": decl,
+        "argpass": passed,
         "part_extra": _block(EXTRA_PART_FIELDS, 6),
+        "seller_extra": _block(EXTRA_SELLER_FIELDS, 8),
         "moq": _block([MOQ_FIELD], 10),
         "offer_extra": _block(EXTRA_OFFER_FIELDS, 10),
     }
     return "\n".join(line for line in filled.splitlines() if line.strip()) + "\n"
 
 
-def fetch(mpns: list[str]) -> tuple[str, dict, dict]:
+def fetch(mpns: list[str], currency: str | None = None,
+          country: str | None = None) -> tuple[str, dict, dict]:
     """(보낸 쿼리, 보낸 변수, 받은 응답 원본)을 그대로 돌려준다."""
-    query = build_query()
-    variables = {"queries": [{"mpn": m, "limit": 1, "reference": m} for m in mpns]}
+    query = build_query(currency, country)
+    variables: dict = {"queries": [{"mpn": m, "limit": 1, "reference": m} for m in mpns]}
+    if currency:
+        variables["currency"] = currency
+    if country:
+        variables["country"] = country
     return query, variables, gql(query, variables)
 
 
@@ -269,10 +331,14 @@ def main() -> None:
     ap.add_argument("--out", default="data/nexar_snapshot.json")
     ap.add_argument("--print-query", action="store_true",
                     help="조회 없이 보낼 쿼리만 출력 (한도 차감 없음)")
+    ap.add_argument("--currency", default="KRW",
+                    help="가격에 붙일 환산 통화. 빈 문자열이면 환산을 요청하지 않는다")
+    ap.add_argument("--country", default="",
+                    help="사용자 국가. 판매자 구성을 좁힐 수 있어 기본은 미지정")
     args = ap.parse_args()
 
     if args.print_query:
-        print(build_query())
+        print(build_query(args.currency, args.country))
         return
 
     if args.introspect:
@@ -292,7 +358,7 @@ def main() -> None:
     ))
     print(f"조회 대상 {len(mpns)}개 MPN (중복 제거 후)")
 
-    query, variables, response = fetch(mpns)
+    query, variables, response = fetch(mpns, args.currency, args.country)
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
