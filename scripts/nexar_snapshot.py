@@ -41,6 +41,15 @@ import time
 from collections import Counter
 from pathlib import Path
 
+# 키는 .env 에서 읽는다 (프로젝트 공통 규약 — env.example 참고).
+# 셸에서 export 해도 되지만, 도구가 호출마다 새 셸을 띄우면 남지 않는다.
+# requests 없이 도는 인터프리터로도 --print-query 는 돌아야 해서 soft import.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 TOKEN_URL = "https://identity.nexar.com/connect/token"
 GRAPHQL_URL = "https://api.nexar.com/graphql"
 TOKEN_CACHE = Path(".nexar_token.json")
@@ -72,7 +81,12 @@ def get_token() -> str:
     cid = os.environ.get("NEXAR_CLIENT_ID")
     secret = os.environ.get("NEXAR_CLIENT_SECRET")
     if not cid or not secret:
-        sys.exit("NEXAR_CLIENT_ID / NEXAR_CLIENT_SECRET 환경변수를 설정하세요.")
+        sys.exit(
+            "NEXAR_CLIENT_ID / NEXAR_CLIENT_SECRET 가 없습니다.\n"
+            "저장소 루트의 .env 에 아래 두 줄을 넣으세요 (.env 는 gitignore 됩니다):\n"
+            "  NEXAR_CLIENT_ID=...\n"
+            "  NEXAR_CLIENT_SECRET=..."
+        )
 
     resp = _requests().post(
         TOKEN_URL,
@@ -100,9 +114,12 @@ def get_token() -> str:
 
 
 def gql(query: str, variables: dict | None = None) -> dict:
+    # 토큰을 먼저 확보한다. 인자 안에서 부르면 _requests() 가 먼저 평가돼서
+    # 정작 설정이 안 된 키 대신 라이브러리 안내가 뜬다.
+    token = get_token()
     resp = _requests().post(
         GRAPHQL_URL,
-        headers={"Authorization": f"Bearer {get_token()}"},
+        headers={"Authorization": f"Bearer {token}"},
         json={"query": query, "variables": variables or {}},
         timeout=60,
     )
