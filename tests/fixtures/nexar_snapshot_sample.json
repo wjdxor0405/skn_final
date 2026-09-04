@@ -1,0 +1,152 @@
+{
+  "provenance": {
+    "endpoint": "https://api.nexar.com/graphql",
+    "fetched_at": "2026-01-01T00:00:00+0900",
+    "query": "(합성 fixture — 실제 조회가 아님)",
+    "variables": {"queries": [{"mpn": "MCU-A", "limit": 1, "reference": "MCU-A"}]},
+    "moq_field": "moq",
+    "note": "회귀 검증용 합성 스냅샷. 실데이터가 아니다. 응답 원본과 같은 모양만 흉내낸다."
+  },
+  "response": {
+    "supMultiMatch": [
+      {
+        "reference": "MCU-A",
+        "hits": 1,
+        "parts": [
+          {
+            "mpn": "MCU-A",
+            "shortDescription": "8-bit MCU, 32KB Flash",
+            "manufacturer": {"name": "ACME Semi"},
+            "sellers": [
+              {
+                "company": {"name": "Digi-Key"},
+                "isAuthorized": true,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/dk/mcu-a",
+                    "inventoryLevel": 12000,
+                    "factoryLeadDays": 21,
+                    "packaging": "Cut Tape",
+                    "moq": 1,
+                    "prices": [
+                      {"quantity": 1, "price": 2.34, "currency": "USD"},
+                      {"quantity": 100, "price": 1.95, "currency": "USD"},
+                      {"quantity": 500, "price": 1.62, "currency": "USD"}
+                    ]
+                  },
+                  {
+                    "clickUrl": "https://example.invalid/dk/mcu-a-reel",
+                    "inventoryLevel": 4000,
+                    "factoryLeadDays": 21,
+                    "packaging": "Tape & Reel",
+                    "moq": 1,
+                    "prices": [{"quantity": 1, "price": 2.50, "currency": "USD"}]
+                  }
+                ]
+              },
+              {
+                "company": {"name": "Mouser"},
+                "isAuthorized": true,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/mo/mcu-a",
+                    "inventoryLevel": 8000,
+                    "factoryLeadDays": null,
+                    "packaging": "Cut Tape",
+                    "moq": null,
+                    "prices": [
+                      {"quantity": 1, "price": 2.10, "currency": "USD"},
+                      {"quantity": 250, "price": 1.85, "currency": "USD"}
+                    ]
+                  }
+                ]
+              },
+              {
+                "company": {"name": "NoPrice Inc"},
+                "isAuthorized": false,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/np/mcu-a",
+                    "inventoryLevel": 300,
+                    "factoryLeadDays": 60,
+                    "packaging": "Bulk",
+                    "moq": 50,
+                    "prices": []
+                  }
+                ]
+              },
+              {
+                "company": {"name": "EuroDist"},
+                "isAuthorized": true,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/eu/mcu-a",
+                    "inventoryLevel": 900,
+                    "factoryLeadDays": 30,
+                    "packaging": "Bulk",
+                    "moq": 25,
+                    "prices": [{"quantity": 1, "price": 2.05, "currency": "EUR"}]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "reference": "CONN-B",
+        "hits": 1,
+        "parts": [
+          {
+            "mpn": "CONN-B",
+            "shortDescription": "2.54mm header, 10-pin",
+            "manufacturer": {"name": "ACME Conn"},
+            "sellers": [
+              {
+                "company": {"name": "Digi-Key"},
+                "isAuthorized": true,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/dk/conn-b",
+                    "inventoryLevel": null,
+                    "factoryLeadDays": 14,
+                    "packaging": "Bulk",
+                    "moq": 10,
+                    "prices": [{"quantity": 10, "price": 0.85, "currency": "USD"}]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "reference": "PASSIVE-C",
+        "hits": 1,
+        "parts": [
+          {
+            "mpn": "PASSIVE-C",
+            "shortDescription": "0402 resistor 10k",
+            "manufacturer": {"name": "ACME Passive"},
+            "sellers": [
+              {
+                "company": {"name": "TinyDist"},
+                "isAuthorized": true,
+                "offers": [
+                  {
+                    "clickUrl": "https://example.invalid/td/passive-c",
+                    "inventoryLevel": 900000,
+                    "factoryLeadDays": 7,
+                    "packaging": "Tape & Reel",
+                    "moq": 5000,
+                    "prices": [{"quantity": 5000, "price": 0.0000001, "currency": "USD"}]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
