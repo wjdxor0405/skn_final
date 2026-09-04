@@ -21,6 +21,8 @@ import math
 import os
 
 from .odoo_client import get_client
+from .store import CATALOG_SOURCE
+from . import snapshot_catalog
 
 # Odoo에는 "하루에 몇 개 만들 수 있는가"에 해당하는 단순한 필드가 없다.
 # (mrp.workcenter + 라우팅으로 표현하지만 데모 범위를 크게 벗어난다)
@@ -29,6 +31,44 @@ CAPACITY_PER_DAY = float(os.getenv("PRODUCTION_CAPACITY_PER_DAY", "10"))
 
 # 부족분을 조달할 때 협상에 넘길 상한가 = 적격 공급처 최저가 × (1 + 이 값)
 PROCURE_CAP_MARGIN = float(os.getenv("PROCURE_CAP_MARGIN", "0.05"))
+
+
+def _vendor_offers(code: str, qty: float) -> list[dict]:
+    """
+    조달 후보. Odoo 모드는 공급처 단가표, 스냅샷 모드는 유통사 카탈로그에서 온다.
+    스냅샷은 수량구간을 갖고 있어서 조달 수량에 맞는 단가가 들어온다.
+    """
+    if CATALOG_SOURCE == "snapshot":
+        # supply_qty 는 그 판매자가 실제로 댈 수 있는 수량이다. Odoo 공급처 단가표에는
+        # 없는 정보라 그쪽은 None(무제한)으로 두고, 스냅샷만 실재고로 제약한다.
+        return [{"vendor": s.seller_id, "price": s.offer_price,
+                 "lead_time_days": s.lead_time_days, "min_qty": s.min_qty,
+                 "supply_qty": s.qty}
+                for s in snapshot_catalog.sellers_for(code, max(1, int(qty)))]
+    return [{**o, "supply_qty": None} for o in get_client().vendor_offers(code)]
+
+
+def _product_and_bom(product_code: str) -> tuple[dict, dict | None]:
+    """
+    품목(재고 포함)과 BOM. 반환하는 품목 dict의 키는 Odoo 쪽과 같다.
+
+    스냅샷에는 '우리' 재고도 BOM도 없다 — 외부 유통사의 공급 데이터뿐이다.
+    그래서 모든 품목을 재고 0인 구매 품목으로 본다: BOM 전개를 건너뛰고 부족분
+    전량을 조달로 채운다. 생산 공정이 없으므로 제조 리드타임·생산일도 0이다.
+    (작업지시서의 권고 — Octopart에는 BOM이 없고 그건 계속 Odoo 담당이다)
+    """
+    if CATALOG_SOURCE == "snapshot":
+        item = next((i for i in snapshot_catalog.list_items()
+                     if i["code"] == product_code), None)
+        if item is None:
+            raise ValueError(f"스냅샷에 없는 품목입니다: {product_code!r}")
+        return {"id": None, "code": item["code"], "name": item["name"],
+                "spec": item["spec"], "on_hand": 0.0}, None
+
+    product = get_client().product(product_code)
+    if product is None:
+        raise ValueError(f"Odoo에 없는 품목입니다: {product_code!r}")
+    return product, get_client().bom_for(product_code)
 
 
 def _material_plan(code: str, required: float, on_hand: float) -> dict:
@@ -46,22 +86,47 @@ def _material_plan(code: str, required: float, on_hand: float) -> dict:
         "best_price": None,
         "blocked": False,
         "note": "",
+        # 한 판매자가 댈 수 있는 최대 수량. 공급능력을 모르는 출처(Odoo)는 None.
+        "supply_cap": None,
     }
     if shortage <= 0:
         return plan
 
-    offers = get_client().vendor_offers(code)
+    offers = _vendor_offers(code, shortage)
     if not offers:
         plan["blocked"] = True
-        plan["note"] = "Odoo에 등록된 공급처가 없습니다."
+        plan["note"] = ("스냅샷에 이 품목의 판매자가 없습니다."
+                        if CATALOG_SOURCE == "snapshot"
+                        else "Odoo에 등록된 공급처가 없습니다.")
         return plan
 
     # 부족분이 최소주문량보다 적어도 조달은 된다 — 초과 발주하면 그만이다.
     # 그래서 실제 발주량은 '부족분'과 '가장 낮은 MOQ' 중 큰 값이고,
     # 이 수량이면 적어도 한 곳은 협상 스크리닝을 통과한다.
+    caps = [o["supply_qty"] for o in offers
+            if o["supply_qty"] is not None and o["supply_qty"] >= o["min_qty"]]
+    if caps:
+        plan["supply_cap"] = float(max(caps))
+
     min_moq = min(o["min_qty"] for o in offers)
     procure_qty = max(shortage, float(min_moq))
-    qualified = [o for o in offers if procure_qty >= o["min_qty"]]
+    # 최소주문량을 넘겨야 하고, 그 수량을 실제로 댈 수 있어야 한다.
+    # 재고를 안 보면 협상 스크리닝이 전원 탈락시킬 물량을 "가능"이라고 답하게 된다 —
+    # 이 모듈이 막으려는 바로 그 답이다.
+    qualified = [o for o in offers
+                 if procure_qty >= o["min_qty"]
+                 and (o["supply_qty"] is None or o["supply_qty"] >= procure_qty)]
+    if not qualified:
+        plan["procure_qty"] = procure_qty
+        plan["overbuy"] = procure_qty - shortage
+        plan["blocked"] = True
+        best = max((o["supply_qty"] for o in offers if o["supply_qty"] is not None),
+                   default=None)
+        note = f"{procure_qty:,.0f}개를 댈 수 있는 판매자가 없습니다"
+        if best is not None:
+            note += f" (한 곳의 최대 보유량 {best:,.0f}개)"
+        plan["note"] = note + "."
+        return plan
 
     plan["procure_qty"] = procure_qty
     plan["overbuy"] = procure_qty - shortage
@@ -82,14 +147,9 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
     조달과 생산은 **직렬**로 본다(자재가 와야 만들기 시작). 실제로는 일부 겹치지만,
     영업이 고객에게 약속하는 자리라 보수적으로 잡는 편이 맞다.
     """
-    product = get_client().product(product_code)
-    if product is None:
-        raise ValueError(f"Odoo에 없는 품목입니다: {product_code!r}")
-
+    product, bom = _product_and_bom(product_code)
     on_hand = product["on_hand"]
     shortfall = max(0.0, qty - on_hand)
-
-    bom = get_client().bom_for(product_code)
     is_manufactured = bom is not None
     materials = []
 
@@ -125,6 +185,11 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
         # 조달만 하면 되므로, 납기가 조달 납기를 넘기면 요청 수량 전부 가능하고
         # 못 넘기면 지금 있는 재고까지만 가능하다.
         max_feasible_qty = qty if procurement_days <= due_days else on_hand
+        # 다만 아무도 그만큼 못 대면 거기까지다. 이걸 빼면 "댈 수 있는 판매자가
+        # 없습니다" 라고 해놓고 "최대 요청 수량까지 가능합니다" 라고 답하게 된다.
+        caps = [m["supply_cap"] for m in materials if m["supply_cap"] is not None]
+        if caps:
+            max_feasible_qty = min(max_feasible_qty, on_hand + min(caps))
 
     reasons = []
     reasons.append(

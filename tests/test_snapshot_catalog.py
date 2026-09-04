@@ -216,8 +216,42 @@ def check_negotiation_uses_qty() -> None:
     print("  수량구간 OK — 1개면 Mouser 2,940원 / 500개면 Digi-Key 2,268원")
 
 
+def check_feasibility_snapshot() -> None:
+    """
+    snapshot 모드에서 납품 가능성 검증이 Odoo 없이 돈다.
+
+    feasibility.py 도 병렬 작업자와 겹치지 않는다는 보장이 없다. Odoo 호출이
+    다시 무조건 호출로 돌아오면 여기서 잡힌다 — 이 검사는 Odoo 없이 돌기 때문이다.
+    """
+    from app import feasibility
+
+    # fixture 의 MCU-A: Digi-Key 재고 12,000 / Mouser 재고 8,000
+    ok = feasibility.check("MCU-A", 5000, 30)
+    assert ok["feasible"] is True, ok["reasons"]
+    assert ok["on_hand"] == 0.0                  # 스냅샷에는 '우리' 재고가 없다
+    assert ok["is_manufactured"] is False        # BOM 전개를 건너뛴다
+    assert ok["manufacturing_lead_days"] == 0 and ok["production_days"] == 0
+    assert len(feasibility.procurement_requests(ok)) == 1
+
+    # 아무도 못 대는 수량이면 막힌다. 이걸 놓치면 협상 스크리닝이 전원 탈락시킬
+    # 물량을 "가능"이라고 답하게 된다 — 이 모듈이 막으려는 바로 그 답이다.
+    no = feasibility.check("MCU-A", 99999, 30)
+    assert no["feasible"] is False, no["reasons"]
+    assert no["max_feasible_qty"] == 12000, no["max_feasible_qty"]
+    assert any("댈 수 있는 판매자가 없습니다" in r for r in no["reasons"]), no["reasons"]
+
+    try:
+        feasibility.check("없는품목", 1, 10)
+    except ValueError as e:
+        assert "스냅샷" in str(e), e
+    else:
+        raise AssertionError("없는 품목인데 ValueError 가 안 났다")
+    print("  feasibility OK — Odoo 없이 검증, 공급 한도 초과는 막힌다")
+
+
 CHECKS = {
     "snapshot": check_snapshot_mode,
+    "feasibility": check_feasibility_snapshot,
     "negotiation_qty": check_negotiation_uses_qty,
     "snapshot_authorized": check_snapshot_authorized,
     "sqlite": check_sqlite_mode,
@@ -228,7 +262,7 @@ CHECKS = {
 # ── pytest 가 나중에 들어와도 그대로 잡히도록 ────────────────────────────────
 def _run(mode: str) -> None:
     env = {**os.environ, "CATALOG_SOURCE": mode, "PYTHONPATH": str(ROOT)}
-    if mode.startswith("snapshot") or mode == "negotiation_qty":
+    if mode.startswith("snapshot") or mode in ("negotiation_qty", "feasibility"):
         env["CATALOG_SOURCE"] = "snapshot"
         env["SNAPSHOT_PATH"] = str(FIXTURE)
         env["SNAPSHOT_FX"] = "USD=1400"
@@ -249,6 +283,7 @@ def _run(mode: str) -> None:
 def test_snapshot_mode(): _run("snapshot")
 def test_snapshot_authorized(): _run("snapshot_authorized")
 def test_negotiation_uses_qty(): _run("negotiation_qty")
+def test_feasibility_snapshot(): _run("feasibility")
 def test_sqlite_mode(): _run("sqlite")
 def test_odoo_mode(): _run("odoo")
 
