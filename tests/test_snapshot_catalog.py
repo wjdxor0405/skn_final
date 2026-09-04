@@ -188,8 +188,37 @@ def check_snapshot_authorized() -> None:
     print("  snapshot 인가필터 OK — 비인가 1곳 제외, 후보는 2곳 유지")
 
 
+def check_negotiation_uses_qty() -> None:
+    """
+    협상이 요청 수량에 맞는 가격구간을 쓰는가.
+
+    negotiate.py 가 store.sellers_for(item, qty) 로 수량을 넘겨야 성립한다.
+    그 파일은 병렬 작업자와 겹치는 영역이라 병합에서 인자가 떨어져 나갈 수 있다.
+    떨어지면 최소수량 구간 단가가 쓰이고 이 검사가 깨진다.
+    """
+    from app.store import CentralStore
+    from app.schemas import BuyerRequest
+    from app.negotiate import run_negotiation
+
+    store = CentralStore()
+    # fixture 의 MCU-A: Mouser 는 1개 2,940원 / 250개 2,590원,
+    #                   Digi-Key 는 1개 3,276원 / 100개 2,730원 / 500개 2,268원
+    small = run_negotiation(store, BuyerRequest(
+        item="MCU-A", qty=1, cap_price=99999, max_lead_time_days=999))
+    assert small["seller_id"] == "Mouser", small
+    assert small["price"] == 2940, small
+
+    bulk = run_negotiation(store, BuyerRequest(
+        item="MCU-A", qty=500, cap_price=99999, max_lead_time_days=999))
+    # 500개 구간이 적용되면 Digi-Key 가 Mouser(250개 구간 2,590원)를 앞지른다
+    assert bulk["seller_id"] == "Digi-Key", bulk
+    assert bulk["price"] == 2268, bulk
+    print("  수량구간 OK — 1개면 Mouser 2,940원 / 500개면 Digi-Key 2,268원")
+
+
 CHECKS = {
     "snapshot": check_snapshot_mode,
+    "negotiation_qty": check_negotiation_uses_qty,
     "snapshot_authorized": check_snapshot_authorized,
     "sqlite": check_sqlite_mode,
     "odoo": check_odoo_mode,
@@ -199,13 +228,13 @@ CHECKS = {
 # ── pytest 가 나중에 들어와도 그대로 잡히도록 ────────────────────────────────
 def _run(mode: str) -> None:
     env = {**os.environ, "CATALOG_SOURCE": mode, "PYTHONPATH": str(ROOT)}
-    if mode.startswith("snapshot"):
+    if mode.startswith("snapshot") or mode == "negotiation_qty":
         env["CATALOG_SOURCE"] = "snapshot"
         env["SNAPSHOT_PATH"] = str(FIXTURE)
         env["SNAPSHOT_FX"] = "USD=1400"
         env["SNAPSHOT_FLOOR_RATIO"] = "0.90"
         # 기본 검사는 필터 없이, 전용 검사는 기본값(켜짐)으로 돈다
-        env["SNAPSHOT_AUTHORIZED_ONLY"] = "false" if mode == "snapshot" else "true"
+        env["SNAPSHOT_AUTHORIZED_ONLY"] = "true" if mode == "snapshot_authorized" else "false"
     else:
         env.pop("SNAPSHOT_PATH", None)
     proc = subprocess.run(
@@ -219,6 +248,7 @@ def _run(mode: str) -> None:
 
 def test_snapshot_mode(): _run("snapshot")
 def test_snapshot_authorized(): _run("snapshot_authorized")
+def test_negotiation_uses_qty(): _run("negotiation_qty")
 def test_sqlite_mode(): _run("sqlite")
 def test_odoo_mode(): _run("odoo")
 

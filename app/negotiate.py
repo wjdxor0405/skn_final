@@ -48,7 +48,9 @@ def _screen_candidates(store: CentralStore, txid: str, request: BuyerRequest) ->
     (v3: "재고 10대인데 100대 가능하다고 응답" 같은 할루시네이션을 룰로 사전 차단).
     """
     passed: list[SellerRegister] = []
-    for seller in store.sellers_for(request.item):
+    # 수량을 함께 넘긴다. 출처가 수량구간을 갖고 있으면(스냅샷) 그 수량에 맞는
+    # 단가로 후보가 들어온다. 구간이 없는 출처(sqlite/odoo)는 인자를 무시한다.
+    for seller in store.sellers_for(request.item, request.qty):
         reasons = []
         if seller.qty < request.qty:
             reasons.append(f"재고부족(보유 {seller.qty} < 요청 {request.qty})")
