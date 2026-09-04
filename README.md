@@ -112,6 +112,15 @@ python scripts/nexar_snapshot.py --mpn-file scripts/mpns.txt --out data/nexar_sn
 
 조회할 MPN 목록과 고른 기준은 `scripts/mpns.txt` 에 있습니다.
 
+### 더 읽을 것
+
+| 문서 | 무엇 |
+|---|---|
+| `docs/스냅샷-데이터-구조.md` | 파일 안에 무엇이 들어 있는가, 어떤 필드가 얼마나 비어 있는가 |
+| `docs/decisions/0002-…` | 왜 원본을 그대로 뜨고 해석을 읽는 시점으로 미뤘는가 |
+| `docs/decisions/0003-…` | 왜 인가 유통사만 후보로 두는가 |
+| `docs/decisions/0004-…` | 작업지시서 범위 밖에서 고친 두 파일 — **병합 담당자가 읽어야 합니다** |
+
 ## 실행 방법
 
 ```bash
