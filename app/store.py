@@ -9,9 +9,10 @@ L1 — 중앙 서버 + 로그 append
 - 나중에 MySQL(RDS)로 옮길 때도 create_engine()의 연결 문자열 한 줄만 바꾸면 된다
   (SQLite 전용 문법을 쓰지 않고 SQLAlchemy ORM 표준 쿼리만 사용했기 때문)
 
-[카탈로그 출처는 두 가지 — CATALOG_SOURCE 참고]
-- sqlite : 화면에서 등록한 셀러 카탈로그 (기존 동작)
-- odoo   : Odoo의 공급처 단가표를 읽고, 낙찰 시 Odoo 발주서 초안까지 만든다
+[카탈로그 출처는 세 가지 — CATALOG_SOURCE 참고]
+- sqlite   : 화면에서 등록한 셀러 카탈로그 (기존 동작)
+- odoo     : Odoo의 공급처 단가표를 읽고, 낙찰 시 Odoo 발주서 초안까지 만든다
+- snapshot : Nexar(Octopart) API 응답 스냅샷을 읽는다. 외부 ERP가 없으므로 발주서는 안 만든다
 
 이 파일이 저장·연동을 모두 흡수하므로 negotiate.py / report.py 는 출처를 알지 못한다.
 (다만 MOQ는 Odoo에만 있던 제약이라 negotiate.py 의 스크리닝에 한 절이 추가돼 있다)
@@ -28,6 +29,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .schemas import Envelope, SellerRegister, Item, LEGACY_ITEMS
 from .odoo_client import get_client
+from . import snapshot_catalog
 
 log = logging.getLogger(__name__)
 
@@ -36,8 +38,10 @@ class CatalogReadOnly(RuntimeError):
     """카탈로그의 주인이 Odoo일 때 쓰기를 시도한 경우. API 계층에서 409로 바꾼다."""
 
 # ── 카탈로그 출처 ────────────────────────────────────────────────────────────
-# sqlite : 화면에서 직접 등록한 셀러 카탈로그 (기존 동작, 기본값)
-# odoo   : Odoo의 공급처 단가표(product.supplierinfo)를 카탈로그로 읽는다
+# sqlite   : 화면에서 직접 등록한 셀러 카탈로그 (기존 동작, 기본값)
+# odoo     : Odoo의 공급처 단가표(product.supplierinfo)를 카탈로그로 읽는다
+# snapshot : 커밋된 Nexar(Octopart) 응답 원본을 읽는다 (app/snapshot_catalog.py).
+#            API 키 없이 실데이터로 돌리기 위한 경로다. 환산·합성 가정은 그쪽에 있다.
 CATALOG_SOURCE = os.getenv("CATALOG_SOURCE", "sqlite").lower()
 
 # Odoo 모드에서만 쓰는 두 가지 가정 — Odoo에 해당 데이터가 아예 없어서 유도해야 한다.
@@ -162,6 +166,11 @@ class CentralStore:
                 "CATALOG_SOURCE=odoo 에서는 카탈로그의 주인이 Odoo입니다. "
                 "공급처·단가는 Odoo에서 등록하세요: Purchase > Products > 해당 품목 > Purchase 탭."
             )
+        if CATALOG_SOURCE == "snapshot":
+            raise CatalogReadOnly(
+                "CATALOG_SOURCE=snapshot 에서는 카탈로그의 주인이 외부(Nexar/Octopart)입니다. "
+                "내용을 바꾸려면 scripts/nexar_snapshot.py 로 스냅샷을 다시 뜨세요."
+            )
         with SessionLocal() as session:
             row = SellerCatalogRow(
                 seller_id=offer.seller_id,
@@ -176,9 +185,13 @@ class CentralStore:
             session.add(row)
             session.commit()
 
-    def sellers_for(self, item: str) -> list[SellerRegister]:
+    def sellers_for(self, item: str, qty: int | None = None) -> list[SellerRegister]:
         if CATALOG_SOURCE == "odoo":
             return [_offer_to_seller(item, o) for o in get_client().vendor_offers(item)]
+        if CATALOG_SOURCE == "snapshot":
+            # qty 를 받으면 그 수량에 맞는 가격구간을 고른다. 호출부가 아직 수량을
+            # 넘기지 않아서 기본값은 최소수량 구간 — 자격 없는 볼륨가를 부르지 않는다.
+            return snapshot_catalog.sellers_for(item, qty)
         with SessionLocal() as session:
             rows = session.query(SellerCatalogRow).filter_by(item=item).all()
             return [_row_to_seller(r) for r in rows]
@@ -193,6 +206,8 @@ class CentralStore:
                 out += [_offer_to_seller(product["code"], o)
                         for o in get_client().vendor_offers(product["code"])]
             return out
+        if CATALOG_SOURCE == "snapshot":
+            return snapshot_catalog.list_sellers()
         with SessionLocal() as session:
             rows = session.query(SellerCatalogRow).all()
             return [_row_to_seller(r) for r in rows]
@@ -201,6 +216,8 @@ class CentralStore:
         """선택 가능한 품목 목록 (화면의 드롭다운용)."""
         if CATALOG_SOURCE == "odoo":
             return get_client().purchasable_products(ODOO_ITEM_PREFIX)
+        if CATALOG_SOURCE == "snapshot":
+            return snapshot_catalog.list_items()
         with SessionLocal() as session:
             codes = sorted({r.item for r in session.query(SellerCatalogRow).all()})
         # 아직 등록된 셀러가 없으면 화면의 드롭다운이 비어 셀러 등록 자체를 못 하게 된다.
