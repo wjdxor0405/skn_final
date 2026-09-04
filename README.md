@@ -27,6 +27,7 @@ scripts/
 |---|---|---|---|
 | `sqlite` (기본) | 이 서비스 | 1번 화면에서 등록 | SQLite에만 기록 |
 | `odoo` | **Odoo** | Odoo에서 등록 (1번 화면은 409) | **Odoo 발주서 초안** + chatter에 협상 로그 |
+| `snapshot` | **Nexar(Octopart) API** | 불가 (1번 화면은 409) | SQLite에만 기록 (외부 ERP가 없어 발주서 없음) |
 
 `odoo` 모드에서 읽고 쓰는 Odoo 모델:
 
@@ -40,6 +41,76 @@ scripts/
       해당 발주서의 chatter   협상 라운드 전문
       button_confirm/cancel  승인/거절 반영
 ```
+
+## `snapshot` 모드 — 실제 유통 데이터
+
+`sqlite`·`odoo` 모드의 단가·재고·납기는 시연용으로 지어낸 값입니다.
+`snapshot` 모드는 **Nexar(Octopart) API에서 받은 실제 전자부품 유통 데이터**를 씁니다.
+한 부품에 여러 유통사의 오퍼가 붙기 때문에, 복수 후보 비교라는 이 프로젝트의
+핵심 장면이 실데이터로 성립합니다.
+
+**API 키 없이 실행됩니다.** 라이브 호출이 아니라 응답을 떠서 커밋한 JSON을 읽습니다.
+
+```bash
+# .env 에 CATALOG_SOURCE=snapshot 만 넣으면 끝입니다
+uvicorn app.main:app --reload --port 8000
+```
+
+### 무엇이 실데이터이고 무엇이 합성인가
+
+이 경계가 흐려지면 시연의 의미가 사라지므로 명시합니다.
+
+| 값 | 출처 |
+|---|---|
+| 단가 · 수량별 가격구간 | **API 원본** |
+| 재고(`inventoryLevel`) · 최소주문량(`moq`) | **API 원본** |
+| 공장 리드타임(`factoryLeadDays`) | **API 원본** |
+| 판매자 · 인가 여부 · 제조사 · 사양 | **API 원본** |
+| 원화 환산 | **API가 계산한 환율** — 판매자마다 원 통화가 다릅니다 (USD 1,351.30 · EUR 1,571.33 · HKD 172.35 · CNY 201.30 · JPY 8.65 · GBP 1,830.53) |
+| **`floor_price` (셀러 최저 수용가)** | **합성** — 제시가 × `SNAPSHOT_FLOOR_RATIO`(기본 0.90) |
+
+합성값은 `floor_price` 하나뿐입니다. 셀러가 얼마까지 받아들이는지는 **어떤 공개
+데이터에도 없습니다** — 공개되면 협상이 성립하지 않는 값이기 때문입니다.
+
+중요한 것은 **스냅샷 파일(`data/nexar_snapshot.json`)에는 합성값이 하나도 없다**는
+점입니다. 그 파일은 API 응답 원본과 조회 이력(보낸 쿼리 전문 포함)뿐이고,
+`floor_price` 합성·통화 환산·수량구간 선택은 전부 `app/snapshot_catalog.py` 가
+**읽는 시점에** 합니다. 가정이 바뀌면 로더만 고치면 되고 재조회가 필요 없습니다.
+
+### 조정할 수 있는 것 (`env.example` 참고)
+
+| 환경변수 | 기본 | 뜻 |
+|---|---|---|
+| `SNAPSHOT_FLOOR_RATIO` | `0.90` | 유일한 합성값의 크기 = 협상 여지 |
+| `SNAPSHOT_AUTHORIZED_ONLY` | `true` | 인가 유통사만 후보로. 끄면 판매자가 33곳 → 96곳 |
+| `SNAPSHOT_STOCK_LEAD_DAYS` | `0` | 재고에서 나가는 물량의 납기 |
+| `SNAPSHOT_CURRENCY` / `SNAPSHOT_FX` | `KRW` / `USD=1400` | 환산 통화와 폴백 환율 |
+
+`SNAPSHOT_FX` 는 폴백일 뿐 실제로는 쓰이지 않습니다. 조회할 때 통화를 넘겨두면
+응답에 API가 계산한 환산값이 실려 오고, 현재 스냅샷은 **1,039행 전부** 그 값을
+씁니다. 어느 단가가 API 값이고 어느 것이 폴백인지는 `snapshot_catalog.diagnostics()`
+의 `price_sources` 로 확인할 수 있습니다.
+
+`SNAPSHOT_AUTHORIZED_ONLY` 를 켜두는 이유는 비인가 유통사의 최저가가 인가 유통사의
+1/4.4(중앙값)이고, 극단은 기가비트 이더넷 PHY 37원 · 파워 MOSFET 13원처럼 같은
+물건이라고 보기 어려운 값이기 때문입니다. 스냅샷 파일에는 전부 남아 있으므로
+끄면 즉시 되돌아옵니다.
+
+### 스냅샷을 다시 뜨려면 (평소에는 필요 없습니다)
+
+무료 플랜의 파트 한도는 **조회한 파트 수**로 차감됩니다. 한 번 제대로 돌리고
+결과를 커밋하는 방식이라, 아래는 데이터를 갱신할 때만 씁니다.
+
+```bash
+# .env 에 NEXAR_CLIENT_ID / NEXAR_CLIENT_SECRET 추가 후
+pip install requests                                    # 조회할 때만 필요
+
+python scripts/nexar_snapshot.py --introspect SupOffer  # 한도 차감 없음
+python scripts/nexar_snapshot.py --print-query          # 한도 차감 없음
+python scripts/nexar_snapshot.py --mpn-file scripts/mpns.txt --out data/nexar_snapshot.json
+```
+
+조회할 MPN 목록과 고른 기준은 `scripts/mpns.txt` 에 있습니다.
 
 ## 실행 방법
 
@@ -88,6 +159,24 @@ python scripts/seed_odoo_demo.py
    (GPU 재고 10장뿐이라 90장 부족, 조달 7일 + 제조 5일 + 생산 10일 = 22일 필요)
 3. 결과의 `P000xx` 링크를 열면 Odoo 발주서 — **chatter에 협상 전 과정**이 남아 있음
 4. 2·3번 화면으로 개별 품목 협상도 가능. 승인/거절하면 Odoo 발주서가 확정/취소됨
+
+### `snapshot` 모드
+
+셀러 등록 단계가 없습니다 — 카탈로그의 주인이 외부(Nexar/Octopart)입니다.
+
+1. 2번 화면에서 `STM32F103C8T6` / **500개** / 상한가 **6,000원** / 납기 60일
+2. 3번 화면에 실제 유통사 9곳이 후보로 뜹니다 — Arrow 3,608원 · Verical 3,608원 ·
+   Future 4,851원 · Newark 6,446원 · TME 8,865원 · DigiKey/Mouser 11,135원 · Avnet 11,162원
+3. 재고가 없는 곳은 스크리닝에서 사유와 함께 떨어집니다
+   (`재고부족(보유 0 < 요청 500)` — Newark · RS · Avnet)
+4. 낙찰은 Arrow Electronics @ 3,608원. 승인하면 `reports/{txid}.txt` 생성
+
+품목 28종 전부 인가 유통사가 3곳 이상이라 어떤 품목을 골라도 후보 비교가 됩니다.
+
+> 수량별 가격구간은 스냅샷에 전부 보존돼 있고 로더도 지원하지만
+> (`sellers_for(item, qty)`), `negotiate.py` 가 아직 수량을 넘기지 않아 지금은
+> 최소수량 구간 단가가 쓰입니다. 수량을 넘기면 500개 기준으로 DigiKey 가
+> 11,135원에서 6,688원으로 내려갑니다.
 
 ## 표준계약 — 에이전트가 언제 나서지 않는가
 
@@ -195,6 +284,8 @@ uvicorn app.main:app --reload --port 8000
 - 협상은 동기(synchronous) 처리 — 실제 별도 프로세스라면 비동기 메시지 큐가 필요
 - 카탈로그·거래는 SQLite(`data/mmvp.db`)에 저장되어 서버 재시작에도 유지됨, 원문 로그는 거래별 텍스트 파일
 - 인증/권한 관리 없음 — 공모전 시연 범위에서 우선순위 낮음으로 확인된 부분
+- `snapshot` 모드는 발주서를 만들지 않습니다 — 외부 ERP가 없습니다. BOM 전개(`feasibility.py`)도 Odoo 담당이라 이 모드에서는 `/api/feasibility` 를 쓸 수 없습니다
+- `snapshot` 모드에서 납기 스크리닝이 사실상 걸리지 않습니다 — 인가 유통사는 재고가 있으면 납기가 0이고, 재고가 없으면 납기보다 재고부족으로 먼저 떨어지기 때문입니다
 - `llm` 모드에서 유보가격 액수가 자유 문장으로 새어나갈 여지 — 프롬프트로 금지했으나 출력 검사는 없음 (위 "정보 은닉" 절 참고). `rule` 모드는 해당 없음
 ## 라이선스와 오픈소스 사용 고지
 
