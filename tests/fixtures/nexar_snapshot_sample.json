@@ -112,7 +112,9 @@
                     "factoryLeadDays": 14,
                     "packaging": "Bulk",
                     "moq": 10,
-                    "prices": [{"quantity": 10, "price": 0.85, "currency": "USD"}]
+                    "prices": [{"quantity": 10, "price": 0.85, "currency": "USD",
+                                "convertedPrice": 1150.4, "convertedCurrency": "KRW",
+                                "conversionRate": 1353.4}]
                   }
                 ]
               }

@@ -75,6 +75,9 @@ def check_snapshot_mode() -> None:
     # inventoryLevel=null → 0 (부풀리지 않는다)
     conn = store.sellers_for("CONN-B")
     assert len(conn) == 1 and conn[0].qty == 0, conn
+    # convertedPrice 가 있으면 API 환산을 쓴다 — 우리 고정 환율(0.85×1400=1190)이 아니라
+    # 응답에 실린 1150.4 를 반올림한 값
+    assert conn[0].offer_price == 1150, conn[0].offer_price
 
     # 카탈로그의 주인이 외부다
     try:
@@ -93,6 +96,9 @@ def check_snapshot_mode() -> None:
     assert diag["dropped"]["같은 판매자의 중복 오퍼"] == 1           # Digi-Key 2건
     assert diag["single_seller_items"] == ["CONN-B"], diag
     assert diag["moq_field"] == "moq"
+    # 단가 출처가 구분돼 남는다 — 어디까지가 API 값이고 어디부터가 우리 가정인지
+    assert diag["currency"] == "KRW"
+    assert diag["price_sources"] == {"api": 1, "폴백환율": 2}, diag["price_sources"]
     print("  snapshot 모드 OK —", {k: v for k, v in diag.items() if k != "path"})
 
 

@@ -38,7 +38,13 @@ _ROOT = Path(__file__).resolve().parent.parent
 SNAPSHOT_PATH = os.getenv("SNAPSHOT_PATH", "data/nexar_snapshot.json")
 # store.py 의 ODOO_FLOOR_RATIO 와 같은 관례 — 제시가의 이 비율을 최저 수용가로 가정한다.
 SNAPSHOT_FLOOR_RATIO = float(os.getenv("SNAPSHOT_FLOOR_RATIO", "0.90"))
-# "USD=1400,EUR=1520" 형식. 표에 없는 통화의 행은 환산하지 않고 버린다(틀린 환율보다 낫다).
+# 스키마가 정수라서 단가를 이 통화로 맞춘다.
+SNAPSHOT_CURRENCY = os.getenv("SNAPSHOT_CURRENCY", "KRW").upper()
+# 폴백 환율. "USD=1400,EUR=1520" 형식.
+#
+# 조회할 때 currency 를 넘겼으면 응답에 convertedPrice/conversionRate 가 들어 있다.
+# 그건 API가 계산한 실제 환율이므로 우선 쓰고, 이 표는 환산값이 없는 행에만 쓴다.
+# 어느 쪽도 안 되면 그 행은 버린다 — 틀린 환율로 넣는 것보다 낫다.
 SNAPSHOT_FX = os.getenv("SNAPSHOT_FX", "USD=1400")
 
 
@@ -86,38 +92,58 @@ def _fx() -> dict[str, float]:
 
 
 # ── 변환 ────────────────────────────────────────────────────────────────────
-def _price_breaks(offer: dict) -> list[tuple[int, float, str]]:
-    """(수량, 단가, 통화) 를 수량 오름차순으로. 가격이 빠진 구간은 뺀다."""
+def _price_breaks(offer: dict) -> list[dict]:
+    """수량 구간을 오름차순으로. 가격이 빠진 구간은 뺀다."""
     breaks = []
     for p in offer.get("prices") or []:
         price, quantity = p.get("price"), p.get("quantity")
         if price is None or quantity is None:
             continue
-        breaks.append((int(quantity), float(price), (p.get("currency") or "").upper()))
-    return sorted(breaks, key=lambda b: b[0])
+        breaks.append({
+            "quantity": int(quantity),
+            "price": float(price),
+            "currency": (p.get("currency") or "").upper(),
+            # 조회 시 currency 를 넘겼을 때만 채워진다.
+            "converted_price": p.get("convertedPrice"),
+            "converted_currency": (p.get("convertedCurrency") or "").upper(),
+        })
+    return sorted(breaks, key=lambda b: b["quantity"])
 
 
-def pick_break(breaks: list[tuple[int, float, str]], qty: int | None):
+def pick_break(breaks: list[dict], qty: int | None) -> dict:
     """
     요청 수량에 해당하는 수량 구간. qty 를 모르면 최소수량 구간(=가장 비싼 단가)을 쓴다.
     자격이 없는 볼륨 할인가를 먼저 부르지 않는 쪽이 보수적이라 그렇게 잡았다.
     """
     if qty is None:
         return breaks[0]
-    applicable = [b for b in breaks if b[0] <= qty]
+    applicable = [b for b in breaks if b["quantity"] <= qty]
     return applicable[-1] if applicable else breaks[0]
 
 
-def _to_krw(price: float, currency: str) -> int | None:
-    rate = _fx().get(currency)
-    return None if rate is None else int(round(price * rate))
+def _unit_price(brk: dict) -> tuple[int | None, str]:
+    """
+    구간 단가를 목표 통화의 정수로. 출처를 함께 돌려준다 — 어느 값이 API 환산이고
+    어느 값이 우리 가정인지 구분되지 않으면 스냅샷의 신뢰 경계가 흐려진다.
+    """
+    if brk["converted_currency"] == SNAPSHOT_CURRENCY and brk["converted_price"] is not None:
+        return int(round(float(brk["converted_price"]))), "api"
+    if brk["currency"] == SNAPSHOT_CURRENCY:
+        return int(round(brk["price"])), "원본"
+    rate = _fx().get(brk["currency"])
+    if rate is None:
+        return None, "환율없음"
+    return int(round(brk["price"] * rate)), "폴백환율"
 
 
-def _build(qty: int | None) -> tuple[list[SellerRegister], Counter]:
+def _build(qty: int | None) -> tuple[list[SellerRegister], Counter, Counter]:
     raw = _raw()
     moq_key = _moq_key(raw)
     dropped: Counter = Counter()
     best: dict[tuple[str, str], SellerRegister] = {}
+    # 카탈로그에 실제로 남은 행의 단가 출처만 센다. 중복·0원으로 버려진 것까지
+    # 세면 "이 카탈로그의 단가 중 몇 개가 API 값인가"라는 질문에 답하지 못한다.
+    origins: dict[tuple[str, str], str] = {}
 
     for match in _matches(raw):
         for part in match.get("parts") or []:
@@ -136,10 +162,10 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter]:
                     if not breaks:
                         dropped["가격 없는 오퍼"] += 1
                         continue
-                    break_qty, price, currency = pick_break(breaks, qty)
-                    unit = _to_krw(price, currency)
+                    brk = pick_break(breaks, qty)
+                    unit, origin = _unit_price(brk)
                     if unit is None:
-                        dropped[f"환율 미정의({currency or '통화없음'})"] += 1
+                        dropped[f"환율 미정의({brk['currency'] or '통화없음'})"] += 1
                         continue
                     if unit < 1:
                         # 1원 미만으로 뭉개지면 협상 자체가 성립하지 않는다.
@@ -162,7 +188,7 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter]:
                         # MOQ와 구간 수량 중 큰 쪽이 실제 최소주문량이다.
                         # (MOQ_FIELD 미확인이면 moq 는 None — 여기서 0으로 정규화된다.
                         #  스키마가 int 라서 None 을 그대로 넘기면 검증에서 터진다.)
-                        min_qty=max(int(moq or 0), break_qty),
+                        min_qty=max(int(moq or 0), brk["quantity"]),
                     )
                     # 같은 판매자가 같은 품목에 여러 오퍼를 낸다(포장 단위 차이 등).
                     # 협상 상대가 중복으로 등장하면 로그가 읽히지 않으므로 최저가만 남긴다.
@@ -172,17 +198,18 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter]:
                         if best[key].offer_price <= row.offer_price:
                             continue
                     best[key] = row
+                    origins[key] = origin
 
     rows = sorted(best.values(), key=lambda s: (s.item, s.offer_price, s.seller_id))
-    return rows, dropped
+    sources = Counter(origins.values())
+    return rows, dropped, sources
 
 
 @lru_cache(maxsize=8)
 def _catalog_cached(qty: int | None) -> tuple[SellerRegister, ...]:
-    rows, dropped = _build(qty)
-    if dropped:
-        log.info("스냅샷 카탈로그(qty=%s): %d행 · 제외 %s",
-                 qty, len(rows), dict(dropped))
+    rows, dropped, sources = _build(qty)
+    log.info("스냅샷 카탈로그(qty=%s): %d행 · 단가출처 %s · 제외 %s",
+             qty, len(rows), dict(sources), dict(dropped))
     return tuple(rows)
 
 
@@ -206,7 +233,7 @@ def list_items() -> list[dict]:
 
 def diagnostics(qty: int | None = None) -> dict:
     """무엇이 몇 건 빠졌는지. 스냅샷 품질을 눈으로 볼 때 쓴다."""
-    rows, dropped = _build(qty)
+    rows, dropped, sources = _build(qty)
     items = {s.item for s in rows}
     return {
         "path": SNAPSHOT_PATH,
@@ -215,6 +242,9 @@ def diagnostics(qty: int | None = None) -> dict:
         "rows": len(rows),
         "sellers": len({s.seller_id for s in rows}),
         "items": len(items),
+        "currency": SNAPSHOT_CURRENCY,
+        # 어느 단가가 API 환산이고 어느 것이 우리 폴백 환율인지.
+        "price_sources": dict(sources),
         "dropped": dict(dropped),
         # 판매자가 1곳뿐인 품목은 협상 후보가 안 생긴다.
         "single_seller_items": sorted(
