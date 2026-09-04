@@ -24,7 +24,7 @@ FIXTURE = Path(__file__).resolve().parent / "fixtures" / "nexar_snapshot_sample.
 
 # ── 자식 프로세스에서 도는 검사들 ────────────────────────────────────────────
 def check_snapshot_mode() -> None:
-    """CATALOG_SOURCE=snapshot — 로더와 store 분기."""
+    """CATALOG_SOURCE=snapshot — 로더와 store 분기 (인가 필터 끈 상태)."""
     from app.store import CentralStore, CatalogReadOnly
     from app import snapshot_catalog as sc
     from app.schemas import SellerRegister
@@ -59,6 +59,8 @@ def check_snapshot_mode() -> None:
     assert mo.min_qty == 1, mo.min_qty          # 구간 수량 1, MOQ 없음
     assert mo.lead_time_days == 0               # factoryLeadDays=null → 0
     assert mo.qty == 8000
+    # 재고가 있으면 공장 리드타임(21일)이 아니라 재고 출하다 — 둘은 배타적이지 않다
+    assert dk.qty == 12000 and dk.lead_time_days == 0, (dk.qty, dk.lead_time_days)
     # 소량에서는 Mouser 가 싸다
     assert mo.offer_price == 2940, mo.offer_price
     assert mo.offer_price < dk.offer_price
@@ -78,6 +80,8 @@ def check_snapshot_mode() -> None:
     # convertedPrice 가 있으면 API 환산을 쓴다 — 우리 고정 환율(0.85×1400=1190)이 아니라
     # 응답에 실린 1150.4 를 반올림한 값
     assert conn[0].offer_price == 1150, conn[0].offer_price
+    # 반대로 재고가 없으면 공장 리드타임이 적용된다
+    assert conn[0].lead_time_days == 14, conn[0].lead_time_days
 
     # 카탈로그의 주인이 외부다
     try:
@@ -164,8 +168,29 @@ def check_odoo_mode() -> None:
     print("  odoo 모드 OK — 분기가 그대로 Odoo 로 간다")
 
 
+def check_snapshot_authorized() -> None:
+    """SNAPSHOT_AUTHORIZED_ONLY 기본값(켜짐) — 비인가 판매자가 후보에서 빠진다."""
+    from app.store import CentralStore
+    from app import snapshot_catalog as sc
+
+    assert sc.SNAPSHOT_AUTHORIZED_ONLY is True
+    store = CentralStore()
+
+    # NoPrice Inc 는 isAuthorized=false — 가격이 없어서가 아니라 인가가 아니라서 빠진다
+    diag = sc.diagnostics()
+    assert diag["authorized_only"] is True
+    assert diag["dropped"]["인가 판매자 아님"] == 1, diag["dropped"]
+    assert "가격 없는 오퍼" not in diag["dropped"], diag["dropped"]
+
+    # 걸러도 협상 후보는 그대로 2곳 이상이다 (완료 기준이 필터와 양립한다)
+    mcu = store.sellers_for("MCU-A")
+    assert {s.seller_id for s in mcu} == {"Digi-Key", "Mouser"}, mcu
+    print("  snapshot 인가필터 OK — 비인가 1곳 제외, 후보는 2곳 유지")
+
+
 CHECKS = {
     "snapshot": check_snapshot_mode,
+    "snapshot_authorized": check_snapshot_authorized,
     "sqlite": check_sqlite_mode,
     "odoo": check_odoo_mode,
 }
@@ -174,10 +199,13 @@ CHECKS = {
 # ── pytest 가 나중에 들어와도 그대로 잡히도록 ────────────────────────────────
 def _run(mode: str) -> None:
     env = {**os.environ, "CATALOG_SOURCE": mode, "PYTHONPATH": str(ROOT)}
-    if mode == "snapshot":
+    if mode.startswith("snapshot"):
+        env["CATALOG_SOURCE"] = "snapshot"
         env["SNAPSHOT_PATH"] = str(FIXTURE)
         env["SNAPSHOT_FX"] = "USD=1400"
         env["SNAPSHOT_FLOOR_RATIO"] = "0.90"
+        # 기본 검사는 필터 없이, 전용 검사는 기본값(켜짐)으로 돈다
+        env["SNAPSHOT_AUTHORIZED_ONLY"] = "false" if mode == "snapshot" else "true"
     else:
         env.pop("SNAPSHOT_PATH", None)
     proc = subprocess.run(
@@ -190,6 +218,7 @@ def _run(mode: str) -> None:
 
 
 def test_snapshot_mode(): _run("snapshot")
+def test_snapshot_authorized(): _run("snapshot_authorized")
 def test_sqlite_mode(): _run("sqlite")
 def test_odoo_mode(): _run("odoo")
 

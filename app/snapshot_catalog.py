@@ -46,6 +46,23 @@ SNAPSHOT_CURRENCY = os.getenv("SNAPSHOT_CURRENCY", "KRW").upper()
 # 그건 API가 계산한 실제 환율이므로 우선 쓰고, 이 표는 환산값이 없는 행에만 쓴다.
 # 어느 쪽도 안 되면 그 행은 버린다 — 틀린 환율로 넣는 것보다 낫다.
 SNAPSHOT_FX = os.getenv("SNAPSHOT_FX", "USD=1400")
+# 인가 유통사(isAuthorized)만 후보로 볼지.
+#
+# 실측 결과 비인가 유통사의 최저가가 인가 유통사의 1/4.4(중앙값)이고, 극단은
+# 기가비트 PHY 37원 · 파워 MOSFET 13원처럼 물건이 같다고 보기 어려운 값이다.
+# 그대로 두면 협상이 매번 그쪽을 고르고, 왜 이겼는지 설명할 수 없게 된다.
+# 스냅샷 파일에는 전부 남아 있으므로 이 값을 끄면 즉시 원래대로 돌아온다.
+SNAPSHOT_AUTHORIZED_ONLY = os.getenv("SNAPSHOT_AUTHORIZED_ONLY", "true").lower() not in (
+    "0", "false", "no", "",
+)
+# 재고에서 바로 나가는 물량의 납기.
+#
+# factoryLeadDays 는 공장이 다시 만드는 데 걸리는 시간이지 재고 출하 납기가 아니다.
+# 실측하면 인가 유통사 오퍼 107건이 재고와 factoryLeadDays 를 함께 갖는다 — 둘은
+# 배타적이지 않다. 재고가 요청 수량을 덮으면 공장 리드타임은 적용되지 않는다.
+# 기본 0 은 "공장 리드타임이라는 제약이 없다"는 뜻이지 배송이 즉시라는 뜻이 아니다.
+# 배송일을 세고 싶으면 이 값을 올리면 되는데, 그건 API에 없는 가정이 된다.
+SNAPSHOT_STOCK_LEAD_DAYS = int(os.getenv("SNAPSHOT_STOCK_LEAD_DAYS", "0"))
 
 
 class SnapshotUnavailable(RuntimeError):
@@ -157,6 +174,9 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter, Counter]:
                 if not company:
                     dropped["판매자명 없음"] += 1
                     continue
+                if SNAPSHOT_AUTHORIZED_ONLY and not seller.get("isAuthorized"):
+                    dropped["인가 판매자 아님"] += 1
+                    continue
                 for offer in seller.get("offers") or []:
                     breaks = _price_breaks(offer)
                     if not breaks:
@@ -173,17 +193,22 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter, Counter]:
                         continue
 
                     moq = offer.get(moq_key) if moq_key else None
+                    inventory = int(offer.get("inventoryLevel") or 0)
+                    # 재고가 요청을 덮으면 재고에서 나간다. qty 를 모르면 재고 유무로 본다
+                    # (덮지 못하는 판매자는 어차피 재고부족으로 스크리닝에서 걸린다).
+                    from_stock = inventory >= qty if qty is not None else inventory > 0
                     row = SellerRegister(
                         seller_id=company,
                         item=item,
                         # 재고는 원본에 있다(Odoo 모드와 달리 가정할 필요가 없다).
                         # 값이 없으면 0 — 스크리닝에서 걸러지는 편이 부풀리는 것보다 낫다.
-                        qty=int(offer.get("inventoryLevel") or 0),
+                        qty=inventory,
                         offer_price=unit,
                         # 유일한 합성값. 0원이 되면 협상 하한이 무너지므로 최소 1원.
                         floor_price=max(1, int(round(unit * SNAPSHOT_FLOOR_RATIO))),
                         spec=spec,
-                        lead_time_days=int(offer.get("factoryLeadDays") or 0),
+                        lead_time_days=(SNAPSHOT_STOCK_LEAD_DAYS if from_stock
+                                        else int(offer.get("factoryLeadDays") or 0)),
                         # 이 단가를 받으려면 해당 수량 구간 이상을 사야 한다.
                         # MOQ와 구간 수량 중 큰 쪽이 실제 최소주문량이다.
                         # (MOQ_FIELD 미확인이면 moq 는 None — 여기서 0으로 정규화된다.
@@ -243,6 +268,7 @@ def diagnostics(qty: int | None = None) -> dict:
         "sellers": len({s.seller_id for s in rows}),
         "items": len(items),
         "currency": SNAPSHOT_CURRENCY,
+        "authorized_only": SNAPSHOT_AUTHORIZED_ONLY,
         # 어느 단가가 API 환산이고 어느 것이 우리 폴백 환율인지.
         "price_sources": dict(sources),
         "dropped": dict(dropped),
