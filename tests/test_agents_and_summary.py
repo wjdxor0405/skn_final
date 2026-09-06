@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-협상 어댑터(Strands/OpenAI)와 설명 제너레이션 회귀 검증.
+협상 어댑터(Strands/OpenAI)·설명 제너레이션·에이전트 도구 회귀 검증.
 
 pytest 없이 그대로 실행된다:
 
@@ -167,6 +167,84 @@ def check_explain_prompt() -> None:
     print("  설명 프롬프트 OK — 사실 dict 만 들어가고 원문 로그는 안 들어간다")
 
 
+# ── Strands 도구 (이식 2단계) ────────────────────────────────────────────────
+def check_tools_are_plain_functions() -> None:
+    """
+    @tool 로 감싼 뒤에도 평범한 함수로 부를 수 있어야 한다.
+
+    그래야 도구의 판정을 **모델 없이** 검증할 수 있다. 판정은 룰이 하고 모델은
+    무엇을 물어볼지만 정한다는 경계가, 이 검사가 성립한다는 사실로 보장된다.
+    """
+    from app.agent_tools import list_catalog_items, find_sellers, check_delivery
+
+    items = list_catalog_items()
+    assert items and "code" in items[0], items[:1]
+
+    d = check_delivery("39-01-2040", 838293, 30)
+    assert d["feasible"] is False, d
+    assert d["max_feasible_qty"] == 694443, d["max_feasible_qty"]
+    assert any("댈 수 있는 판매자가 없습니다" in r for r in d["reasons"]), d["reasons"]
+
+    d = check_delivery("없는품목", 1, 10)
+    assert "error" in d, "없는 품목이면 예외가 아니라 error 를 돌려줘야 도구가 계속 돈다"
+    print("  도구 직접 호출 OK — 모델 없이 판정이 검증된다")
+
+
+def check_tools_hide_floor_price() -> None:
+    """
+    도구가 셀러의 최저 수용가를 절대 내보내면 안 된다.
+
+    `store.sellers_for()` 는 `floor_price` 를 들고 있는 `SellerRegister` 를
+    돌려준다. 그걸 그대로 직렬화해 모델에 넘기면 **바이어 쪽 에이전트가 셀러의
+    유보가격을 보게 된다** — 알면 거기까지 깎으면 그만이라 협상이 성립하지 않는다.
+    도구가 dict 로 바꾸는 자리가 모델로 나가는 유일한 경로라 거기서 잘라낸다.
+    """
+    from app.agent_tools import find_sellers
+    from app.store import store
+
+    raw = store.sellers_for("STM32F103C8T6", 500)
+    assert raw and raw[0].floor_price, "전제: 원본에는 floor_price 가 있다"
+
+    rows = find_sellers("STM32F103C8T6", 500)
+    assert rows, rows
+    for r in rows:
+        assert "floor" not in " ".join(r).lower(), f"최저 수용가가 샜다: {r}"
+        assert raw[0].floor_price not in r.values(), f"최저 수용가 값이 샜다: {r}"
+    assert {"seller_id", "offer_price", "available_qty"} <= set(rows[0]), rows[0]
+    print("  도구 정보 은닉 OK — 최저 수용가가 모델로 안 나간다")
+
+
+def check_tool_specs() -> None:
+    """모델이 보는 도구 스펙(이름·인자)이 실제 시그니처와 맞는지."""
+    from app.agent_tools import TOOLS
+
+    specs = {t.tool_spec["name"]: t.tool_spec for t in TOOLS}
+    assert set(specs) == {"list_catalog_items", "find_sellers", "check_delivery"}, list(specs)
+    assert set(specs["find_sellers"]["inputSchema"]["json"]["properties"]) == {"item", "qty"}
+    assert set(specs["check_delivery"]["inputSchema"]["json"]["properties"]) == {
+        "item", "qty", "due_days"}
+    for name, spec in specs.items():
+        assert spec.get("description"), f"{name}: 설명이 없으면 모델이 언제 부를지 모른다"
+    print("  도구 스펙 OK — 3종, 인자와 설명이 붙어 있다")
+
+
+def check_negotiators_have_no_tools() -> None:
+    """
+    협상 에이전트는 도구를 받지 않는다 — 정보 은닉이 깨진다.
+
+    셀러가 find_sellers 를 부르면 경쟁 셀러의 제시가를 보고, 바이어가 부르면
+    카탈로그를 통째로 본다. 협상 라운드 안에서는 negotiate.py 가 넘겨주는 것만
+    알아야 한다.
+    """
+    import inspect
+    from app import strands_agents
+
+    src = inspect.getsource(strands_agents)
+    assert "agent_tools" not in src and "tools=" not in src, (
+        "협상 어댑터에 도구가 들어갔다 — 정보 은닉이 깨진다")
+    print("  협상 어댑터에 도구 없음 OK")
+
+
 CHECKS = {
     "prompt_contract": check_prompt_contract,
     "mode_switch": check_mode_switch,
@@ -174,6 +252,10 @@ CHECKS = {
     "verify_guard": check_verify_guard,
     "llm_fallback": check_llm_fallback,
     "explain_prompt": check_explain_prompt,
+    "tools_plain": check_tools_are_plain_functions,
+    "tools_hide_floor": check_tools_hide_floor_price,
+    "tool_specs": check_tool_specs,
+    "negotiators_no_tools": check_negotiators_have_no_tools,
 }
 
 
@@ -183,6 +265,10 @@ def test_facts_template(): check_facts_and_template()
 def test_verify_guard(): check_verify_guard()
 def test_llm_fallback(): check_llm_fallback()
 def test_explain_prompt(): check_explain_prompt()
+def test_tools_plain(): check_tools_are_plain_functions()
+def test_tools_hide_floor(): check_tools_hide_floor_price()
+def test_tool_specs(): check_tool_specs()
+def test_negotiators_no_tools(): check_negotiators_have_no_tools()
 
 
 if __name__ == "__main__":

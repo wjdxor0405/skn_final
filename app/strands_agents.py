@@ -50,7 +50,7 @@ class BuyerDecision(BaseModel):
     message: str = Field(description="협상 상대에게 보낼 짧은 메시지(한국어, 1문장)")
 
 
-def _model():
+def _model(model_id: str | None = None):
     """
     모델 프로바이더. 여기 한 곳만 바꾸면 Bedrock·Anthropic·Ollama 로 간다.
 
@@ -63,9 +63,9 @@ def _model():
     if not api_key:
         raise RuntimeError(
             "OPENAI_API_KEY 환경변수가 설정되어 있지 않습니다. "
-            "NEGOTIATOR_MODE=strands 로 쓰려면 이 키가 필요합니다."
+            "Strands 를 쓰려면(협상·리포트·어시스턴트) 이 키가 필요합니다."
         )
-    return OpenAIModel(client_args={"api_key": api_key}, model_id=MODEL)
+    return OpenAIModel(client_args={"api_key": api_key}, model_id=model_id or MODEL)
 
 
 def _agent(system_prompt: str):

@@ -72,6 +72,19 @@ body[data-t="feas"] [data-page="feas"]{display:block;max-width:760px}
 body[data-t="sell"] [data-page="sell"]{display:block}
 body[data-t="buy"] [data-page="buy"]{display:block}
 body[data-t="deal"] [data-page="deal"]{display:block;max-width:720px}
+body[data-t="ask"] [data-page="ask"]{display:block;max-width:760px}
+
+/* ── 조달 어시스턴트 ── */
+.toolcalls{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 0}
+.toolcalls .tc{font-family:var(--mono);font-size:11px;padding:3px 9px;border:1px solid var(--brass);
+  color:var(--brass);border-radius:2px;letter-spacing:.02em}
+.toolcalls .tc.err{border-color:#b00;color:#b00}
+.answer{white-space:pre-wrap;line-height:1.85;margin-top:16px}
+.asked{font-family:var(--mono);font-size:12px;color:var(--ink-2);margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips button{font-size:12px;padding:6px 12px;border:1px solid var(--rule);background:transparent;
+  color:var(--ink-2);cursor:pointer;border-radius:2px;text-align:left}
+.chips button:hover{border-color:var(--brass);color:var(--ink)}
 
 .eyebrow{font-family:var(--mono);font-size:11px;color:var(--brass-deep);letter-spacing:.1em;margin-bottom:10px}
 h1{font-family:var(--disp);font-size:26px;font-weight:600;letter-spacing:-.01em;margin-bottom:8px}
@@ -159,6 +172,7 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
     <a onclick="setTab('sell')" class="on" id="nav-sell"><span class="no">01</span><span class="lb">셀러 등록</span></a>
     <a onclick="setTab('buy')" id="nav-buy"><span class="no">02</span><span class="lb">구매 요청 등록</span></a>
     <a onclick="setTab('deal')" id="nav-deal"><span class="no">03</span><span class="lb">협상 결과 · 승인</span></a>
+    <a onclick="setTab('ask')" id="nav-ask"><span class="no">04</span><span class="lb">조달 어시스턴트</span></a>
     <div class="foot">L0 CONTRACT v1<br>5 FIELDS · 5 MSG TYPES</div>
   </aside>
 
@@ -303,7 +317,33 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       <div class="btn-note" id="d-result" style="margin-top:10px"></div>
     </div>
 
-  </main>
+  
+    <!-- 04 조달 어시스턴트 (Strands 도구 호출) -->
+    <div data-page="ask">
+      <div class="eyebrow">STEP 04 / 04 · STRANDS AGENT</div>
+      <h1>조달 어시스턴트</h1>
+      <div class="sub">에이전트가 카탈로그·납품 가능성 도구를 <b>직접 호출해서</b> 답합니다. 아래에 어떤 도구를 몇 번 불렀는지 그대로 표시되므로, 모델이 지어낸 답과 룰이 판정한 답을 구분할 수 있습니다.</div>
+
+      <div class="ledger-field">
+        <label>질문</label>
+        <input type="text" id="q-input" value="STM32F103C8T6 500개를 60일 안에 받을 수 있나요? 어디가 제일 싼가요?">
+      </div>
+
+      <div class="chips">
+        <button onclick="askExample(this)">39-01-2040을 30일 안에 80만개 받을 수 있나요?</button>
+        <button onclick="askExample(this)">39-01-2040은 수량을 늘리면 어디가 싸지나요?</button>
+        <button onclick="askExample(this)">Arrow의 최저 수용가는 얼마인가요?</button>
+      </div>
+
+      <div class="btnrow">
+        <button class="btn primary" onclick="askAssistant()">물어보기</button>
+        <span class="btn-note" id="q-note">→ NEGOTIATOR_MODE와 무관하게 OPENAI_API_KEY가 필요합니다</span>
+      </div>
+
+      <div class="toolcalls" id="q-tools"></div>
+      <div class="answer" id="q-answer"></div>
+    </div>
+</main>
 </div>
 
 <script>
@@ -462,6 +502,32 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       }
       console.error('품목 로딩 실패:', e);
     }
+  }
+
+  function askExample(btn){
+    document.getElementById('q-input').value = btn.textContent;
+    askAssistant();
+  }
+
+  async function askAssistant(){
+    const q = document.getElementById('q-input').value.trim();
+    const tools = document.getElementById('q-tools');
+    const ans = document.getElementById('q-answer');
+    if(!q) return;
+    tools.innerHTML = ''; ans.textContent = '에이전트가 도구를 부르는 중…';
+
+    const res = await fetch(`${API}/assistant`, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question:q})});
+    const d = await res.json();
+    if(!res.ok){
+      // 키가 없거나 모델이 실패한 경우 — 사유를 그대로 보여준다 (폴백 없음)
+      ans.innerHTML = `<span style="color:#b00">${d.detail ?? '어시스턴트 호출 실패'}</span>`;
+      return;
+    }
+    tools.innerHTML = (d.tools_used ?? []).map(t =>
+      `<span class="tc${t.errors ? ' err' : ''}">${t.tool} ×${t.calls}${t.errors ? ` · 오류 ${t.errors}` : ''}</span>`
+    ).join('') + `<span class="tc">사고 ${d.cycles}회</span>`;
+    ans.textContent = d.answer;
   }
 
   loadItems();

@@ -5,6 +5,7 @@
   화면 3 (협상 결과·승인)    -> GET  /api/deals/{txid}
                               POST /api/deals/{txid}/approve
                               POST /api/deals/{txid}/reject
+  화면 4 (조달 어시스턴트)   -> POST /api/assistant   (Strands 도구 호출)
 """
 
 from __future__ import annotations
@@ -71,6 +72,30 @@ def list_sellers():
 def list_items():
     """화면의 품목 드롭다운용. 카탈로그 출처가 가진 품목 목록."""
     return store.list_items()
+
+
+class AssistantQuestion(BaseModel):
+    """조달 담당자의 자연어 질문."""
+    question: str
+
+
+@app.post("/api/assistant")
+def ask_assistant(req: AssistantQuestion):
+    """
+    Strands 에이전트가 도구(카탈로그·납품 가능성)를 직접 부르며 답한다.
+
+    무슨 도구를 몇 번 불렀는지도 함께 돌려준다 — 답만 보면 모델이 지어낸 것과
+    룰이 판정한 것을 구분할 수 없는데, 이 프로젝트가 보여주려는 게 그 구분이다.
+
+    키가 없거나 모델이 실패하면 502 로 그 사유를 그대로 내보낸다. 협상·리포트와
+    달리 여기는 **폴백이 없다** — 룰만으로 답할 수 있는 질문이 아니기 때문이다.
+    """
+    from . import assistant
+
+    try:
+        return assistant.ask(req.question)
+    except Exception as e:  # noqa: BLE001 — 사유가 화면에 보여야 한다
+        raise HTTPException(502, f"어시스턴트를 쓸 수 없습니다: {e}")
 
 
 class FeasibilityRequest(BaseModel):
