@@ -11,9 +11,13 @@ MAX_ROUNDS로 반영했다. 초과 시 해당 셀러는 자동으로 결렬 처�
 
 에이전트 구현체는 NEGOTIATOR_MODE 환경변수로 전환된다:
   - "rule" (기본값): RuleBasedSellerAgent/RuleBasedBuyerAgent — API 비용 없음
-  - "llm": OpenAISellerAgent/OpenAIBuyerAgent — OPENAI_API_KEY 필요
+  - "strands": StrandsSellerAgent/StrandsBuyerAgent — 해커톤 필수 요건. OPENAI_API_KEY 필요
+  - "llm": OpenAISellerAgent/OpenAIBuyerAgent — OpenAI SDK 직접 호출(구형). OPENAI_API_KEY 필요
 어느 쪽이든 SellerAgentPort/BuyerAgentPort 인터페이스가 같아서 이 파일의
 나머지 로직(라운드 진행, 로그 적재, 최저가 채택)은 전혀 안 바뀐다.
+
+기본값이 여전히 "rule" 인 이유는 **키 없이 실행돼야 하기 때문이다** — 심사위원이
+받자마자 돌릴 수 있어야 하고, 데모 당일 API 가 흔들려도 같은 화면이 나와야 한다.
 """
 
 from __future__ import annotations
@@ -27,9 +31,13 @@ MAX_ROUNDS = 3  # 하한선: 이 이상 왕복해도 안 맞으면 결렬 (무�
 
 
 def _build_agents() -> tuple[SellerAgentPort, BuyerAgentPort]:
+    # 임포트를 분기 안에 두는 이유: 키도 패키지도 없이 rule 모드가 돌아야 한다.
     mode = os.environ.get("NEGOTIATOR_MODE", "rule").lower()
+    if mode == "strands":
+        from .strands_agents import StrandsSellerAgent, StrandsBuyerAgent
+        return StrandsSellerAgent(), StrandsBuyerAgent()
     if mode == "llm":
-        from .llm_agents import OpenAISellerAgent, OpenAIBuyerAgent  # 필요할 때만 임포트(키 없어도 rule 모드는 동작)
+        from .llm_agents import OpenAISellerAgent, OpenAIBuyerAgent
         return OpenAISellerAgent(), OpenAIBuyerAgent()
     return RuleBasedSellerAgent(), RuleBasedBuyerAgent()
 
