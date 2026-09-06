@@ -12,56 +12,34 @@ L1 — 중앙 서버 + 로그 append
 [카탈로그 출처는 세 가지 — CATALOG_SOURCE 참고]
 - snapshot : Nexar(Octopart) API 응답 스냅샷을 읽는다 (기본값). 외부 ERP가 없으므로 발주서는 안 만든다
 - sqlite   : 화면에서 등록한 셀러 카탈로그
-- odoo     : Odoo의 공급처 단가표를 읽고, 낙찰 시 Odoo 발주서 초안까지 만든다
 
-이 파일이 저장·연동을 모두 흡수하므로 negotiate.py / report.py 는 출처를 알지 못한다.
-(다만 MOQ는 Odoo에만 있던 제약이라 negotiate.py 의 스크리닝에 한 절이 추가돼 있다)
+이 파일이 저장을 흡수하므로 negotiate.py / report.py 는 출처를 알지 못한다.
+(다만 MOQ 스크리닝은 negotiate.py 에 한 절로 남아 있다 — 스냅샷도 MOQ 를 갖고 있다)
 """
 
 from __future__ import annotations
-import html
 import json
-import logging
 import os
 from pathlib import Path
 from sqlalchemy import create_engine, Column, String, Integer, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .schemas import Envelope, SellerRegister, Item, LEGACY_ITEMS
-from .odoo_client import get_client
 from . import snapshot_catalog
-
-log = logging.getLogger(__name__)
 
 
 class CatalogReadOnly(RuntimeError):
-    """카탈로그의 주인이 Odoo일 때 쓰기를 시도한 경우. API 계층에서 409로 바꾼다."""
+    """카탈로그의 주인이 외부일 때 쓰기를 시도한 경우. API 계층에서 409로 바꾼다."""
 
 # ── 카탈로그 출처 ────────────────────────────────────────────────────────────
 # snapshot : 커밋된 Nexar(Octopart) 응답 원본을 읽는다 (app/snapshot_catalog.py).
 #            API 키 없이 실데이터로 돌리기 위한 경로다. 환산·합성 가정은 그쪽에 있다.
 #            **기본값** — 아무것도 설정하지 않아도 실데이터로 돈다.
 # sqlite   : 화면에서 직접 등록한 셀러 카탈로그
-# odoo     : Odoo의 공급처 단가표(product.supplierinfo)를 카탈로그로 읽는다
 #
 # 기본값이 sqlite 에서 snapshot 으로 바뀌었다. 지어낸 시연용 값보다 실제 유통
 # 데이터로 첫 화면이 뜨는 편이 낫고, 도메인이 제조업에서 유통으로 옮겨갔다.
 CATALOG_SOURCE = os.getenv("CATALOG_SOURCE", "snapshot").lower()
-
-# Odoo 모드에서만 쓰는 두 가지 가정 — Odoo에 해당 데이터가 아예 없어서 유도해야 한다.
-#
-#  floor_price : 공급처의 "최저 수용가"는 Odoo에 없다(공급처가 알려줄 리 없는 값이다).
-#                제시가의 이 비율로 가정한다. 협상 여지의 크기를 정하는 손잡이.
-#  qty         : 공급처의 보유재고·공급능력도 Odoo에 없다(qty_available은 '우리' 재고다).
-#                사실상 무제한으로 두고, 실질 제약은 MOQ(min_qty)가 담당한다.
-ODOO_FLOOR_RATIO = float(os.getenv("ODOO_FLOOR_RATIO", "0.90"))
-ODOO_VENDOR_CAPACITY = int(os.getenv("ODOO_VENDOR_CAPACITY", "1000000"))
-ODOO_ITEM_PREFIX = os.getenv("ODOO_ITEM_PREFIX", "")
-
-# 화면에 띄울 발주서 링크의 주소. 브라우저가 도는 곳에서 접근 가능한 주소여야 하므로
-# 서버가 쓰는 ODOO_URL(localhost일 수 있다)과 별개로 둔다.
-ODOO_PUBLIC_URL = os.getenv(
-    "ODOO_PUBLIC_URL", os.getenv("ODOO_URL", "http://localhost:8069")).rstrip("/")
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 LOG_DIR = DATA_DIR / "logs"
@@ -100,10 +78,6 @@ class DealRow(Base):
     approval = Column(String, nullable=True)
     reason = Column(Text, nullable=True)
     log_path = Column(String, nullable=False)  # 원문 로그 텍스트 파일 경로 (멘토 지침 반영)
-    # CATALOG_SOURCE=odoo 에서 낙찰 시 만들어지는 Odoo 발주서 초안
-    po_id = Column(Integer, nullable=True)
-    po_name = Column(String, nullable=True)
-    po_error = Column(Text, nullable=True)   # 발주서를 못 만들었을 때 그 이유 (조용히 넘어가지 않기 위해)
 
 
 Base.metadata.create_all(engine)  # 테이블 없으면 최초 실행 시 자동 생성 (스키마는 여기 한 곳에서만 정의)
@@ -117,46 +91,6 @@ def _row_to_seller(r: SellerCatalogRow) -> SellerRegister:
     )
 
 
-def _offer_to_seller(item: str, offer: dict) -> SellerRegister:
-    """Odoo 공급처 단가표 1행 -> SellerRegister. 유도되는 두 값은 위 설정 주석 참고."""
-    return SellerRegister(
-        seller_id=offer["vendor"],
-        item=item,
-        qty=ODOO_VENDOR_CAPACITY,
-        offer_price=offer["price"],
-        floor_price=int(round(offer["price"] * ODOO_FLOOR_RATIO)),
-        spec=offer["spec"],
-        lead_time_days=offer["lead_time_days"],
-        min_qty=offer["min_qty"],
-    )
-
-
-def _chatter_body(txid: str, summary: dict, envelopes: list[Envelope]) -> str:
-    """협상 로그를 발주서 chatter에 남길 HTML로. 승인자가 발주서 화면에서
-    '왜 이 업체·이 가격인지'를 바로 볼 수 있게 하는 것이 목적이다."""
-    rows = []
-    for e in envelopes:
-        payload = ", ".join(f"{k}={v}" for k, v in e.payload.items() if k != "item")
-        rows.append(
-            f"<li><b>{html.escape(e.type)}</b> "
-            f"{html.escape(e.frm)} → {html.escape(e.to)}"
-            + (f" : {html.escape(payload)}" if payload else "")
-            + "</li>"
-        )
-    price = summary.get("price")
-    price_txt = f"{price:,}원" if isinstance(price, (int, float)) else "-"
-    # 표준계약 경로는 협상 라운드가 없다 — 제목이 사실과 달라지지 않게 구분한다
-    standard = any(e.payload.get("route") == "STANDARD" for e in envelopes)
-    title = "표준계약 자동 처리 로그 (협상 없음)" if standard else "AI 에이전트 협상 로그"
-    return (
-        f"<p><b>{title}</b> — 거래 {html.escape(txid)}</p>"
-        f"<p>낙찰: <b>{html.escape(str(summary.get('seller_id')))}</b> / "
-        f"{summary.get('qty')}개 / 단가 {price_txt}</p>"
-        f"<ul>{''.join(rows)}</ul>"
-        f"<p><i>이 발주서는 초안입니다. 확정은 사람이 합니다.</i></p>"
-    )
-
-
 class CentralStore:
     """
     거래ID(txid) 기준으로 모든 걸 격리한다 (M-04 원칙 선반영).
@@ -165,11 +99,6 @@ class CentralStore:
 
     # ── 셀러 등록 (화면 1) ──
     def register_seller(self, offer: SellerRegister) -> None:
-        if CATALOG_SOURCE == "odoo":
-            raise CatalogReadOnly(
-                "CATALOG_SOURCE=odoo 에서는 카탈로그의 주인이 Odoo입니다. "
-                "공급처·단가는 Odoo에서 등록하세요: Purchase > Products > 해당 품목 > Purchase 탭."
-            )
         if CATALOG_SOURCE == "snapshot":
             raise CatalogReadOnly(
                 "CATALOG_SOURCE=snapshot 에서는 카탈로그의 주인이 외부(Nexar/Octopart)입니다. "
@@ -190,8 +119,6 @@ class CentralStore:
             session.commit()
 
     def sellers_for(self, item: str, qty: int | None = None) -> list[SellerRegister]:
-        if CATALOG_SOURCE == "odoo":
-            return [_offer_to_seller(item, o) for o in get_client().vendor_offers(item)]
         if CATALOG_SOURCE == "snapshot":
             # qty 를 받으면 그 수량에 맞는 가격구간을 고른다. 호출부가 아직 수량을
             # 넘기지 않아서 기본값은 최소수량 구간 — 자격 없는 볼륨가를 부르지 않는다.
@@ -202,14 +129,6 @@ class CentralStore:
 
     def list_sellers(self) -> list[SellerRegister]:
         """등록된 셀러 전체 조회 (조회/디버깅용, 화면 API가 사용)."""
-        if CATALOG_SOURCE == "odoo":
-            # 품목 수만큼 조회가 나간다. 데모 규모(3종)에서는 문제없지만
-            # 품목이 많아지면 supplierinfo를 한 번에 읽어 품목별로 묶는 편이 낫다.
-            out: list[SellerRegister] = []
-            for product in get_client().purchasable_products(ODOO_ITEM_PREFIX):
-                out += [_offer_to_seller(product["code"], o)
-                        for o in get_client().vendor_offers(product["code"])]
-            return out
         if CATALOG_SOURCE == "snapshot":
             return snapshot_catalog.list_sellers()
         with SessionLocal() as session:
@@ -218,8 +137,6 @@ class CentralStore:
 
     def list_items(self) -> list[dict]:
         """선택 가능한 품목 목록 (화면의 드롭다운용)."""
-        if CATALOG_SOURCE == "odoo":
-            return get_client().purchasable_products(ODOO_ITEM_PREFIX)
         if CATALOG_SOURCE == "snapshot":
             return snapshot_catalog.list_items()
         with SessionLocal() as session:
@@ -266,25 +183,6 @@ class CentralStore:
             row.approval = summary.get("approval")
             row.reason = summary.get("reason")
             row.log_path = str(self._log_path(txid))
-
-            if CATALOG_SOURCE == "odoo" and summary.get("status") == "SETTLED" and not row.po_id:
-                try:
-                    po = get_client().create_draft_purchase_order(
-                        vendor=summary["seller_id"],
-                        product_code=summary["item"],
-                        qty=summary["qty"],
-                        price=summary["price"],
-                        origin=txid,
-                    )
-                    row.po_id, row.po_name, row.po_error = po["id"], po["name"], None
-                    get_client().post_note("purchase.order", po["id"],
-                                   _chatter_body(txid, summary, self.get_log(txid)))
-                except Exception as e:  # noqa: BLE001 - 아래 주석 참고
-                    # 협상 결과 자체는 이미 확정된 사실이다. Odoo 쓰기는 부가 작업이므로
-                    # 어떤 예외도 거래를 되돌리게 두지 않고, 실패 사실만 남겨 화면에 보인다.
-                    row.po_error = str(e)
-                    log.warning("발주서 초안 생성 실패 (txid=%s): %s", txid, e)
-
             session.commit()
 
     def get_deal(self, txid: str) -> dict | None:
@@ -297,37 +195,15 @@ class CentralStore:
                 "seller_id": row.seller_id, "item": row.item, "qty": row.qty,
                 "price": row.price, "approval": row.approval, "reason": row.reason,
                 "log_path": row.log_path,
-                "po_id": row.po_id, "po_name": row.po_name, "po_error": row.po_error,
-                "po_url": f"{ODOO_PUBLIC_URL}/odoo/purchase/{row.po_id}" if row.po_id else None,
             }
 
     def set_approval(self, txid: str, approval: str) -> None:
-        """
-        승인/거절 처리 — approve/reject 엔드포인트에서 호출.
-        Odoo 모드에서는 발주서 초안까지 같이 확정/취소해서, 어느 화면에서 눌러도
-        두 시스템의 상태가 갈라지지 않게 한다.
-        """
+        """승인/거절 처리 — approve/reject 엔드포인트에서 호출."""
         with SessionLocal() as session:
             row = session.get(DealRow, txid)
             if not row:
                 return
             row.approval = approval
-
-            if CATALOG_SOURCE == "odoo" and row.po_id:
-                try:
-                    if approval == "APPROVED":
-                        get_client().confirm_purchase_order(row.po_id)
-                        note = "협상 결과가 <b>승인</b>되어 발주서를 확정했습니다."
-                    else:
-                        get_client().cancel_purchase_order(row.po_id)
-                        note = "협상 결과가 <b>거절</b>되어 발주서를 취소했습니다."
-                    get_client().post_note("purchase.order", row.po_id,
-                                   f"<p>{note} (거래 {html.escape(txid)})</p>")
-                    row.po_error = None
-                except Exception as e:  # noqa: BLE001 - 승인 기록 자체는 남아야 한다
-                    row.po_error = str(e)
-                    log.warning("발주서 상태 반영 실패 (txid=%s): %s", txid, e)
-
             session.commit()
 
 

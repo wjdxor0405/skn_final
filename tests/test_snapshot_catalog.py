@@ -136,38 +136,6 @@ def check_sqlite_mode() -> None:
     print("  sqlite 모드 OK — 등록·조회 왕복 정상")
 
 
-def check_odoo_mode() -> None:
-    """CATALOG_SOURCE=odoo — snapshot 분기가 odoo 경로를 가리지 않는지."""
-    from app import store as store_mod
-
-    assert store_mod.CATALOG_SOURCE == "odoo"
-
-    calls = []
-
-    class FakeClient:
-        def vendor_offers(self, item):
-            calls.append(("vendor_offers", item))
-            return [{"vendor": "공급처 A", "price": 1000, "spec": "",
-                     "lead_time_days": 5, "min_qty": 10}]
-
-        def purchasable_products(self, prefix=""):
-            calls.append(("purchasable_products", prefix))
-            return [{"code": "RM-X", "name": "자재 X", "spec": "", "on_hand": 0.0}]
-
-    store_mod.get_client = lambda *a, **k: FakeClient()
-
-    store = store_mod.CentralStore()
-    rows = store.sellers_for("RM-X")
-    assert len(rows) == 1 and rows[0].seller_id == "공급처 A", rows
-    # floor_price 는 여전히 store.py 가 ODOO_FLOOR_RATIO 로 유도한다
-    assert rows[0].floor_price == round(1000 * store_mod.ODOO_FLOOR_RATIO), rows[0]
-    assert rows[0].min_qty == 10
-    assert [i["code"] for i in store.list_items()] == ["RM-X"]
-    assert len(store.list_sellers()) == 1
-    assert ("vendor_offers", "RM-X") in calls
-    print("  odoo 모드 OK — 분기가 그대로 Odoo 로 간다")
-
-
 def check_snapshot_authorized() -> None:
     """SNAPSHOT_AUTHORIZED_ONLY 기본값(켜짐) — 비인가 판매자가 후보에서 빠진다."""
     from app.store import CentralStore
@@ -218,10 +186,9 @@ def check_negotiation_uses_qty() -> None:
 
 def check_feasibility_snapshot() -> None:
     """
-    snapshot 모드에서 납품 가능성 검증이 Odoo 없이 돈다.
+    납품 가능성 검증이 스냅샷 데이터만으로 돈다.
 
-    feasibility.py 도 병렬 작업자와 겹치지 않는다는 보장이 없다. Odoo 호출이
-    다시 무조건 호출로 돌아오면 여기서 잡힌다 — 이 검사는 Odoo 없이 돌기 때문이다.
+    외부 시스템 호출이 다시 들어오면 여기서 잡힌다 — 이 검사는 스냅샷만 갖고 돌기 때문이다.
     """
     from app import feasibility
 
@@ -246,7 +213,7 @@ def check_feasibility_snapshot() -> None:
         assert "스냅샷" in str(e), e
     else:
         raise AssertionError("없는 품목인데 ValueError 가 안 났다")
-    print("  feasibility OK — Odoo 없이 검증, 공급 한도 초과는 막힌다")
+    print("  feasibility OK — 스냅샷만으로 검증, 공급 한도 초과는 막힌다")
 
 
 CHECKS = {
@@ -255,7 +222,6 @@ CHECKS = {
     "negotiation_qty": check_negotiation_uses_qty,
     "snapshot_authorized": check_snapshot_authorized,
     "sqlite": check_sqlite_mode,
-    "odoo": check_odoo_mode,
 }
 
 
@@ -285,7 +251,6 @@ def test_snapshot_authorized(): _run("snapshot_authorized")
 def test_negotiation_uses_qty(): _run("negotiation_qty")
 def test_feasibility_snapshot(): _run("feasibility")
 def test_sqlite_mode(): _run("sqlite")
-def test_odoo_mode(): _run("odoo")
 
 
 if __name__ == "__main__":

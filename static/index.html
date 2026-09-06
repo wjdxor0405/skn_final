@@ -155,7 +155,7 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       <div class="en">Deal Ledger</div>
       <div class="tag">MMVP · Rule-based</div>
     </div>
-    <a onclick="setTab('feas')" id="nav-feas"><span class="no">00</span><span class="lb">고객 주문 접수</span></a>
+    <a onclick="setTab('feas')" id="nav-feas"><span class="no">00</span><span class="lb">납품 가능성 검증</span></a>
     <a onclick="setTab('sell')" class="on" id="nav-sell"><span class="no">01</span><span class="lb">셀러 등록</span></a>
     <a onclick="setTab('buy')" id="nav-buy"><span class="no">02</span><span class="lb">구매 요청 등록</span></a>
     <a onclick="setTab('deal')" id="nav-deal"><span class="no">03</span><span class="lb">협상 결과 · 승인</span></a>
@@ -167,36 +167,30 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
     <!-- 00 납품 가능성 검증 -->
     <div data-page="feas">
       <div class="eyebrow">STEP 00 / 03</div>
-      <h1>고객 주문 접수</h1>
-      <div class="sub">표준계약 범위면 협상 없이 자동 처리하고, 벗어나는 이례적 발주에만 에이전트가 협상에 나섭니다. 재고·자재소요·조달납기·제조 리드타임은 전부 Odoo에서 읽습니다.</div>
+      <h1>납품 가능성 검증</h1>
+      <div class="sub">"이 수량을 이 납기 안에 댈 수 있는가"를 룰로만 판정합니다. 재고·최소주문량·조달납기는 전부 유통 데이터 원본에서 읽습니다 — 판매자가 실제로 댈 수 있는 수량을 넘기면 근거와 함께 불가로 떨어집니다.</div>
 
       <div class="ledger-field">
-        <label>고객사</label>
-        <select id="f-customer"><option value="">불러오는 중…</option></select>
-        <div class="hint">고객사별 분기 표준수량이 Odoo에 설정돼 있습니다</div>
-      </div>
-      <div class="ledger-field">
-        <label>완제품</label>
+        <label>품목</label>
         <select id="f-item"><option value="">불러오는 중…</option></select>
       </div>
       <div class="ledger-field">
-        <label>주문 수량</label>
-        <input type="number" id="f-qty" value="60">
+        <label>요청 수량</label>
+        <input type="number" id="f-qty" value="5000">
       </div>
       <div class="ledger-field">
         <label>요구 납기(일)</label>
-        <input type="number" id="f-due" value="90">
-        <div class="hint">조달 + 제조 리드타임 + 생산일을 합쳐 이 안에 들어가는지 봅니다</div>
+        <input type="number" id="f-due" value="30">
+        <div class="hint">조달 납기가 이 안에 들어가는지 봅니다</div>
       </div>
 
       <div class="btnrow">
-        <button class="btn primary" onclick="submitOrder()">주문 접수</button>
-        <button class="btn" onclick="checkFeasibility(false)">납품 가능성만 검증</button>
-        <span class="btn-note" id="f-note">→ 접수하면 표준/예외를 판정하고 그에 맞게 처리합니다</span>
+        <button class="btn primary" onclick="checkFeasibility(false)">납품 가능성 검증</button>
+        <button class="btn" onclick="checkFeasibility(true)">부족분 조달까지</button>
+        <span class="btn-note" id="f-note">→ 조달까지 누르면 부족분마다 협상이 돕니다</span>
       </div>
 
-      <div id="f-route" style="margin-top:22px"></div>
-      <div id="f-verdict" style="margin-top:12px"></div>
+      <div id="f-verdict" style="margin-top:22px"></div>
       <div id="f-reasons" style="margin-top:10px"></div>
       <div id="f-deals" style="margin-top:14px"></div>
     </div>
@@ -339,7 +333,7 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
     if(res.ok){
       note = `→ ${body.seller_id} 등록 완료`;
     } else {
-      // 서버가 알려준 이유를 그대로 보여준다 (예: 카탈로그 주인이 Odoo인 경우)
+      // 서버가 알려준 이유를 그대로 보여준다 (예: 카탈로그 주인이 외부인 경우)
       const err = await res.json().catch(() => ({}));
       note = `→ 등록 실패 — ${err.detail ?? '서버 로그를 확인하세요'}`;
     }
@@ -384,7 +378,6 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
         <div class="k">수량</div><div class="v">${d.qty}건</div>
         <div class="k">확정 단가</div><div class="v">${d.price}원</div>
         <div class="k">상태</div><div class="v settle">SETTLED · 승인 ${d.approval === 'PENDING' ? '대기' : d.approval}</div>
-        ${poRow(d)}
       `;
       document.getElementById('d-stamp').style.display = "flex";
     } else {
@@ -412,72 +405,6 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       : "→ 처리 실패";
   }
 
-  async function loadProducts(){
-    const sel = document.getElementById('f-item');
-    try{
-      const res = await fetch(`${API}/products`);
-      const items = await res.json();
-      if(!items.length) throw new Error('완제품 없음 (CATALOG_SOURCE=odoo 필요)');
-      sel.innerHTML = items.map(it =>
-        `<option value="${it.code}">${it.code} — ${it.name} (재고 ${it.on_hand.toLocaleString()})</option>`).join('');
-    }catch(e){
-      sel.innerHTML = `<option value="">완제품을 불러오지 못했습니다</option>`;
-      console.error('완제품 로딩 실패:', e);
-    }
-  }
-
-  async function loadCustomers(){
-    const sel = document.getElementById('f-customer');
-    try{
-      const res = await fetch(`${API}/customers`);
-      const items = await res.json();
-      if(!items.length) throw new Error('고객사 없음 (CATALOG_SOURCE=odoo 필요)');
-      sel.innerHTML = items.map(c => `<option value="${c.ref}">${c.name}</option>`).join('');
-    }catch(e){
-      sel.innerHTML = `<option value="">고객사를 불러오지 못했습니다</option>`;
-      console.error('고객사 로딩 실패:', e);
-    }
-  }
-
-  // 발주 접수 — 표준/예외 판정까지 함께 보여준다
-  async function submitOrder(){
-    const body = {
-      customer_ref: document.getElementById('f-customer').value,
-      item: document.getElementById('f-item').value,
-      qty:  Number(document.getElementById('f-qty').value),
-      due_days: Number(document.getElementById('f-due').value),
-    };
-    const rt = document.getElementById('f-route');
-    const v  = document.getElementById('f-verdict');
-    const rs = document.getElementById('f-reasons');
-    const ds = document.getElementById('f-deals');
-    rt.textContent = '접수 중…'; v.innerHTML = ''; rs.innerHTML = ''; ds.innerHTML = '';
-
-    const res = await fetch(`${API}/orders/intake`, {
-      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
-    if(!res.ok){ rt.textContent = '접수 실패'; return; }
-    const d = await res.json();
-
-    const std = d.verdict.kind === 'STANDARD';
-    rt.innerHTML = `<span class="v ${std ? 'settle' : ''}" style="font-size:18px">`
-      + (std ? '표준계약 범위 — 협상 없이 자동 처리' : '예외 발주 — 에이전트 협상')
-      + `</span><div class="hint" style="margin-top:4px">${d.verdict.reason}</div>`;
-    v.innerHTML = d.feasible
-      ? `<span class="v settle">납품 가능</span>`
-      : `<span class="v" style="color:#b00">납품 불가</span>`;
-    rs.innerHTML = '<ul style="line-height:1.9;padding-left:18px">'
-      + d.reasons.map(r => `<li>${r}</li>`).join('') + '</ul>';
-    ds.innerHTML = d.deals.length
-      ? '<div style="font-weight:600;margin-bottom:6px">부족분 조달</div>'
-        + d.deals.map(x => `<div class="tape-item"><span class="msg">`
-          + `<b>${x.route === 'STANDARD' ? '협상 없음' : '협상'}</b> · `
-          + `${x.item} · ${x.seller_id ?? '-'} · ${x.qty}개 · ${(x.price ?? 0).toLocaleString()}원 → `
-          + (x.po_url ? `<a href="${x.po_url}" target="_blank" rel="noopener">${x.po_name}</a>`
-                      : (x.po_error ?? '발주서 없음'))
-          + `<br><span style="color:var(--ink-2)">${x.route_note ?? ''}</span></span></div>`).join('')
-      : '<div class="hint">조달할 부족 자재가 없습니다.</div>';
-  }
-
   async function checkFeasibility(procure){
     const body = {
       item: document.getElementById('f-item').value,
@@ -487,7 +414,6 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
     const v = document.getElementById('f-verdict');
     const rs = document.getElementById('f-reasons');
     const ds = document.getElementById('f-deals');
-    document.getElementById('f-route').innerHTML = '';
     v.textContent = '판정 중…'; rs.innerHTML = ''; ds.innerHTML = '';
 
     const url = procure ? `${API}/feasibility/procure` : `${API}/feasibility`;
@@ -505,29 +431,15 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
       ds.innerHTML = d.deals.length
         ? '<div style="font-weight:600;margin-bottom:6px">부족분 조달 — 협상 결과</div>'
           + d.deals.map(x => `<div class="tape-item"><span class="msg">`
-            + `${x.item} · ${x.seller_id ?? '-'} · ${x.qty}개 · ${(x.price ?? 0).toLocaleString()}원 → `
-            + (x.po_url ? `<a href="${x.po_url}" target="_blank" rel="noopener">${x.po_name}</a>`
-                        : (x.po_error ?? '발주서 없음'))
+            + `${x.item} · ${x.seller_id ?? '-'} · ${x.qty}개 · ${(x.price ?? 0).toLocaleString()}원`
             + `</span></div>`).join('')
-        : '<div class="hint">조달할 부족 자재가 없습니다.</div>';
+        : '<div class="hint">조달할 부족분이 없습니다.</div>';
     }
   }
 
-  // Odoo 발주서 초안 링크. CATALOG_SOURCE=odoo 일 때만 채워진다.
-  function poRow(d){
-    if(d.po_error){
-      return `<div class="k">Odoo 발주서</div><div class="v" style="color:#b00">생성 실패 — ${d.po_error}</div>`;
-    }
-    if(!d.po_name) return "";
-    return `<div class="k">Odoo 발주서</div><div class="v">`
-         + `<a href="${d.po_url}" target="_blank" rel="noopener">${d.po_name}</a>`
-         + ` <span style="font-weight:400;color:var(--ink-2)">— 협상 로그가 이 발주서에 기록됩니다</span></div>`;
-  }
-
-  // 품목 드롭다운은 서버에서 받아 채운다.
-  // CATALOG_SOURCE=odoo 면 Odoo 품목 마스터가, sqlite 면 등록된 품목이 내려온다.
+  // 품목 드롭다운은 서버에서 받아 채운다 (카탈로그 출처가 가진 품목).
   async function loadItems(){
-    const selects = ['s-item', 'b-item'].map(id => document.getElementById(id));
+    const selects = ['s-item', 'b-item', 'f-item'].map(id => document.getElementById(id));
     try {
       const res = await fetch(`${API}/items`);
       if(!res.ok) throw new Error(res.status);
@@ -553,8 +465,6 @@ select:focus, input:focus{outline:none;border-bottom-color:var(--brass)}
   }
 
   loadItems();
-  loadProducts();
-  loadCustomers();
 </script>
 </body>
 </html>

@@ -49,13 +49,13 @@ def _screen_candidates(store: CentralStore, txid: str, request: BuyerRequest) ->
     """
     passed: list[SellerRegister] = []
     # 수량을 함께 넘긴다. 출처가 수량구간을 갖고 있으면(스냅샷) 그 수량에 맞는
-    # 단가로 후보가 들어온다. 구간이 없는 출처(sqlite/odoo)는 인자를 무시한다.
+    # 단가로 후보가 들어온다. 구간이 없는 출처(sqlite)는 인자를 무시한다.
     for seller in store.sellers_for(request.item, request.qty):
         reasons = []
         if seller.qty < request.qty:
             reasons.append(f"재고부족(보유 {seller.qty} < 요청 {request.qty})")
         # MOQ는 재고와 부등호 방향이 반대다 — 주문량이 최소주문량 "이상"이어야 통과.
-        # Odoo 공급처 단가표(product.supplierinfo.min_qty)에서 들어온다. 0이면 제약 없음.
+        # 스냅샷의 moq 에서 들어온다. 0이면 제약 없음.
         if seller.min_qty and request.qty < seller.min_qty:
             reasons.append(f"최소주문량 미달(요청 {request.qty} < MOQ {seller.min_qty})")
         if not _spec_matches(request.spec, seller.spec):

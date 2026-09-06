@@ -1,7 +1,7 @@
 """
 L0 계약서 (코드화)
 - 품목 스키마: 품목ID, 수량, 제시가, 셀러 최저수용가, 바이어 상한가 (최초 5필드)
-  + 사양·납기일수 (v3 D-02) + 최소주문량 MOQ (Odoo 공급처 단가표 연동)
+  + 사양·납기일수 (v3 D-02) + 최소주문량 MOQ
 - 메시지 타입 5종: REQUEST, OFFER, ACCEPT, REJECT, SETTLED
 - 메시지 봉투(envelope): from/to/type/txid/ts/payload
 
@@ -22,7 +22,7 @@ import uuid
 
 
 # ── 품목 코드 ──
-# 예전에는 3종 고정 Enum이었다. CATALOG_SOURCE=odoo 에서는 품목 마스터가 Odoo에 있어서
+# 예전에는 3종 고정 Enum이었다. 품목 마스터가 외부 카탈로그에 있어서
 # 어떤 코드가 유효한지를 이 파일이 알 수 없으므로, 코드 문자열을 그대로 받는다.
 # (sqlite 모드의 기존 데모 값 "A4용지/토너/볼트"도 문자열이라 그대로 유효하다)
 Item = str
@@ -71,7 +71,7 @@ class SellerRegister(BaseModel):
     floor_price: int          # 최저 수용가 (바이어에게 노출 금지)
     spec: str = ""            # 사양 (예: "80g/2500매")
     lead_time_days: int = 0   # 납기일수
-    min_qty: int = 0          # 최소주문량(MOQ). Odoo product.supplierinfo.min_qty 대응.
+    min_qty: int = 0          # 최소주문량(MOQ). 스냅샷의 moq 대응.
                               # 0이면 제약 없음 — 기존 sqlite 데이터의 동작이 바뀌지 않는다.
 
 

@@ -2,15 +2,8 @@
 납품 가능성 검증 — "재고 10대인데 100대 가능하다"를 룰로 막는 자리
 
 `P0_확정안_v3` §2가 지목한 그 검증이다. 문서의 표현대로
-**LLM 없이 P0에 넣을 수 있는 유일한 검증**이고, 여기 쓰이는 숫자는 전부 Odoo에서 온다:
-
-    완제품 재고        product.product.qty_available
-    자재 소요량        mrp.bom.line.product_qty
-    자재 재고          product.product.qty_available
-    자재 조달 납기     product.supplierinfo.delay  (최소주문량 반영)
-    제조 리드타임      mrp.bom.produce_delay
-
-Odoo에 없어서 설정으로 두는 값은 **일일 생산 캐파** 하나뿐이다(아래 주석 참고).
+**LLM 없이 P0에 넣을 수 있는 유일한 검증**이고, 여기 쓰이는 숫자는 전부 카탈로그
+스냅샷에서 온다 — 재고(inventoryLevel)·최소주문량(moq)·공장 리드타임 전부 API 원본이다.
 
 영업 담당자가 고객에게 답하려면 "왜 안 되는지"가 필요하다 — 그게 `reasons` / `materials` 다.
 """
@@ -20,13 +13,9 @@ from __future__ import annotations
 import math
 import os
 
-from .odoo_client import get_client
-from .store import CATALOG_SOURCE
 from . import snapshot_catalog
 
-# Odoo에는 "하루에 몇 개 만들 수 있는가"에 해당하는 단순한 필드가 없다.
-# (mrp.workcenter + 라우팅으로 표현하지만 데모 범위를 크게 벗어난다)
-# 도메인에 따라 크게 달라지는 값이다. 기본값은 GPU 서버랙 조립 기준 일 10대(주 50대).
+# "하루에 몇 개 만들 수 있는가". 제조 경로가 남아 있는 동안만 쓰인다.
 CAPACITY_PER_DAY = float(os.getenv("PRODUCTION_CAPACITY_PER_DAY", "10"))
 
 # 부족분을 조달할 때 협상에 넘길 상한가 = 적격 공급처 최저가 × (1 + 이 값)
@@ -35,40 +24,30 @@ PROCURE_CAP_MARGIN = float(os.getenv("PROCURE_CAP_MARGIN", "0.05"))
 
 def _vendor_offers(code: str, qty: float) -> list[dict]:
     """
-    조달 후보. Odoo 모드는 공급처 단가표, 스냅샷 모드는 유통사 카탈로그에서 온다.
-    스냅샷은 수량구간을 갖고 있어서 조달 수량에 맞는 단가가 들어온다.
+    조달 후보. 유통사 카탈로그에서 오고, 수량구간이 있어서 조달 수량에 맞는 단가가 들어온다.
+    supply_qty 는 그 판매자가 실제로 댈 수 있는 수량이다 — 이것 때문에
+    "그만큼 댈 수 있는 판매자가 없습니다"라는 판정이 나올 수 있다.
     """
-    if CATALOG_SOURCE == "snapshot":
-        # supply_qty 는 그 판매자가 실제로 댈 수 있는 수량이다. Odoo 공급처 단가표에는
-        # 없는 정보라 그쪽은 None(무제한)으로 두고, 스냅샷만 실재고로 제약한다.
-        return [{"vendor": s.seller_id, "price": s.offer_price,
-                 "lead_time_days": s.lead_time_days, "min_qty": s.min_qty,
-                 "supply_qty": s.qty}
-                for s in snapshot_catalog.sellers_for(code, max(1, int(qty)))]
-    return [{**o, "supply_qty": None} for o in get_client().vendor_offers(code)]
+    return [{"vendor": s.seller_id, "price": s.offer_price,
+             "lead_time_days": s.lead_time_days, "min_qty": s.min_qty,
+             "supply_qty": s.qty}
+            for s in snapshot_catalog.sellers_for(code, max(1, int(qty)))]
 
 
 def _product_and_bom(product_code: str) -> tuple[dict, dict | None]:
     """
-    품목(재고 포함)과 BOM. 반환하는 품목 dict의 키는 Odoo 쪽과 같다.
+    품목(재고 포함)과 BOM.
 
     스냅샷에는 '우리' 재고도 BOM도 없다 — 외부 유통사의 공급 데이터뿐이다.
     그래서 모든 품목을 재고 0인 구매 품목으로 본다: BOM 전개를 건너뛰고 부족분
     전량을 조달로 채운다. 생산 공정이 없으므로 제조 리드타임·생산일도 0이다.
-    (작업지시서의 권고 — Octopart에는 BOM이 없고 그건 계속 Odoo 담당이다)
     """
-    if CATALOG_SOURCE == "snapshot":
-        item = next((i for i in snapshot_catalog.list_items()
-                     if i["code"] == product_code), None)
-        if item is None:
-            raise ValueError(f"스냅샷에 없는 품목입니다: {product_code!r}")
-        return {"id": None, "code": item["code"], "name": item["name"],
-                "spec": item["spec"], "on_hand": 0.0}, None
-
-    product = get_client().product(product_code)
-    if product is None:
-        raise ValueError(f"Odoo에 없는 품목입니다: {product_code!r}")
-    return product, get_client().bom_for(product_code)
+    item = next((i for i in snapshot_catalog.list_items()
+                 if i["code"] == product_code), None)
+    if item is None:
+        raise ValueError(f"스냅샷에 없는 품목입니다: {product_code!r}")
+    return {"id": None, "code": item["code"], "name": item["name"],
+            "spec": item["spec"], "on_hand": 0.0}, None
 
 
 def _material_plan(code: str, required: float, on_hand: float) -> dict:
@@ -86,7 +65,7 @@ def _material_plan(code: str, required: float, on_hand: float) -> dict:
         "best_price": None,
         "blocked": False,
         "note": "",
-        # 한 판매자가 댈 수 있는 최대 수량. 공급능력을 모르는 출처(Odoo)는 None.
+        # 한 판매자가 댈 수 있는 최대 수량. 조달할 게 없으면 None.
         "supply_cap": None,
     }
     if shortage <= 0:
@@ -95,9 +74,7 @@ def _material_plan(code: str, required: float, on_hand: float) -> dict:
     offers = _vendor_offers(code, shortage)
     if not offers:
         plan["blocked"] = True
-        plan["note"] = ("스냅샷에 이 품목의 판매자가 없습니다."
-                        if CATALOG_SOURCE == "snapshot"
-                        else "Odoo에 등록된 공급처가 없습니다.")
+        plan["note"] = "스냅샷에 이 품목의 판매자가 없습니다."
         return plan
 
     # 부족분이 최소주문량보다 적어도 조달은 된다 — 초과 발주하면 그만이다.

@@ -36,7 +36,7 @@ log = logging.getLogger(__name__)
 _ROOT = Path(__file__).resolve().parent.parent
 
 SNAPSHOT_PATH = os.getenv("SNAPSHOT_PATH", "data/nexar_snapshot.json")
-# store.py 의 ODOO_FLOOR_RATIO 와 같은 관례 — 제시가의 이 비율을 최저 수용가로 가정한다.
+# 제시가의 이 비율을 셀러의 최저 수용가로 가정한다 — 이 저장소의 유일한 합성값이다.
 SNAPSHOT_FLOOR_RATIO = float(os.getenv("SNAPSHOT_FLOOR_RATIO", "0.90"))
 # 스키마가 정수라서 단가를 이 통화로 맞춘다.
 SNAPSHOT_CURRENCY = os.getenv("SNAPSHOT_CURRENCY", "KRW").upper()
@@ -200,7 +200,7 @@ def _build(qty: int | None) -> tuple[list[SellerRegister], Counter, Counter]:
                     row = SellerRegister(
                         seller_id=company,
                         item=item,
-                        # 재고는 원본에 있다(Odoo 모드와 달리 가정할 필요가 없다).
+                        # 재고는 API 원본에 있다 — 가정할 필요가 없다.
                         # 값이 없으면 0 — 스크리닝에서 걸러지는 편이 부풀리는 것보다 낫다.
                         qty=inventory,
                         offer_price=unit,
