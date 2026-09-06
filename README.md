@@ -21,6 +21,11 @@ app/
 
   snapshot_catalog.py  # 커밋된 Nexar 응답을 카탈로그로 읽는 로더 (환산·가정이 전부 여기)
   feasibility.py       # 납품 가능성 검증 — 재고·최소주문량·조달납기를 룰로만 판정
+
+  strands_agents.py    # Strands 어댑터 — 협상 판단 (NEGOTIATOR_MODE=strands)
+  agent_prompts.py     # LLM 어댑터 둘이 공유하는 프롬프트 (정보 은닉 규약이 여기)
+  agent_tools.py       # 룰 함수를 @tool 로 노출 — 최저 수용가는 잘라낸다
+  assistant.py         # 그 도구를 스스로 골라 부르는 에이전트 (화면 4)
 scripts/
   nexar_snapshot.py    # Nexar 응답 원본을 그대로 뜨는 조회 스크립트 (평소엔 안 씁니다)
 ```
@@ -135,6 +140,7 @@ uvicorn app.main:app --reload --port 8000
 | 1. 셀러 등록 | "등록" 클릭 (`snapshot` 모드에서는 409) | `POST /api/sellers/register` |
 | 2. 구매 요청 등록 | "요청 등록" 클릭 → 즉시 협상까지 실행되고 3번 화면으로 자동 이동 | `POST /api/buyers/request` |
 | 3. 협상 결과·승인 | 결과 자동 표시, "승인/거절" 클릭 | `GET /api/deals/{txid}`, `POST /api/deals/{txid}/approve|reject` |
+| 4. 조달 어시스턴트 | 자연어로 질문 → 에이전트가 도구를 부르며 답함 | `POST /api/assistant` |
 
 ## 데모 시연 순서
 
@@ -236,7 +242,7 @@ LLM API 라 어텐션을 볼 수 없고, LIME 은 토큰을 하나씩 빼며 재
 실제로 들어 있는지**만 확인합니다. 생성이 실패하든 사실과 어긋나든 템플릿이
 대신 나갑니다 — 리포트는 승인 흐름의 산출물이라 없으면 안 됩니다.
 
-### Strands 어댑터
+### Strands — 협상 어댑터와 도구를 쓰는 에이전트
 
 `app/strands_agents.py` 가 `Agent` + `structured_output(pydantic)` 을 씁니다.
 `SellerAgentPort`/`BuyerAgentPort` 인터페이스가 같아서 `negotiate.py` 는 분기
@@ -247,9 +253,36 @@ LLM API 라 어텐션을 볼 수 없고, LIME 은 토큰을 하나씩 빼며 재
 규약(셀러는 바이어 상한가를 못 본다)이 프롬프트 **문장** 안에 있어서 타입도
 린터도 안 잡아 주고, 어댑터마다 들고 있으면 한쪽만 고쳐질 때 조용히 깨집니다.
 
+**도구를 쓰는 에이전트 (화면 4).** `app/agent_tools.py` 가 기존 룰 함수 셋을
+`@tool` 로 노출하고, `app/assistant.py` 의 에이전트가 무엇을 확인할지 스스로
+정해 여러 번 부릅니다.
+
+```
+"STM32 500개를 60일 안에 받을 수 있나? 어디가 제일 싸지?"
+  → list_catalog_items()   품목 코드를 확인하고
+  → check_delivery(...)    납기 안에 되는지 룰로 판정한 뒤
+  → find_sellers(...)      후보와 조건을 받아
+  → 근거를 붙여 답한다
+```
+
+**새 로직이 없습니다** — 세 도구 전부 `store.list_items()` · `store.sellers_for()` ·
+`feasibility.check()` 를 감싸기만 합니다. 판정은 여전히 룰이 하고 모델이 정하는
+것은 *무엇을 물어볼지*입니다. 화면 4는 **무슨 도구를 몇 번 불렀는지** 배지로
+보여줍니다 — 답만 보면 모델이 지어낸 것과 룰이 판정한 것을 구분할 수 없습니다.
+
+두 가지를 일부러 막아 뒀고, 각각 검사가 붙어 있습니다:
+
+- **`find_sellers` 는 `floor_price` 를 반환하지 않습니다.** `store.sellers_for()` 가
+  돌려주는 `SellerRegister` 에는 셀러의 최저 수용가가 들어 있는데, 그대로 모델에
+  넘기면 상대의 유보가격을 아는 셈이라 협상이 성립하지 않습니다
+- **협상 에이전트에게는 도구를 주지 않습니다.** 셀러가 `find_sellers` 를 부르면
+  경쟁 셀러의 제시가를 봅니다. 협상 라운드 안에서는 `negotiate.py` 가 넘겨주는
+  것만 알아야 합니다
+
 > **아직 확인되지 않은 것**: 모델 왕복을 실제로 돌려 보지 못했습니다(API 키 없음).
-> 테스트는 프롬프트 규약·가드레일·폴백까지만 덮습니다. 제출 전에 키를 넣고
-> 두 모드를 각각 한 번씩 돌려 볼 것.
+> 테스트가 덮는 것은 프롬프트 규약·가드레일·폴백·도구의 판정과 경계까지입니다.
+> **모델이 실제로 도구를 부르는지**는 키가 있어야 확인됩니다. 제출 전에 키를 넣고
+> 세 자리(협상·리포트·어시스턴트)를 각각 한 번씩 돌려 볼 것.
 
 ### 설정 방법
 
