@@ -15,9 +15,6 @@ import os
 
 from . import snapshot_catalog
 
-# "하루에 몇 개 만들 수 있는가". 제조 경로가 남아 있는 동안만 쓰인다.
-CAPACITY_PER_DAY = float(os.getenv("PRODUCTION_CAPACITY_PER_DAY", "10"))
-
 # 부족분을 조달할 때 협상에 넘길 상한가 = 적격 공급처 최저가 × (1 + 이 값)
 PROCURE_CAP_MARGIN = float(os.getenv("PROCURE_CAP_MARGIN", "0.05"))
 
@@ -34,24 +31,24 @@ def _vendor_offers(code: str, qty: float) -> list[dict]:
             for s in snapshot_catalog.sellers_for(code, max(1, int(qty)))]
 
 
-def _product_and_bom(product_code: str) -> tuple[dict, dict | None]:
+def _product(product_code: str) -> dict:
     """
-    품목(재고 포함)과 BOM.
+    품목과 '우리' 재고.
 
-    스냅샷에는 '우리' 재고도 BOM도 없다 — 외부 유통사의 공급 데이터뿐이다.
-    그래서 모든 품목을 재고 0인 구매 품목으로 본다: BOM 전개를 건너뛰고 부족분
-    전량을 조달로 채운다. 생산 공정이 없으므로 제조 리드타임·생산일도 0이다.
+    스냅샷에는 우리 재고가 없다 — 외부 유통사의 공급 데이터뿐이다. 그래서
+    `on_hand` 는 항상 0이고, 요청 수량 전량을 조달로 채운다. 상수를 그대로 두지
+    않고 필드로 남기는 이유는, 실제 재고 출처가 생기면 여기 한 곳만 바뀌기 때문이다.
     """
     item = next((i for i in snapshot_catalog.list_items()
                  if i["code"] == product_code), None)
     if item is None:
         raise ValueError(f"스냅샷에 없는 품목입니다: {product_code!r}")
     return {"id": None, "code": item["code"], "name": item["name"],
-            "spec": item["spec"], "on_hand": 0.0}, None
+            "spec": item["spec"], "on_hand": 0.0}
 
 
 def _material_plan(code: str, required: float, on_hand: float) -> dict:
-    """자재 1종의 부족분과 조달 조건. 조달할 게 없으면 candidates는 빈 목록."""
+    """품목 1종의 부족분과 조달 조건. 조달할 게 없으면 candidates는 빈 목록."""
     shortage = max(0.0, required - on_hand)
     plan = {
         "code": code,
@@ -121,58 +118,34 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
     """
     "이 수량을 이 납기 안에 댈 수 있는가"를 판정하고 근거를 함께 돌려준다.
 
-    조달과 생산은 **직렬**로 본다(자재가 와야 만들기 시작). 실제로는 일부 겹치지만,
-    영업이 고객에게 약속하는 자리라 보수적으로 잡는 편이 맞다.
+    소요일은 조달 납기 하나다. 우리가 만드는 게 아니라 유통사에서 사 오는 구조라
+    제조 리드타임·생산일이 없다.
     """
-    product, bom = _product_and_bom(product_code)
+    product = _product(product_code)
     on_hand = product["on_hand"]
     shortfall = max(0.0, qty - on_hand)
-    is_manufactured = bom is not None
     materials = []
-
-    if is_manufactured:
-        # 만들어 파는 품목 — 자재를 조달해서 생산한다.
-        if shortfall > 0:
-            for line in bom["lines"]:
-                materials.append(_material_plan(
-                    line["code"], line["qty_per"] * shortfall, line["on_hand"]))
-        mfg_lead_days = bom["produce_delay"]
-        production_days = math.ceil(shortfall / CAPACITY_PER_DAY) if shortfall > 0 else 0
-    else:
-        # BOM이 없는 품목 = 사다 파는(또는 사서 쓰는) 품목. 생산 공정이 없으므로
-        # 부족분을 그 품목 자체로 조달한다. 생산일·제조 리드타임은 0.
-        if shortfall > 0:
-            materials.append(_material_plan(product_code, qty, on_hand))
-        mfg_lead_days = 0
-        production_days = 0
+    if shortfall > 0:
+        materials.append(_material_plan(product_code, qty, on_hand))
 
     procurement_days = max([m["best_lead_days"] for m in materials], default=0)
     blocked = [m for m in materials if m["blocked"]]
-    total_days = procurement_days + mfg_lead_days + production_days
+    total_days = procurement_days
 
     feasible = (not blocked) and total_days <= due_days
 
     # 납기 안에 댈 수 있는 최대 수량 — 안 된다고만 하지 않고 대안을 준다.
     # 조달 납기는 요청 수량 기준으로 구한 값을 그대로 쓴다(수량이 줄면 MOQ 때문에
     # 조달이 오히려 막힐 수 있어서, 이 값은 낙관적인 상한이다).
-    if is_manufactured:
-        spare_days = due_days - procurement_days - mfg_lead_days
-        max_feasible_qty = on_hand + max(0.0, spare_days) * CAPACITY_PER_DAY
-    else:
-        # 조달만 하면 되므로, 납기가 조달 납기를 넘기면 요청 수량 전부 가능하고
-        # 못 넘기면 지금 있는 재고까지만 가능하다.
-        max_feasible_qty = qty if procurement_days <= due_days else on_hand
-        # 다만 아무도 그만큼 못 대면 거기까지다. 이걸 빼면 "댈 수 있는 판매자가
-        # 없습니다" 라고 해놓고 "최대 요청 수량까지 가능합니다" 라고 답하게 된다.
-        caps = [m["supply_cap"] for m in materials if m["supply_cap"] is not None]
-        if caps:
-            max_feasible_qty = min(max_feasible_qty, on_hand + min(caps))
+    max_feasible_qty = qty if procurement_days <= due_days else on_hand
+    # 다만 아무도 그만큼 못 대면 거기까지다. 이걸 빼면 "댈 수 있는 판매자가
+    # 없습니다" 라고 해놓고 "최대 요청 수량까지 가능합니다" 라고 답하게 된다.
+    caps = [m["supply_cap"] for m in materials if m["supply_cap"] is not None]
+    if caps:
+        max_feasible_qty = min(max_feasible_qty, on_hand + min(caps))
 
     reasons = []
-    reasons.append(
-        f"완제품 재고 {on_hand:,.0f}개 → {shortfall:,.0f}개를 새로 만들어야 합니다."
-        if is_manufactured
-        else f"재고 {on_hand:,.0f}개 → {shortfall:,.0f}개를 조달해야 합니다 (BOM이 없는 구매 품목).")
+    reasons.append(f"재고 {on_hand:,.0f}개 → {shortfall:,.0f}개를 조달해야 합니다.")
     for m in materials:
         if m["blocked"]:
             reasons.append(f"[{m['code']}] {m['note']}")
@@ -185,15 +158,10 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
             reasons.append(
                 f"[{m['code']}] 소요 {m['required']:,.0f} / 재고 {m['on_hand']:,.0f} → 충분")
     if shortfall > 0:
-        reasons.append(
-            f"소요일 = 조달 {procurement_days}일 + 제조 리드타임 {mfg_lead_days}일 + "
-            f"생산 {production_days}일(일 {CAPACITY_PER_DAY:,.0f}개) = {total_days}일 "
-            f"(요구 납기 {due_days}일)"
-            if is_manufactured
-            else f"소요일 = 조달 {procurement_days}일 (요구 납기 {due_days}일)")
+        reasons.append(f"소요일 = 조달 {procurement_days}일 (요구 납기 {due_days}일)")
     if not feasible:
         reasons.append(
-            "→ 이 납기 안에는 한 개도 댈 수 없습니다 (조달·제조 리드타임만으로 납기를 다 씁니다)."
+            "→ 이 납기 안에는 한 개도 댈 수 없습니다 (조달 납기만으로 납기를 다 씁니다)."
             if max_feasible_qty <= 0
             else f"→ 납기 내 최대 {max_feasible_qty:,.0f}개까지 가능합니다.")
 
@@ -202,12 +170,8 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
         "requested_qty": qty,
         "due_days": due_days,
         "on_hand": on_hand,
-        "is_manufactured": is_manufactured,
         "shortfall": shortfall,
-        "capacity_per_day": CAPACITY_PER_DAY,
         "procurement_days": procurement_days,
-        "manufacturing_lead_days": mfg_lead_days,
-        "production_days": production_days,
         "total_days": total_days,
         "feasible": feasible,
         "max_feasible_qty": max_feasible_qty,
@@ -219,7 +183,7 @@ def check(product_code: str, qty: float, due_days: int) -> dict:
 def procurement_requests(result: dict) -> list[dict]:
     """
     검증 결과에서 '부족분 조달 요청' 목록을 뽑는다.
-    이걸 그대로 협상(run_negotiation)에 넘기면 3단계의 발주서 생성까지 이어진다.
+    이걸 그대로 협상(run_negotiation)에 넘기면 검증에서 협상까지 이어진다.
     """
     out = []
     for m in result["materials"]:

@@ -196,8 +196,9 @@ def check_feasibility_snapshot() -> None:
     ok = feasibility.check("MCU-A", 5000, 30)
     assert ok["feasible"] is True, ok["reasons"]
     assert ok["on_hand"] == 0.0                  # 스냅샷에는 '우리' 재고가 없다
-    assert ok["is_manufactured"] is False        # BOM 전개를 건너뛴다
-    assert ok["manufacturing_lead_days"] == 0 and ok["production_days"] == 0
+    # 소요일은 조달 납기 하나다 — 제조 경로가 없으므로 더해지는 항이 없다
+    assert ok["total_days"] == ok["procurement_days"]
+    assert "is_manufactured" not in ok, "제조 경로가 되살아났다"
     assert len(feasibility.procurement_requests(ok)) == 1
 
     # 아무도 못 대는 수량이면 막힌다. 이걸 놓치면 협상 스크리닝이 전원 탈락시킬
