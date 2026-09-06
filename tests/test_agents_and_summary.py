@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-협상 어댑터(Strands/OpenAI) 회귀 검증.
+협상 어댑터(Strands/OpenAI)와 설명 제너레이션 회귀 검증.
 
 pytest 없이 그대로 실행된다:
 
@@ -23,7 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from app.agent_prompts import seller_prompt, buyer_prompt          # noqa: E402
-from app.schemas import SellerRegister, BuyerRequest              # noqa: E402
+from app.schemas import SellerRegister, BuyerRequest, Envelope, MsgType  # noqa: E402
+from app import report                                              # noqa: E402
 
 
 OFFER = SellerRegister(
@@ -88,14 +89,100 @@ def check_mode_switch() -> None:
     print("  모드 전환 OK — rule(기본) / strands / llm")
 
 
+# ── 설명 제너레이션 ─────────────────────────────────────────────────────────
+def _log() -> list[Envelope]:
+    """낙찰까지 간 최소 로그. 한 곳은 스크리닝에서, 한 곳은 가격으로 밀린다."""
+    def env(t, frm, to, **payload):
+        return Envelope(type=t, **{"from": frm}, to=to, txid="TX-TEST", payload=payload)
+
+    return [
+        env(MsgType.REQUEST, "buyer", "central", item="MCU-A", qty=500, cap_price=4800),
+        env(MsgType.REQUEST, "central", "*", item="MCU-A", qty=500),
+        env(MsgType.REJECT, "central", "머큐리", stage="screening", reason="재고부족(보유 0 < 요청 500)"),
+        env(MsgType.OFFER, "한빛테크", "central", item="MCU-A", price=4500),
+        env(MsgType.OFFER, "오퍼렛", "central", item="MCU-A", price=4700),
+        env(MsgType.SETTLED, "central", "buyer", seller_id="한빛테크", price=4500, qty=500),
+    ]
+
+
+def check_facts_and_template() -> None:
+    f = report._facts(_log())
+    assert f["winner"] == "한빛테크" and f["price"] == 4500, f
+    assert list(f["sellers"]) == ["한빛테크", "오퍼렛"], f["sellers"]
+    assert f["screening_rejects"][0]["seller_id"] == "머큐리"
+    assert f["cap"] == 4800, "상한가는 buyer→central 접수 메시지에서만 온다"
+
+    text = report.TemplateSummarizer().summarize(_log())
+    assert "한빛테크" in text and "4500" in text, text
+    print("  사실 추출·템플릿 OK — 낙찰자·상한가·스크리닝 사유가 전부 잡힌다")
+
+
+def check_verify_guard() -> None:
+    """가드레일이 무엇을 막는지 — 막아야 할 것만 막고 멀쩡한 건 통과시킨다."""
+    f = report._facts(_log())
+
+    ok, _ = report._verify("한빛테크가 4,500원으로 최저가를 제시해 채택되었습니다.", f)
+    assert ok, "천 단위 구분이 들어간 정상 문장을 막으면 안 된다"
+
+    for bad, why in [
+        ("", "빈 응답"),
+        ("오퍼렛이 4500원으로 채택되었습니다.", "낙찰자가 틀림"),
+        ("한빛테크가 3900원으로 채택되었습니다.", "낙찰가가 틀림"),
+    ]:
+        ok, _ = report._verify(bad, f)
+        assert not ok, f"막았어야 한다({why}): {bad!r}"
+    print("  가드레일 OK — 낙찰자·낙찰가가 틀리면 잡고, 천 단위 구분은 통과시킨다")
+
+
+def check_llm_fallback() -> None:
+    """
+    설명 생성이 실패하거나 사실과 어긋나면 **템플릿과 똑같은 문장**이 나온다.
+
+    리포트는 승인 흐름의 산출물이라 "요약을 못 만들어서 리포트가 없다"가 되면 안 된다.
+    """
+    expected = report.TemplateSummarizer().summarize(_log())
+
+    s = report.LLMSummarizer()
+    s._generate = lambda f: (_ for _ in ()).throw(RuntimeError("네트워크 끊김"))
+    assert s.summarize(_log()) == expected, "생성 실패인데 템플릿으로 안 돌아갔다"
+
+    s = report.LLMSummarizer()
+    s._generate = lambda f: "오퍼렛이 9999원에 낙찰되었습니다."   # 사실과 어긋남
+    assert s.summarize(_log()) == expected, "사실과 어긋나는데 그대로 내보냈다"
+
+    s = report.LLMSummarizer()
+    s._generate = lambda f: "규칙 엔진은 한빛테크의 4,500원을 채택했습니다. 오퍼렛은 4,700원으로 더 높았습니다."
+    out = s.summarize(_log())
+    assert out.startswith("규칙 엔진은"), out
+    print("  폴백 OK — 실패·사실불일치면 템플릿, 정상이면 생성문이 나간다")
+
+
+def check_explain_prompt() -> None:
+    """설명 프롬프트에는 룰이 뽑은 사실만 들어간다 — 원문 로그가 새면 안 된다."""
+    f = report._facts(_log())
+    p = report._explain_prompt(f)
+    assert "한빛테크" in p and "4500" in p and "머큐리" in p, p
+    assert "재고부족" in p, "탈락 사유가 있어야 '왜 탈락했는지'를 설명할 수 있다"
+    assert "Envelope" not in p and "txid" not in p, f"원문 로그가 프롬프트에 샜다:\n{p}"
+    print("  설명 프롬프트 OK — 사실 dict 만 들어가고 원문 로그는 안 들어간다")
+
+
 CHECKS = {
     "prompt_contract": check_prompt_contract,
     "mode_switch": check_mode_switch,
+    "facts_template": check_facts_and_template,
+    "verify_guard": check_verify_guard,
+    "llm_fallback": check_llm_fallback,
+    "explain_prompt": check_explain_prompt,
 }
 
 
 def test_prompt_contract(): check_prompt_contract()
 def test_mode_switch(): check_mode_switch()
+def test_facts_template(): check_facts_and_template()
+def test_verify_guard(): check_verify_guard()
+def test_llm_fallback(): check_llm_fallback()
+def test_explain_prompt(): check_explain_prompt()
 
 
 if __name__ == "__main__":
