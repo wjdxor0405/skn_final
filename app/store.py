@@ -10,9 +10,9 @@ L1 — 중앙 서버 + 로그 append
   (SQLite 전용 문법을 쓰지 않고 SQLAlchemy ORM 표준 쿼리만 사용했기 때문)
 
 [카탈로그 출처는 세 가지 — CATALOG_SOURCE 참고]
-- sqlite   : 화면에서 등록한 셀러 카탈로그 (기존 동작)
+- snapshot : Nexar(Octopart) API 응답 스냅샷을 읽는다 (기본값). 외부 ERP가 없으므로 발주서는 안 만든다
+- sqlite   : 화면에서 등록한 셀러 카탈로그
 - odoo     : Odoo의 공급처 단가표를 읽고, 낙찰 시 Odoo 발주서 초안까지 만든다
-- snapshot : Nexar(Octopart) API 응답 스냅샷을 읽는다. 외부 ERP가 없으므로 발주서는 안 만든다
 
 이 파일이 저장·연동을 모두 흡수하므로 negotiate.py / report.py 는 출처를 알지 못한다.
 (다만 MOQ는 Odoo에만 있던 제약이라 negotiate.py 의 스크리닝에 한 절이 추가돼 있다)
@@ -38,11 +38,15 @@ class CatalogReadOnly(RuntimeError):
     """카탈로그의 주인이 Odoo일 때 쓰기를 시도한 경우. API 계층에서 409로 바꾼다."""
 
 # ── 카탈로그 출처 ────────────────────────────────────────────────────────────
-# sqlite   : 화면에서 직접 등록한 셀러 카탈로그 (기존 동작, 기본값)
-# odoo     : Odoo의 공급처 단가표(product.supplierinfo)를 카탈로그로 읽는다
 # snapshot : 커밋된 Nexar(Octopart) 응답 원본을 읽는다 (app/snapshot_catalog.py).
 #            API 키 없이 실데이터로 돌리기 위한 경로다. 환산·합성 가정은 그쪽에 있다.
-CATALOG_SOURCE = os.getenv("CATALOG_SOURCE", "sqlite").lower()
+#            **기본값** — 아무것도 설정하지 않아도 실데이터로 돈다.
+# sqlite   : 화면에서 직접 등록한 셀러 카탈로그
+# odoo     : Odoo의 공급처 단가표(product.supplierinfo)를 카탈로그로 읽는다
+#
+# 기본값이 sqlite 에서 snapshot 으로 바뀌었다. 지어낸 시연용 값보다 실제 유통
+# 데이터로 첫 화면이 뜨는 편이 낫고, 도메인이 제조업에서 유통으로 옮겨갔다.
+CATALOG_SOURCE = os.getenv("CATALOG_SOURCE", "snapshot").lower()
 
 # Odoo 모드에서만 쓰는 두 가지 가정 — Odoo에 해당 데이터가 아예 없어서 유도해야 한다.
 #
