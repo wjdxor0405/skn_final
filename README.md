@@ -279,7 +279,7 @@ uvicorn app.main:app --reload --port 8000
 Nexar 이용약관을 따릅니다.
 
 **Odoo (Community 판, LGPLv3)** 를 CRM·ERP로 쓰던 시기가 있었고 히스토리에 남아
-있습니다(`app/odoo_client.py`, 커밋 `e32a17b` 에서 제거). 그때도 **Odoo 코드를 이
+있습니다(`app/odoo_client.py`, 커밋 `7228944` 에서 제거). 그때도 **Odoo 코드를 이
 저장소에 포함하지 않았습니다** — 기본 제공되는 JSON-RPC External API를 표준
 라이브러리로 호출했을 뿐이라 LGPL 조건이 전파되지 않았습니다. 현재 코드는 Odoo를
 전혀 쓰지 않습니다.
