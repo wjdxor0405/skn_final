@@ -114,6 +114,7 @@ python scripts/nexar_snapshot.py --mpn-file scripts/mpns.txt --out data/nexar_sn
 | `docs/decisions/0004-…` | 작업지시서 범위 밖에서 고친 두 파일 — **병합 담당자가 읽어야 합니다** |
 | `docs/decisions/0005-…` | 왜 Odoo·제조업을 걷어냈고 무엇을 남겼는가 |
 | `docs/wiki_대조_20260907.md` | 9/5~9/6 회의가 뒤집은 것과 아직 안 갈린 쟁점 4개 |
+| `docs/해커톤_요건_대조.md` | 제출 요건 대비 상태 — Strands 진행도가 여기 있습니다 |
 
 ## 실행 방법
 
@@ -197,11 +198,11 @@ uvicorn app.main:app --reload --port 8000
 - **동률 처리 정확성**: 자연어 요약에서 동일 가격일 때 "낮은 단가"가 아니라 "동일한 단가지만 먼저 접수된 조건"으로 정확히 서술
 - **리포트는 로그에서만 파생**: 에이전트가 리포트를 직접 쓰지 않고, `report.py`가 항상 append된 로그를 읽어서만 생성
 
-## LLM으로 교체하는 방법 (L4 다음 단계)
+## 리포트 요약을 LLM으로 (L4 다음 단계) — 완료
 
-`report.py`의 `TemplateSummarizer`가 `SummarizerPort`(schemas.py) 인터페이스를 구현하고 있습니다.
-같은 인터페이스로 `LLMSummarizer`를 새로 만들고, `main.py`에서 주입하는 인스턴스만 바꾸면 됩니다.
-메시지 형식(Envelope)과 API 엔드포인트는 그대로 유지됩니다.
+✅ 했습니다 — `report.py` 의 `LLMSummarizer` 가 `SummarizerPort` 를 구현하고
+`SUMMARIZER_MODE=llm` 으로 켜집니다. 메시지 형식(Envelope)과 API 엔드포인트는
+그대로입니다. 자세한 것은 아래 "LLM 을 켜는 방법" 절.
 
 ## 자체 호스팅 프로세스 분리가 필요해지면
 
@@ -210,9 +211,49 @@ uvicorn app.main:app --reload --port 8000
 실제 HTTP 요청이나 메시지 큐 발행으로 바꾸면 됩니다 — 메시지 형식(Envelope)이 이미 고정되어 있어
 호출 방식만 바뀌고 나머지 로직은 그대로 재사용됩니다.
 
-## LLM 에이전트로 전환하는 방법 (OpenAI API)
+## LLM 을 켜는 방법 — 두 자리
 
-기본값은 규칙 기반(`rule`)입니다. LLM 기반 협상으로 바꾸려면 **`.env` 파일**을 쓰세요.
+기본값은 **LLM 없이** 돕니다(`rule` + `template`). 켤 수 있는 자리는 둘입니다.
+
+| 환경변수 | 기본 | 켜면 |
+|---|---|---|
+| `NEGOTIATOR_MODE` | `rule` | `strands` — **Strands Agents SDK 로 협상**(해커톤 필수 요건)<br>`llm` — OpenAI SDK 직접 호출(구형) |
+| `SUMMARIZER_MODE` | `template` | `llm` — **설명 제너레이션**. 아래 |
+
+### 설명 제너레이션 — 왜 XAI 가 아닌가
+
+멘토 피드백의 결론입니다. XAI 는 기각됐습니다 — 팀이 쓰는 건 로컬 모델이 아니라
+LLM API 라 어텐션을 볼 수 없고, LIME 은 토큰을 하나씩 빼며 재추론해야 해서
+1회 예측에 수천 원까지 갑니다. 대안이 **예측 후에 "왜 이렇게 골랐는지"를 텍스트로
+푸는 것**이었습니다. COT(답을 내기 전에 추론을 먼저 생성)와 다릅니다 — 여기서
+판단은 이미 룰이 끝냈고 LLM 은 **끝난 판단을 설명만** 합니다.
+
+그래서 **모델이 로그를 직접 읽지 않습니다.** `report.py` 의 `_facts()` 가 룰로
+뽑아낸 사실만 넘어갑니다. 숫자와 판정이 전부 룰에서 오므로 지어낼 자리가 없고,
+같은 사실을 템플릿도 쓰기 때문에 두 구현이 다른 사실을 말할 수 없습니다.
+
+그래도 모델은 숫자를 흘릴 수 있어서 `_verify()` 가 **낙찰자와 낙찰가가 출력에
+실제로 들어 있는지**만 확인합니다. 생성이 실패하든 사실과 어긋나든 템플릿이
+대신 나갑니다 — 리포트는 승인 흐름의 산출물이라 없으면 안 됩니다.
+
+### Strands 어댑터
+
+`app/strands_agents.py` 가 `Agent` + `structured_output(pydantic)` 을 씁니다.
+`SellerAgentPort`/`BuyerAgentPort` 인터페이스가 같아서 `negotiate.py` 는 분기
+한 절만 늘었습니다. **모델 교체는 `_model()` 한 곳**입니다 — Bedrock 으로 가려면
+`OpenAIModel` 을 `BedrockModel` 로 바꾸는 것이 전부입니다.
+
+프롬프트는 `app/agent_prompts.py` 에 모아 두 어댑터가 공유합니다. 정보 은닉
+규약(셀러는 바이어 상한가를 못 본다)이 프롬프트 **문장** 안에 있어서 타입도
+린터도 안 잡아 주고, 어댑터마다 들고 있으면 한쪽만 고쳐질 때 조용히 깨집니다.
+
+> **아직 확인되지 않은 것**: 모델 왕복을 실제로 돌려 보지 못했습니다(API 키 없음).
+> 테스트는 프롬프트 규약·가드레일·폴백까지만 덮습니다. 제출 전에 키를 넣고
+> 두 모드를 각각 한 번씩 돌려 볼 것.
+
+### 설정 방법
+
+**`.env` 파일**을 쓰세요.
 
 ```bash
 # Windows PowerShell이면: copy .env.example .env
@@ -221,7 +262,8 @@ uvicorn app.main:app --reload --port 8000
 `.env` 파일을 열어서 값을 채워넣으세요:
 ```
 OPENAI_API_KEY=sk-여기에-발급받은-실제-키
-NEGOTIATOR_MODE=llm
+NEGOTIATOR_MODE=strands    # 또는 llm
+SUMMARIZER_MODE=llm        # 설명 제너레이션도 켜려면
 OPENAI_MODEL=gpt-4o-mini   # 생략 가능. 다른 모델 쓰려면 이 값만 바꾸면 됨 (예: gpt-4o, gpt-4.1-mini)
 ```
 
@@ -234,9 +276,11 @@ uvicorn app.main:app --reload --port 8000
 
 **주의**: `.env` 파일은 실제 API 키가 들어있으니 **절대 git에 커밋하지 마세요** (`.gitignore`에 `.env` 추가 권장, `.env.example`만 커밋).
 
-### 추가된 파일
-- `agents.py` — `RuleBasedSellerAgent`/`RuleBasedBuyerAgent` (기존 로직을 클래스로 감쌈)
-- `llm_agents.py` — `OpenAISellerAgent`/`OpenAIBuyerAgent` (OpenAI `gpt-4o-mini`, Structured Outputs로 `{price, message}` / `{accept, message}` 형식 강제)
+### 관련 파일
+- `agents.py` — `RuleBasedSellerAgent`/`RuleBasedBuyerAgent` (기본값)
+- `strands_agents.py` — `StrandsSellerAgent`/`StrandsBuyerAgent` (Strands SDK)
+- `llm_agents.py` — `OpenAISellerAgent`/`OpenAIBuyerAgent` (OpenAI SDK 직접 호출)
+- `agent_prompts.py` — 두 LLM 어댑터가 공유하는 프롬프트
 - `audit.py` — **감사자**: LLM이 최저수용가 밑으로 부르거나, 상한가 초과인데 실수로 승인하면 규칙으로 보정. 개입한 경우 로그의 `audit_note` 필드에 사유가 남음
 
 ### 정보 은닉 — 무엇을 닫았고 무엇이 남았나
