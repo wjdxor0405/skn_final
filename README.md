@@ -85,6 +85,9 @@ app/
     tools.py           6단계를 @tool 로 노출
     run.py             rule / strands 전환
   reviews/             리뷰 소스 + 조작 확률
+    synthetic.py       합성 리뷰 (기본값)
+    collected.py       모아서 클렌징한 실 리뷰 — REVIEW_SOURCE=collected
+    clean.py           클렌징 — 개인정보·중복·다른 옵션의 리뷰를 걷어낸다
   main.py              API — /api/recommend 하나가 엔진의 입구
 
   schemas.py · store.py · negotiate.py · agents.py · audit.py · report.py
@@ -93,8 +96,12 @@ app/
   snapshot_catalog.py  Nexar 스냅샷 로더 (환산·합성 가정이 전부 여기)
 scripts/
   eval_matcher.py      의미 대조 채점기
+  parse_parts_list.py  부품 마스터 xlsx → data/parts.json
+  collect_reviews.py   리뷰 실사(probe) · 수집(collect)
+  clean_reviews.py     원문 → 클렌징 결과 + 커밋되는 파생 지표
 tests/
   test_recommend_engine.py   검사 19건, 키 없이 돈다
+  test_review_pipeline.py    검사 12건, 네트워크 없이 돈다
 ```
 
 **엔진은 도메인을 모릅니다.** 검사가 그것을 강제합니다 — 엔진 모듈 어디에도
@@ -108,7 +115,7 @@ tests/
 | `RECOMMEND_MODE` | `rule` 1~5단계를 순서대로 | `strands` 에이전트가 순서를 정한다 |
 | `MATCH_MODE` | `label` 합성 라벨을 읽는다 | `llm` 모델이 리뷰를 실제로 읽는다 |
 | `RISK_MODE` | `none` 붙은 점수만 | `llm` 모델이 조작 확률을 매긴다 |
-| `REVIEW_SOURCE` | `synthetic` | 새 소스는 `app/reviews/` 에 등록 |
+| `REVIEW_SOURCE` | `synthetic` | `collected` 모아 둔 실 리뷰 (아래 절) |
 | `CATALOG_SOURCE` | `snapshot` 실 유통 데이터 | `sqlite` |
 | `MODEL_PROVIDER` | `openai` | `bedrock` — AWS 자격증명은 boto3 표준 체인 |
 | `NEGOTIATOR_MODE` | `rule` | `llm` · `strands` (이전 기획) |
@@ -164,9 +171,9 @@ Bedrock 모델 id 는 교차 리전 추론 프로파일 접두사(`global.`·`us
 
 ---
 
-## 리뷰 데이터 — 지금은 합성입니다
+## 리뷰 데이터 — 기본은 합성, 실 리뷰는 모아서 씁니다
 
-3단계가 대조할 리뷰의 데이터원이 없습니다. 기획은 네이버 강화 API 를 전제했는데
+3단계가 대조할 리뷰의 데이터원이 없었습니다. 기획은 네이버 강화 API 를 전제했는데
 **2026-09-07 확인 결과 네이버·카카오 어느 쪽에서도 리뷰를 가져올 수 없었습니다.**
 
 그래서 기본 구현이 합성이고, `data/nexar_snapshot.json` 이 키 없이 실데이터로 도는
@@ -179,6 +186,31 @@ Bedrock 모델 id 는 교차 리전 추론 프로파일 접두사(`global.`·`us
 잡았다"* 는 **탐지 성능이 아니라 파이프라인의 증명**입니다 — 우리가 심고 우리가
 찾았습니다. 배경과 대가는
 [`docs/decisions/0008-…`](docs/decisions/0008-리뷰-소스-기본값을-합성으로-둔다.md).
+
+### 실 리뷰 — `REVIEW_SOURCE=collected`
+
+부품 마스터(322행)의 제품에 붙는 리뷰를 다나와에서 모아 씁니다. 세 단계입니다.
+
+```bash
+.venv/bin/python scripts/parse_parts_list.py                 # xlsx → data/parts.json (332 품목)
+.venv/bin/python scripts/collect_reviews.py probe            # 어디에 몇 건 있는지 (약 1시간)
+.venv/bin/python scripts/collect_reviews.py collect --top 50 # 상위 50 품목의 리뷰
+.venv/bin/python scripts/clean_reviews.py                    # 클렌징 + 파생 지표
+REVIEW_SOURCE=collected .venv/bin/uvicorn app.main:app --port 8000
+```
+
+**원문은 커밋되지 않습니다.** `data/reviews_raw/` 와 `data/reviews_clean/` 은
+`.gitignore` 로 막혀 있고, 저장소에 남는 것은 `data/reviews_snapshot.json` 의
+건수·분포·출처뿐입니다 — 2026-09-08 방침(리뷰 원문을 그대로 저장·노출하지 않는다)
+때문입니다. 그래서 이 모드는 **직접 모은 기계에서만** 돕니다.
+
+수집이 느린 것은 일부러입니다. `search.danawa.com` 이 `Crawl-delay: 10` 을 적어
+뒀고 그대로 지킵니다. 연속 실패 3회면 재시도하지 않고 멈춥니다.
+
+가장 조심한 곳은 **어느 상품에 붙일지**입니다. `Core i5-13400F` 를 검색하면 1위가
+그 CPU 를 넣은 **완제품 PC** 이고 이름만 보면 100% 일치합니다. 분류 코드·제외어·
+모델 꼬리표·낱말 네 겹으로 거릅니다. 배경과 대가는
+[`docs/decisions/0009-…`](docs/decisions/0009-리뷰-실소스를-다나와로-두고-원문은-커밋하지-않는다.md).
 
 ## 카탈로그 출처 — `CATALOG_SOURCE`
 
