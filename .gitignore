@@ -9,6 +9,17 @@
 data/*
 # 스냅샷 카탈로그만 예외 — 소스 취급(CATALOG_SOURCE=snapshot 이 읽는다)
 !data/nexar_snapshot.json
+# 부품 마스터를 편 것 — 우리가 손으로 채운 스펙이라 커밋한다
+!data/parts.json
+# 리뷰 실사 결과 — 상품 식별자와 건수뿐, 리뷰 원문이 아니다
+!data/review_probe.json
+# 리뷰 파생 지표 — 건수·분포·출처만. **원문은 여기 없다**
+!data/reviews_snapshot.json
+# 리뷰 원문과 클렌징 결과는 커밋하지 않는다 (2026-09-08 방침).
+# data/* 규칙에 이미 걸리지만, 실수로 예외를 추가하는 것을 막으려고 다시 적는다.
+data/reviews_raw/
+data/reviews_clean/
+data/parts_list.xlsx
 reports/
 *.db
 *.sqlite

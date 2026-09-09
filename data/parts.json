@@ -1,0 +1,7536 @@
+{
+ "as_of": "2026-09-09",
+ "source": "parts_list.xlsx (팀이 손으로 채운 수집 마스터)",
+ "note": "리뷰 수집 대상 목록. 스펙은 원본 표기 그대로 두고 수치는 derived 에 따로 뽑는다.",
+ "parts": [
+  {
+   "part_code": "cpu-intel-core-i3-12100f-ddr4",
+   "type": "cpu",
+   "name": "Core i3-12100F - DDR4",
+   "name_raw": "Core i3-12100F - DDR4",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "58W",
+    "memory": "DDR4",
+    "tier": "Entry"
+   },
+   "derived": {
+    "tdp_w": 58
+   },
+   "fields_raw": "LGA1700|58W|DDR4|Entry",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/132223/intel-core-i312100f-processor-12m-cache-up-to-4-30-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/132223/intel-core-i312100f-processor-12m-cache-up-to-4-30-ghz/compatible.html",
+   "row": 21,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i3-13100f",
+   "type": "cpu",
+   "name": "Core i3-13100F",
+   "name_raw": "Core i3-13100F",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "58W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Entry"
+   },
+   "derived": {
+    "tdp_w": 58
+   },
+   "fields_raw": "LGA1700|58W|DDR4 / DDR5|Entry",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/230575/intel-core-i313100f-processor-12m-cache-up-to-4-50-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/230575/intel-core-i313100f-processor-12m-cache-up-to-4-50-ghz/compatible.html",
+   "row": 22,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i3-14100f-ddr4",
+   "type": "cpu",
+   "name": "Core i3-14100F - DDR4",
+   "name_raw": "Core i3-14100F - DDR4",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "58W",
+    "memory": "DDR4",
+    "tier": "Entry"
+   },
+   "derived": {
+    "tdp_w": 58
+   },
+   "fields_raw": "LGA1700|58W|DDR4|Entry",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/236780/intel-core-i314100f-processor-12m-cache-up-to-4-70-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/236780/intel-core-i314100f-processor-12m-cache-up-to-4-70-ghz/compatible.html",
+   "row": 23,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-12400f",
+   "type": "cpu",
+   "name": "Core i5-12400F",
+   "name_raw": "Core i5-12400F",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "65W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "LGA1700|65W|DDR4 / DDR5|Mainstream",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/134587/intel-core-i512400f-processor-18m-cache-up-to-4-40-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/134587/intel-core-i512400f-processor-18m-cache-up-to-4-40-ghz/compatible.html",
+   "row": 24,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-12600k",
+   "type": "cpu",
+   "name": "Core i5-12600K",
+   "name_raw": "Core i5-12600K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|Mid-Range",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/134589/intel-core-i512600k-processor-20m-cache-up-to-4-90-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/134589/intel-core-i512600k-processor-20m-cache-up-to-4-90-ghz/compatible.html",
+   "row": 25,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-13400f",
+   "type": "cpu",
+   "name": "Core i5-13400F",
+   "name_raw": "Core i5-13400F",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "65W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "LGA1700|65W|DDR4 / DDR5|Mainstream",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/230501/intel-core-i513400f-processor-20m-cache-up-to-4-60-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/230501/intel-core-i513400f-processor-20m-cache-up-to-4-60-ghz/compatible.html",
+   "row": 26,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-13600k",
+   "type": "cpu",
+   "name": "Core i5-13600K",
+   "name_raw": "Core i5-13600K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|High-End",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/230493/intel-core-i513600k-processor-24m-cache-up-to-5-10-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/230493/intel-core-i513600k-processor-24m-cache-up-to-5-10-ghz/compatible.html",
+   "row": 27,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-14400",
+   "type": "cpu",
+   "name": "Core i5-14400",
+   "name_raw": "Core i5-14400",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "65W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "LGA1700|65W|DDR4 / DDR5|Mainstream",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/236782/intel-core-i514400-processor-20m-cache-up-to-4-70-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/236782/intel-core-i514400-processor-20m-cache-up-to-4-70-ghz/compatible.html",
+   "row": 28,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i5-14600k",
+   "type": "cpu",
+   "name": "Core i5-14600K",
+   "name_raw": "Core i5-14600K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|High-End",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/236776/intel-core-i514600k-processor-24m-cache-up-to-5-30-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/236776/intel-core-i514600k-processor-24m-cache-up-to-5-30-ghz/compatible.html",
+   "row": 29,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i7-12700k",
+   "type": "cpu",
+   "name": "Core i7-12700K",
+   "name_raw": "Core i7-12700K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|High-End",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/134594/intel-core-i712700k-processor-25m-cache-up-to-5-00-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/134594/intel-core-i712700k-processor-25m-cache-up-to-5-00-ghz/compatible.html",
+   "row": 30,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i7-13700k",
+   "type": "cpu",
+   "name": "Core i7-13700K",
+   "name_raw": "Core i7-13700K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|Enthusiast",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/230489/intel-core-i713700k-processor-30m-cache-up-to-5-40-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/230489/intel-core-i713700k-processor-30m-cache-up-to-5-40-ghz/compatible.html",
+   "row": 31,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i7-14700k",
+   "type": "cpu",
+   "name": "Core i7-14700K",
+   "name_raw": "Core i7-14700K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|Enthusiast",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/236773/intel-core-i714700k-processor-33m-cache-up-to-5-60-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/236773/intel-core-i714700k-processor-33m-cache-up-to-5-60-ghz/compatible.html",
+   "row": 32,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i9-13900k",
+   "type": "cpu",
+   "name": "Core i9-13900K",
+   "name_raw": "Core i9-13900K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|Flagship",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/230496/intel-core-i913900k-processor-36m-cache-up-to-5-80-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/230496/intel-core-i913900k-processor-36m-cache-up-to-5-80-ghz/compatible.html",
+   "row": 33,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-i9-14900k",
+   "type": "cpu",
+   "name": "Core i9-14900K",
+   "name_raw": "Core i9-14900K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1700",
+    "tdp": "125W",
+    "memory": "DDR4 / DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1700|125W|DDR4 / DDR5|Flagship",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/236773/intel-core-i914900k-processor-36m-cache-up-to-6-00-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/236773/intel-core-i914900k-processor-36m-cache-up-to-6-00-ghz/compatible.html",
+   "row": 34,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-5-225",
+   "type": "cpu",
+   "name": "Core Ultra 5 225",
+   "name_raw": "Core Ultra 5 225",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "65W",
+    "memory": "DDR5",
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "LGA1851|65W|DDR5|Mid-Range",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/241070/intel-core-ultra-5-processor-225-20m-cache-up-to-4-90-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/241070/intel-core-ultra-5-processor-225-20m-cache-up-to-4-90-ghz/compatible.html",
+   "row": 35,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-5-245k",
+   "type": "cpu",
+   "name": "Core Ultra 5 245K",
+   "name_raw": "Core Ultra 5 245K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "125W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1851|125W|DDR5|High-End",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-5-processor-245k-24m-cache-up-to-5-20-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-5-processor-245k-24m-cache-up-to-5-20-ghz/compatible.html",
+   "row": 36,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-5-250k-plus",
+   "type": "cpu",
+   "name": "Core Ultra 5 250K Plus",
+   "name_raw": "Core Ultra 5 250K Plus",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "125W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1851|125W|DDR5|High-End",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/245694/intel-core-ultra-5-processor-250k-plus-30m-cache-up-to-5-30-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/245694/intel-core-ultra-5-processor-250k-plus-30m-cache-up-to-5-30-ghz/compatible.html",
+   "row": 37,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-7-265k",
+   "type": "cpu",
+   "name": "Core Ultra 7 265K",
+   "name_raw": "Core Ultra 7 265K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "125W",
+    "memory": "DDR5",
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1851|125W|DDR5|Enthusiast",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-7-processor-265k-24m-cache-up-to-5-20-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-7-processor-265k-24m-cache-up-to-5-20-ghz/compatible.html",
+   "row": 38,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-7-270k-plus",
+   "type": "cpu",
+   "name": "Core Ultra 7 270K Plus",
+   "name_raw": "Core Ultra 7 270K Plus",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "125W",
+    "memory": "DDR5",
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1851|125W|DDR5|Enthusiast",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/245692/intel-core-ultra-7-processor-270k-plus-36m-cache-up-to-5-50-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/245692/intel-core-ultra-7-processor-270k-plus-36m-cache-up-to-5-50-ghz/compatible.html",
+   "row": 39,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-intel-core-ultra-9-285k",
+   "type": "cpu",
+   "name": "Core Ultra 9 285K",
+   "name_raw": "Core Ultra 9 285K",
+   "brand": "intel",
+   "brand_raw": "intel",
+   "specs": {
+    "socket": "LGA1851",
+    "tdp": "125W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 125
+   },
+   "fields_raw": "LGA1851|125W|DDR5|Flagship",
+   "spec_url": "https://www.intel.com/content/www/us/en/products/sku/241060/intel-core-ultra-9-processor-285k-36m-cache-up-to-5-70-ghz/specifications.html",
+   "cpu_support_url": "https://www.intel.com/content/www/us/en/products/sku/241060/intel-core-ultra-9-processor-285k-36m-cache-up-to-5-70-ghz/compatible.html",
+   "row": 40,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-5-5500",
+   "type": "cpu",
+   "name": "Ryzen 5 5500",
+   "name_raw": "Ryzen 5 5500",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM4",
+    "tdp": "65W",
+    "memory": "DDR4",
+    "tier": "Entry"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "AM4|65W|DDR4|Entry",
+   "spec_url": "https://www.techpowerup.com/cpu-specs/ryzen-5-5500.c2756",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am4.html",
+   "row": 41,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-5-7600x",
+   "type": "cpu",
+   "name": "Ryzen 5 7600X",
+   "name_raw": "Ryzen 5 7600X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "105W",
+    "memory": "DDR5",
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "tdp_w": 105
+   },
+   "fields_raw": "AM5|105W|DDR5|Mid-Range",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-5-7600x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 42,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-5-7600x3d",
+   "type": "cpu",
+   "name": "Ryzen 5 7600X3D",
+   "name_raw": "Ryzen 5 7600X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "65W",
+    "memory": "DDR5",
+    "tier": "High-End (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "AM5|65W|DDR5|High-End (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-5-7600x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 43,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-5-9600x",
+   "type": "cpu",
+   "name": "Ryzen 5 9600X",
+   "name_raw": "Ryzen 5 9600X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "65W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "AM5|65W|DDR5|High-End",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-5-9600x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 44,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-5-9600x-105w-tdp",
+   "type": "cpu",
+   "name": "Ryzen 5 9600X - 105W TDP",
+   "name_raw": "Ryzen 5 9600X - 105W TDP",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "105W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 105
+   },
+   "fields_raw": "AM5|105W|DDR5|High-End",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-5-9600x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 45,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-5700x",
+   "type": "cpu",
+   "name": "Ryzen 7 5700X",
+   "name_raw": "Ryzen 7 5700X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM4",
+    "tdp": "65W",
+    "memory": "DDR4",
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "AM4|65W|DDR4|Mid-Range",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-5700x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am4.html",
+   "row": 46,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-5800x3d",
+   "type": "cpu",
+   "name": "Ryzen 7 5800X3D",
+   "name_raw": "Ryzen 7 5800X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM4",
+    "tdp": "105W",
+    "memory": "DDR4",
+    "tier": "High-End (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 105
+   },
+   "fields_raw": "AM4|105W|DDR4|High-End (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-5800x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am4.html",
+   "row": 47,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-7700x",
+   "type": "cpu",
+   "name": "Ryzen 7 7700X",
+   "name_raw": "Ryzen 7 7700X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "105W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 105
+   },
+   "fields_raw": "AM5|105W|DDR5|High-End",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-7700x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 48,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-7700x3d",
+   "type": "cpu",
+   "name": "Ryzen 7 7700X3D",
+   "name_raw": "Ryzen 7 7700X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Enthusiast (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Enthusiast (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/processors/desktops/ryzen.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 49,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-7800x3d",
+   "type": "cpu",
+   "name": "Ryzen 7 7800X3D",
+   "name_raw": "Ryzen 7 7800X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Enthusiast (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Enthusiast (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-7800x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 50,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-9700x",
+   "type": "cpu",
+   "name": "Ryzen 7 9700X",
+   "name_raw": "Ryzen 7 9700X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "65W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 65
+   },
+   "fields_raw": "AM5|65W|DDR5|High-End",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-9700x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 51,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-9700x-105w-tdp",
+   "type": "cpu",
+   "name": "Ryzen 7 9700X - 105W TDP",
+   "name_raw": "Ryzen 7 9700X - 105W TDP",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "105W",
+    "memory": "DDR5",
+    "tier": "High-End"
+   },
+   "derived": {
+    "tdp_w": 105
+   },
+   "fields_raw": "AM5|105W|DDR5|High-End",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-9700x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 52,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-9800x3d",
+   "type": "cpu",
+   "name": "Ryzen 7 9800X3D",
+   "name_raw": "Ryzen 7 9800X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-7-9800x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 53,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-7-9850x3d",
+   "type": "cpu",
+   "name": "Ryzen 7 9850X3D",
+   "name_raw": "Ryzen 7 9850X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship (Gaming)"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship (Gaming)",
+   "spec_url": "https://www.amd.com/en/products/processors/desktops/ryzen.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 54,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-7900x3d",
+   "type": "cpu",
+   "name": "Ryzen 9 7900X3D",
+   "name_raw": "Ryzen 9 7900X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-9-7900x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 55,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-7950x",
+   "type": "cpu",
+   "name": "Ryzen 9 7950X",
+   "name_raw": "Ryzen 9 7950X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "170W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 170
+   },
+   "fields_raw": "AM5|170W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-9-7950x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 56,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-7950x3d",
+   "type": "cpu",
+   "name": "Ryzen 9 7950X3D",
+   "name_raw": "Ryzen 9 7950X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-9-7950x3d",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 57,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-9900x",
+   "type": "cpu",
+   "name": "Ryzen 9 9900X",
+   "name_raw": "Ryzen 9 9900X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/cpu/amd-ryzen-9-9900x",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 58,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-9900x3d",
+   "type": "cpu",
+   "name": "Ryzen 9 9900X3D",
+   "name_raw": "Ryzen 9 9900X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/processors/desktops/ryzen.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 59,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-9950x",
+   "type": "cpu",
+   "name": "Ryzen 9 9950X",
+   "name_raw": "Ryzen 9 9950X",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "170W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 170
+   },
+   "fields_raw": "AM5|170W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/ko/products/processors/desktops/ryzen/9000-series/amd-ryzen-9-9950x.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 60,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-9950x3d",
+   "type": "cpu",
+   "name": "Ryzen 9 9950X3D",
+   "name_raw": "Ryzen 9 9950X3D",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "120W",
+    "memory": "DDR5",
+    "tier": "Flagship"
+   },
+   "derived": {
+    "tdp_w": 120
+   },
+   "fields_raw": "AM5|120W|DDR5|Flagship",
+   "spec_url": "https://www.amd.com/en/products/processors/desktops/ryzen.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 61,
+   "warnings": []
+  },
+  {
+   "part_code": "cpu-amd-ryzen-9-9950x3d2",
+   "type": "cpu",
+   "name": "Ryzen 9 9950X3D2",
+   "name_raw": "Ryzen 9 9950X3D2",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "socket": "AM5",
+    "tdp": "170W",
+    "memory": "DDR5",
+    "tier": "Ultra Flagship"
+   },
+   "derived": {
+    "tdp_w": 170
+   },
+   "fields_raw": "AM5|170W|DDR5|Ultra Flagship",
+   "spec_url": "https://www.amd.com/en/products/processors/desktops/ryzen.html",
+   "cpu_support_url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+   "row": 62,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-b650m-pro-rs",
+   "type": "mainboard",
+   "name": "B650M Pro RS",
+   "name_raw": "B650M Pro RS",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 v3.01 이상 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|mATX|DDR5|Ryzen 9000 시리즈 장착 시 v3.01 이상 BIOS 업데이트 권장",
+   "spec_url": "https://www.asrock.com/mb/AMD/B650M%20Pro%20RS/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asrock.com/mb/AMD/B650M%2520Pro%2520RS/index.asp%23CPU",
+   "row": 65,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-b650-pg-lighting",
+   "type": "mainboard",
+   "name": "B650 PG Lighting",
+   "name_raw": "B650 PG Lighting",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 v3.01 이상 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|ATX|DDR5|Ryzen 9000 시리즈 장착 시 v3.01 이상 BIOS 업데이트 권장",
+   "spec_url": "https://pg.asrock.com/mb/AMD/B650%20PG%20Lightning/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://pg.asrock.com/mb/AMD/B650%2520PG%2520Lightning/index.asp%23CPU",
+   "row": 66,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-x870e-taichi",
+   "type": "mainboard",
+   "name": "X870E Taichi",
+   "name_raw": "X870E Taichi",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "E-ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 시리즈 초기 BIOS부터 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|E-ATX|DDR5|Ryzen 7000/8000/9000 시리즈 초기 BIOS부터 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://taichi.asrock.com/AMD/X870E%2520Taichi/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://taichi.asrock.com/AMD/X870E%2520Taichi/index.asp%23CPU",
+   "row": 67,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-livemixer-b650",
+   "type": "mainboard",
+   "name": "LiveMixer B650",
+   "name_raw": "LiveMixer B650",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|ATX|DDR5|Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 필요",
+   "spec_url": "https://www.google.com/search?q=https://livemixer.asrock.com/AMD/B650%2520LiveMixer/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://livemixer.asrock.com/AMD/B650%2520LiveMixer/index.asp%23CPU",
+   "row": 68,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-b760m-pg-lightning",
+   "type": "mainboard",
+   "name": "B760M PG Lightning",
+   "name_raw": "B760M PG Lightning",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://pg.asrock.com/mb/Intel/B760M%20PG%20Lightning/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://pg.asrock.com/mb/Intel/B760M%2520PG%2520Lightning/index.asp%23CPU",
+   "row": 69,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-b760m-pro-rs",
+   "type": "mainboard",
+   "name": "B760M Pro RS",
+   "name_raw": "B760M Pro RS",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.asrock.com/mb/Intel/B760M%20Pro%20RS/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asrock.com/mb/Intel/B760M%2520Pro%2520RS/index.asp%23CPU",
+   "row": 70,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-z790-pro-rs",
+   "type": "mainboard",
+   "name": "Z790 PRO RS",
+   "name_raw": "Z790 PRO RS",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "Z790",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|Z790|ATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.asrock.com/mb/Intel/Z790%20Pro%20RS/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asrock.com/mb/Intel/Z790%2520Pro%2520RS/index.asp%23CPU",
+   "row": 71,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-z890-taichi",
+   "type": "mainboard",
+   "name": "Z890 Taichi",
+   "name_raw": "Z890 Taichi",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "E-ATX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|E-ATX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://taichi.asrock.com/Intel/Z890%2520Taichi/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://taichi.asrock.com/Intel/Z890%2520Taichi/index.asp%23CPU",
+   "row": 72,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asrock-b550m-pro4",
+   "type": "mainboard",
+   "name": "B550M PRO4",
+   "name_raw": "B550M PRO4",
+   "brand": "ASRock",
+   "brand_raw": "ASRock",
+   "specs": {
+    "socket": "AM4",
+    "chipset": "B550",
+    "form_factor": "mATX",
+    "memory": "DDR4",
+    "note": "Ryzen 5000G / 5000XT CPU 장착 시 최신 BIOS 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM4|B550|mATX|DDR4|Ryzen 5000G / 5000XT CPU 장착 시 최신 BIOS 필요",
+   "spec_url": "https://www.asrock.com/mb/AMD/B550M%20Pro4/index.asp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asrock.com/mb/AMD/B550M%2520Pro4/index.asp%23CPU",
+   "row": 73,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-tuf-gaming-b650-plus-wifi",
+   "type": "mainboard",
+   "name": "TUF Gaming B650-Plus WIFI",
+   "name_raw": "TUF Gaming B650-Plus WIFI",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 v2413 이상 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|ATX|DDR5|Ryzen 9000 시리즈 장착 시 v2413 이상 BIOS 업데이트 권장",
+   "spec_url": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b650-plus-wifi/techspec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b650-plus-wifi/helpdesk_cpu/",
+   "row": 74,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-strix-b650e-f-gaming-wifi",
+   "type": "mainboard",
+   "name": "ROG Strix B650E-F Gaming WIFI",
+   "name_raw": "ROG Strix B650E-F Gaming WIFI",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650E",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650E|ATX|DDR5|Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 필요",
+   "spec_url": "https://rog.asus.com/motherboards/rog-strix/rog-strix-b650e-f-gaming-wifi-model/spec/",
+   "cpu_support_url": "https://rog.asus.com/motherboards/rog-strix/rog-strix-b650e-f-gaming-wifi-model/helpdesk_cpu/",
+   "row": 75,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-crosshair-x870e-hero",
+   "type": "mainboard",
+   "name": "ROG Crosshair X870E Hero",
+   "name_raw": "ROG Crosshair X870E Hero",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|ATX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-crosshair/rog-crosshair-x870e-hero-spec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-crosshair/rog-crosshair-x870e-hero-helpdesk_cpu/",
+   "row": 76,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-crosshair-x870e-glacial",
+   "type": "mainboard",
+   "name": "ROG Crosshair X870E Glacial",
+   "name_raw": "ROG Crosshair X870E Glacial",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "E-ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|E-ATX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://rog.asus.com/motherboards/rog-crosshair-series/",
+   "cpu_support_url": "https://www.asus.com/support/download-center/",
+   "row": 77,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-prime-b650m-a-ii",
+   "type": "mainboard",
+   "name": "Prime B650M-A II",
+   "name_raw": "Prime B650M-A II",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|mATX|DDR5|Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b650m-a-ii/techspec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asus.com/motherboards-components/motherboards/prime/prime-b650m-a-ii/helpdesk_cpu/",
+   "row": 78,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-prime-b760m-k",
+   "type": "mainboard",
+   "name": "Prime B760M-K",
+   "name_raw": "Prime B760M-K",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b760m-k/techspec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asus.com/motherboards-components/motherboards/prime/prime-b760m-k/helpdesk_cpu/",
+   "row": 79,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-tuf-gaming-b760-plus-wifi",
+   "type": "mainboard",
+   "name": "TUF Gaming B760-Plus WIFI",
+   "name_raw": "TUF Gaming B760-Plus WIFI",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|ATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b760-plus-wifi/techspec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.asus.com/motherboards-components/motherboards/tuf-gaming/tuf-gaming-b760-plus-wifi/helpdesk_cpu/",
+   "row": 80,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-strix-z790-f-gaming-wifi-ii",
+   "type": "mainboard",
+   "name": "ROG Strix Z790-F Gaming WIFI II",
+   "name_raw": "ROG Strix Z790-F Gaming WIFI II",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "Z790",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 기본 지원 (최신 안정화 BIOS 권장)"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|Z790|ATX|DDR5|인텔 14세대 CPU 기본 지원 (최신 안정화 BIOS 권장)",
+   "spec_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-strix/rog-strix-z790-f-gaming-wifi-ii-spec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-strix/rog-strix-z790-f-gaming-wifi-ii-helpdesk_cpu/",
+   "row": 81,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-maximus-z890-hero",
+   "type": "mainboard",
+   "name": "ROG Maximus Z890 Hero",
+   "name_raw": "ROG Maximus Z890 Hero",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|ATX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-maximus/rog-maximus-z890-hero-spec/",
+   "cpu_support_url": "https://www.google.com/search?q=https://rog.asus.com/motherboards/rog-maximus/rog-maximus-z890-hero-helpdesk_cpu/",
+   "row": 82,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-prime-b550m-k",
+   "type": "mainboard",
+   "name": "Prime B550M-K",
+   "name_raw": "Prime B550M-K",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM4",
+    "chipset": "B550",
+    "form_factor": "mATX",
+    "memory": "DDR4",
+    "note": "Ryzen 5000 시리즈 출고 시기별 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM4|B550|mATX|DDR4|Ryzen 5000 시리즈 출고 시기별 BIOS 업데이트 필요",
+   "spec_url": "https://www.google.com/search?q=https://www.asus.com/motherboards-components/motherboards/prime/prime-b550m-k/techspec/",
+   "cpu_support_url": "https://www.asus.com/motherboards-components/motherboards/prime/prime-b550m-k/helpdesk_cpu/",
+   "row": 83,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-asus-rog-strix-b850-i-gaming-wifi",
+   "type": "mainboard",
+   "name": "ROG Strix B850-I Gaming WIFI",
+   "name_raw": "ROG Strix B850-I Gaming WIFI",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B850",
+    "form_factor": "Mini-ITX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B850|Mini-ITX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://rog.asus.com/motherboards/rog-strix-series/",
+   "cpu_support_url": "https://www.asus.com/support/download-center/",
+   "row": 84,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-b650-aorus-elite-ax",
+   "type": "mainboard",
+   "name": "B650 AORUS ELITE AX",
+   "name_raw": "B650 AORUS ELITE AX",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 F30 이상 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|ATX|DDR5|Ryzen 9000 시리즈 장착 시 F30 이상 BIOS 업데이트 필요",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B650-AORUS-ELITE-AX-rev-10-11/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B650-AORUS-ELITE-AX-rev-10-11/support%23support-cpu",
+   "row": 85,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-b650m-aorus-elite-ax-ice",
+   "type": "mainboard",
+   "name": "B650M AORUS ELITE AX ICE",
+   "name_raw": "B650M AORUS ELITE AX ICE",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 F30 이상 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|mATX|DDR5|Ryzen 9000 시리즈 장착 시 F30 이상 BIOS 업데이트 필요",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B650M-AORUS-ELITE-AX-ICE/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B650M-AORUS-ELITE-AX-ICE/support%23support-cpu",
+   "row": 86,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-x870e-aorus-master",
+   "type": "mainboard",
+   "name": "X870E AORUS Master",
+   "name_raw": "X870E AORUS Master",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|ATX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/X870E-AORUS-MASTER/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/X870E-AORUS-MASTER/support%23support-cpu",
+   "row": 87,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-x870e-aero-x3d-wood",
+   "type": "mainboard",
+   "name": "X870E Aero X3D Wood",
+   "name_raw": "X870E Aero X3D Wood",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 및 X3D CPU 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|ATX|DDR5|Ryzen 7000/8000/9000 전체 및 X3D CPU 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/AERO-Series",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Support/Motherboard",
+   "row": 88,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-b760m-ds3h",
+   "type": "mainboard",
+   "name": "B760M DS3H",
+   "name_raw": "B760M DS3H",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B760M-DS3H-rev-10/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B760M-DS3H-rev-10/support%23support-cpu",
+   "row": 89,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-b760m-aorus-elite-ax",
+   "type": "mainboard",
+   "name": "B760M AORUS ELITE AX",
+   "name_raw": "B760M AORUS ELITE AX",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B760M-AORUS-ELITE-AX-rev-1x/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/B760M-AORUS-ELITE-AX-rev-1x/support%23support-cpu",
+   "row": 90,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-z790-aorus-elite-ax",
+   "type": "mainboard",
+   "name": "Z790 AORUS ELITE AX",
+   "name_raw": "Z790 AORUS ELITE AX",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "Z790",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|Z790|ATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/Z790-AORUS-ELITE-AX-rev-1x/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/Z790-AORUS-ELITE-AX-rev-1x/support%23support-cpu",
+   "row": 91,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-gigabyte-z890-aorus-pro-ice",
+   "type": "mainboard",
+   "name": "Z890 AORUS PRO ICE",
+   "name_raw": "Z890 AORUS PRO ICE",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|ATX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/Z890-AORUS-PRO-ICE/sp%23sp",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.gigabyte.com/Motherboard/Z890-AORUS-PRO-ICE/support%23support-cpu",
+   "row": 92,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-b650-tomahawk-wifi",
+   "type": "mainboard",
+   "name": "MAG B650 Tomahawk WIFI",
+   "name_raw": "MAG B650 Tomahawk WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 v7D75v1I 이상 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|ATX|DDR5|Ryzen 9000 시리즈 장착 시 v7D75v1I 이상 BIOS 업데이트 필요",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-B650-TOMAHAWK-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-B650-TOMAHAWK-WIFI/support%23cpu",
+   "row": 93,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-b650m-mortar-wifi",
+   "type": "mainboard",
+   "name": "MAG B650M Mortar WIFI (박격포)",
+   "name_raw": "MAG B650M Mortar WIFI (박격포)",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 v7D76v1K 이상 BIOS 업데이트 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|mATX|DDR5|Ryzen 9000 시리즈 장착 시 v7D76v1K 이상 BIOS 업데이트 필요",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-B650M-MORTAR-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-B650M-MORTAR-WIFI/support%23cpu",
+   "row": 94,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-pro-b650m-a-wifi",
+   "type": "mainboard",
+   "name": "PRO B650M-A WIFI",
+   "name_raw": "PRO B650M-A WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "B650",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "AM5|B650|mATX|DDR5|Ryzen 9000 시리즈 장착 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.msi.com/Motherboard/PRO-B650M-A-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/PRO-B650M-A-WIFI/support%23cpu",
+   "row": 95,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-x870e-tomahawk-max-wifi",
+   "type": "mainboard",
+   "name": "MAG X870E Tomahawk Max WIFI",
+   "name_raw": "MAG X870E Tomahawk Max WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|ATX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-X870E-TOMAHAWK-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-X870E-TOMAHAWK-WIFI/support%23cpu",
+   "row": 96,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-meg-x870e-godlike",
+   "type": "mainboard",
+   "name": "MEG X870E GODLIKE",
+   "name_raw": "MEG X870E GODLIKE",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM5",
+    "chipset": "X870E",
+    "form_factor": "E-ATX",
+    "memory": "DDR5",
+    "note": "Ryzen 7000/8000/9000 전체 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "AM5|X870E|E-ATX|DDR5|Ryzen 7000/8000/9000 전체 시리즈 기본 지원",
+   "spec_url": "https://www.msi.com/Motherboard/MEG-X870E-GODLIKE/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MEG-X870E-GODLIKE/support%23cpu",
+   "row": 97,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-b760m-mortar-max-wifi",
+   "type": "mainboard",
+   "name": "MAG B760M Mortar MAX WIFI (박격포)",
+   "name_raw": "MAG B760M Mortar MAX WIFI (박격포)",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-B760M-MORTAR-MAX-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-B760M-MORTAR-MAX-WIFI/support%23cpu",
+   "row": 98,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-pro-b760m-e",
+   "type": "mainboard",
+   "name": "PRO B760M-E",
+   "name_raw": "PRO B760M-E",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "B760",
+    "form_factor": "mATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|B760|mATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.msi.com/Motherboard/PRO-B760M-E-DDR4/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/PRO-B760M-E-DDR4/support%23cpu",
+   "row": 99,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-z790-tomahawk-wifi",
+   "type": "mainboard",
+   "name": "MAG Z790 Tomahawk WIFI",
+   "name_raw": "MAG Z790 Tomahawk WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1700",
+    "chipset": "Z790",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장"
+   },
+   "derived": {},
+   "fields_raw": "LGA1700|Z790|ATX|DDR5|인텔 14세대 CPU 사용 시 최신 BIOS 업데이트 권장",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-Z790-TOMAHAWK-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-Z790-TOMAHAWK-WIFI/support%23cpu",
+   "row": 100,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-z890-tomahawk-wifi",
+   "type": "mainboard",
+   "name": "MAG Z890 Tomahawk WIFI",
+   "name_raw": "MAG Z890 Tomahawk WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|ATX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-Z890-TOMAHAWK-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-Z890-TOMAHAWK-WIFI/support%23cpu",
+   "row": 101,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-meg-z890-unify-x",
+   "type": "mainboard",
+   "name": "MEG Z890 UNIFY-X",
+   "name_raw": "MEG Z890 UNIFY-X",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "ATX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|ATX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.msi.com/Motherboard/MEG-Z890-UNIFY-X/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MEG-Z890-UNIFY-X/support%23cpu",
+   "row": 102,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mag-b550m",
+   "type": "mainboard",
+   "name": "MAG B550M 박격포",
+   "name_raw": "MAG B550M 박격포",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "AM4",
+    "chipset": "B550",
+    "form_factor": "mATX",
+    "memory": "DDR4",
+    "note": "Ryzen 5000G / 5000X3D 장착 시 최신 BIOS 필요"
+   },
+   "derived": {},
+   "fields_raw": "AM4|B550|mATX|DDR4|Ryzen 5000G / 5000X3D 장착 시 최신 BIOS 필요",
+   "spec_url": "https://www.msi.com/Motherboard/MAG-B550M-MORTAR/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MAG-B550M-MORTAR/support%23cpu",
+   "row": 103,
+   "warnings": []
+  },
+  {
+   "part_code": "mainboard-msi-mpg-z890i-edge-ti-wifi",
+   "type": "mainboard",
+   "name": "MPG Z890I EDGE TI WIFI",
+   "name_raw": "MPG Z890I EDGE TI WIFI",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "socket": "LGA1851",
+    "chipset": "Z890",
+    "form_factor": "Mini-ITX",
+    "memory": "DDR5",
+    "note": "인텔 코어 Ultra 200 시리즈 기본 지원"
+   },
+   "derived": {},
+   "fields_raw": "LGA1851|Z890|Mini-ITX|DDR5|인텔 코어 Ultra 200 시리즈 기본 지원",
+   "spec_url": "https://www.msi.com/Motherboard/MPG-Z890I-EDGE-TI-WIFI/Specification",
+   "cpu_support_url": "https://www.google.com/search?q=https://www.msi.com/Motherboard/MPG-Z890I-EDGE-TI-WIFI/support%23cpu",
+   "row": 104,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-adata-xpg-lancer-rgb",
+   "type": "ram",
+   "name": "XPG Lancer RGB",
+   "name_raw": "XPG Lancer RGB",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Single / Dual (2개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Single / Dual (2개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 107,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-adata-xpg-lancer-blade",
+   "type": "ram",
+   "name": "XPG Lancer Blade",
+   "name_raw": "XPG Lancer Blade",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Single / Dual (2개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Single / Dual (2개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 108,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-adata-ddr5-5600-premier",
+   "type": "ram",
+   "name": "DDR5-5600 Premier",
+   "name_raw": "DDR5-5600 Premier",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 전용"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 전용)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 109,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-adata-ddr4-xpg-spectrix-d50",
+   "type": "ram",
+   "name": "DDR4 XPG SPECTRIX D50",
+   "name_raw": "DDR4 XPG SPECTRIX D50",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3200~4133MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual (2개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3200~4133MHz)|8GB / 16GB / 32GB|Single / Dual (2개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 110,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-vengeance-rgb-ddr5",
+   "type": "ram",
+   "name": "VENGEANCE RGB DDR5",
+   "name_raw": "VENGEANCE RGB DDR5",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 111,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-vengeance-ddr5",
+   "type": "ram",
+   "name": "VENGEANCE DDR5",
+   "name_raw": "VENGEANCE DDR5",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 112,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-dominator-titanium-rgb",
+   "type": "ram",
+   "name": "DOMINATOR TITANIUM RGB",
+   "name_raw": "DOMINATOR TITANIUM RGB",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual / Quad (2개/4개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 24GB / 32GB / 48GB|Dual / Quad (2개/4개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 113,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-dominator-platinum-rgb",
+   "type": "ram",
+   "name": "DOMINATOR PLATINUM RGB",
+   "name_raw": "DOMINATOR PLATINUM RGB",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 32GB / 64GB",
+    "kit": "Dual / Quad (2개/4개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 32GB / 64GB|Dual / Quad (2개/4개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 114,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-ddr4-vengeance-rgb-pro",
+   "type": "ram",
+   "name": "DDR4 VENGEANCE RGB PRO",
+   "name_raw": "DDR4 VENGEANCE RGB PRO",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 2666~4000MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 2666~4000MHz)|8GB / 16GB / 32GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 115,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-ddr4-vengeance-lpx",
+   "type": "ram",
+   "name": "DDR4 VENGEANCE LPX",
+   "name_raw": "DDR4 VENGEANCE LPX",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 2400~4000MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 2400~4000MHz)|8GB / 16GB / 32GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 116,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-corsair-vengeance-ddr5-so-dimm",
+   "type": "ram",
+   "name": "VENGEANCE DDR5 SO-DIMM",
+   "name_raw": "VENGEANCE DDR5 SO-DIMM",
+   "brand": "Corsair",
+   "brand_raw": "CORSAIR",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "4800~5600MHz 노트북용"
+    },
+    "capacity": "8GB / 16GB / 32GB / 48GB",
+    "kit": "Single / Dual (2개)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (4800~5600MHz 노트북용)|8GB / 16GB / 32GB / 48GB|Single / Dual (2개)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 117,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-crucial-pro-overclocking",
+   "type": "ram",
+   "name": "Pro Overclocking",
+   "name_raw": "Pro Overclocking",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000MHz 지원"
+    },
+    "capacity": "16GB / 24GB / 32GB",
+    "kit": "Dual (16GBx2 / 24GBx2 등)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000MHz 지원)|16GB / 24GB / 32GB|Dual (16GBx2 / 24GBx2 등)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 118,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-crucial-ddr5-5600-standard",
+   "type": "ram",
+   "name": "DDR5-5600 Standard",
+   "name_raw": "DDR5-5600 Standard",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB / 48GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 표준)|8GB / 16GB / 32GB / 48GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 119,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-crucial-ddr4-3200",
+   "type": "ram",
+   "name": "DDR4-3200",
+   "name_raw": "DDR4-3200",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3200MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3200MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 120,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-crucial-ddr5-5600-so-dimm",
+   "type": "ram",
+   "name": "DDR5-5600 SO-DIMM",
+   "name_raw": "DDR5-5600 SO-DIMM",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 노트북용"
+    },
+    "capacity": "8GB / 16GB / 32GB / 48GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 노트북용)|8GB / 16GB / 32GB / 48GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 121,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-trident-z5-rgb",
+   "type": "ram",
+   "name": "Trident Z5 RGB",
+   "name_raw": "Trident Z5 RGB",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 24GBx2 / 32GBx2 / 48GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 24GBx2 / 32GBx2 / 48GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 122,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-trident-z5-neo-rgb-amd-expo",
+   "type": "ram",
+   "name": "Trident Z5 Neo RGB (AMD EXPO)",
+   "name_raw": "Trident Z5 Neo RGB (AMD EXPO)",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~6400MHz 메인"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 32GBx2 등)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~6400MHz 메인)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 32GBx2 등)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 123,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-ripjaws-s5",
+   "type": "ram",
+   "name": "Ripjaws S5",
+   "name_raw": "Ripjaws S5",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 32GBx2 등)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 32GBx2 등)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 124,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-flare-x5-amd-expo",
+   "type": "ram",
+   "name": "Flare X5 (AMD EXPO)",
+   "name_raw": "Flare X5 (AMD EXPO)",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~6400MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 32GBx2 등)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~6400MHz)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 32GBx2 등)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 125,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-ddr4-trident-z-rgb",
+   "type": "ram",
+   "name": "DDR4 TRIDENT Z RGB",
+   "name_raw": "DDR4 TRIDENT Z RGB",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3200~4400MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3200~4400MHz)|8GB / 16GB / 32GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 126,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-g-skill-ddr4-ripjaws-v",
+   "type": "ram",
+   "name": "DDR4 Ripjaws V",
+   "name_raw": "DDR4 Ripjaws V",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 2666~4000MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual / Quad"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 2666~4000MHz)|8GB / 16GB / 32GB|Single / Dual / Quad",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 127,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-geil-orion-v",
+   "type": "ram",
+   "name": "ORION V",
+   "name_raw": "ORION V",
+   "brand": "GeIL",
+   "brand_raw": "GeIL",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB",
+    "kit": "Dual (16GBx2 / 32GBx2 등)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB|Dual (16GBx2 / 32GBx2 등)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 128,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-klevv-cras-v-rgb",
+   "type": "ram",
+   "name": "CRAS V RGB",
+   "name_raw": "CRAS V RGB",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 24GBx2 / 32GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 24GBx2 / 32GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 129,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-klevv-bolt-v",
+   "type": "ram",
+   "name": "BOLT V",
+   "name_raw": "BOLT V",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~6800MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~6800MHz)|16GB / 24GB / 32GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 130,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-klevv-ddr5-5600-standard",
+   "type": "ram",
+   "name": "DDR5-5600 Standard (흑금성 대체)",
+   "name_raw": "DDR5-5600 Standard (흑금성 대체)",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 131,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-klevv-ddr4-cras-xr-rgb",
+   "type": "ram",
+   "name": "DDR4 CRAS XR RGB",
+   "name_raw": "DDR4 CRAS XR RGB",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3600~4000MHz"
+    },
+    "capacity": "8GB / 16GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3600~4000MHz)|8GB / 16GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 132,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-patriot-viper-venom-rgb",
+   "type": "ram",
+   "name": "Viper Venom RGB",
+   "name_raw": "Viper Venom RGB",
+   "brand": "Patriot",
+   "brand_raw": "Patriot",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 32GB",
+    "kit": "Dual (16GBx2 / 32GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 32GB|Dual (16GBx2 / 32GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 133,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-sk-hynix-ddr5-5600",
+   "type": "ram",
+   "name": "DDR5-5600 (흑금성)",
+   "name_raw": "DDR5-5600 (흑금성)",
+   "brand": "SK hynix",
+   "brand_raw": "SK하이닉스",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 134,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-sk-hynix-ddr4-3200",
+   "type": "ram",
+   "name": "DDR4-3200",
+   "name_raw": "DDR4-3200",
+   "brand": "SK hynix",
+   "brand_raw": "SK하이닉스",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3200MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3200MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 135,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-samsung-ddr5-5600",
+   "type": "ram",
+   "name": "DDR5-5600 (시금치)",
+   "name_raw": "DDR5-5600 (시금치)",
+   "brand": "Samsung",
+   "brand_raw": "samsung",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 136,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-samsung-ddr4-3200",
+   "type": "ram",
+   "name": "DDR4-3200",
+   "name_raw": "DDR4-3200",
+   "brand": "Samsung",
+   "brand_raw": "samsung",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3200MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3200MHz 표준)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 137,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-samsung-ddr5-5600-so-dimm",
+   "type": "ram",
+   "name": "DDR5-5600 SO-DIMM",
+   "name_raw": "DDR5-5600 SO-DIMM",
+   "brand": "Samsung",
+   "brand_raw": "samsung",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 노트북용"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 노트북용)|8GB / 16GB / 32GB|Single",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 138,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-t-force-delta-rgb",
+   "type": "ram",
+   "name": "T-Force Delta RGB",
+   "name_raw": "T-Force Delta RGB",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 24GBx2 / 32GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 24GBx2 / 32GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 139,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-t-create-expert",
+   "type": "ram",
+   "name": "T-Create Expert",
+   "name_raw": "T-Create Expert",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 32GBx2 / 48GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 32GBx2 / 48GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 140,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-t-force-vulcan",
+   "type": "ram",
+   "name": "T-Force Vulcan",
+   "name_raw": "T-Force Vulcan",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~6400MHz"
+    },
+    "capacity": "16GB / 32GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~6400MHz)|16GB / 32GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 141,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-t-force-xtreem-rgb",
+   "type": "ram",
+   "name": "T-Force XTREEM RGB",
+   "name_raw": "T-Force XTREEM RGB",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz+"
+    },
+    "capacity": "16GB / 24GB / 32GB / 48GB",
+    "kit": "Dual (16GBx2 / 24GBx2 / 32GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz+)|16GB / 24GB / 32GB / 48GB|Dual (16GBx2 / 24GBx2 / 32GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 142,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-ddr5-5600-elite",
+   "type": "ram",
+   "name": "DDR5-5600 Elite",
+   "name_raw": "DDR5-5600 Elite",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "5600MHz 표준"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|X (5600MHz 표준)|8GB / 16GB / 32GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 143,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-ddr4-t-force-delta-rgb",
+   "type": "ram",
+   "name": "DDR4 T-Force Delta RGB",
+   "name_raw": "DDR4 T-Force Delta RGB",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 3000~4000MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 3000~4000MHz)|8GB / 16GB / 32GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 144,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-teamgroup-ddr4-t-force-vulcan-z",
+   "type": "ram",
+   "name": "DDR4 T-Force Vulcan Z",
+   "name_raw": "DDR4 T-Force Vulcan Z",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "memory_type": "DDR4",
+    "xmp_expo": {
+     "flag": false,
+     "detail": "DDR4 2666~3600MHz"
+    },
+    "capacity": "8GB / 16GB / 32GB",
+    "kit": "Single / Dual"
+   },
+   "derived": {},
+   "fields_raw": "DDR4|X (DDR4 2666~3600MHz)|8GB / 16GB / 32GB|Single / Dual",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 145,
+   "warnings": []
+  },
+  {
+   "part_code": "ram-v-color-manta-m5-rgb",
+   "type": "ram",
+   "name": "Manta M5 RGB",
+   "name_raw": "Manta M5 RGB",
+   "brand": "v-color",
+   "brand_raw": "v-color",
+   "specs": {
+    "memory_type": "DDR5",
+    "xmp_expo": {
+     "flag": true,
+     "detail": "6000~7200MHz"
+    },
+    "capacity": "16GB / 32GB",
+    "kit": "Dual (16GBx2 / 32GBx2)"
+   },
+   "derived": {},
+   "fields_raw": "DDR5|O (6000~7200MHz)|16GB / 32GB|Dual (16GBx2 / 32GBx2)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 146,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5090",
+   "type": "gpu",
+   "name": "GeForce RTX 5090",
+   "name_raw": "GeForce RTX 5090",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "600W",
+    "length": "336mm",
+    "slots": "3.5 Slots",
+    "power_connector": "16-pin (12V-2x6)",
+    "vram": {
+     "flag": true,
+     "detail": ""
+    },
+    "tier": "Ultra Flagship"
+   },
+   "derived": {
+    "tdp_w": 600,
+    "length_mm": 336
+   },
+   "fields_raw": "600W|336mm|3.5 Slots|16-pin (12V-2x6)|O|Ultra Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 149,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5080",
+   "type": "gpu",
+   "name": "GeForce RTX 5080",
+   "name_raw": "GeForce RTX 5080",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "400W",
+    "length": "310mm",
+    "slots": "3.0 Slots",
+    "power_connector": "16-pin (12V-2x6)",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR7"
+    },
+    "tier": "Flagship"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 400,
+    "length_mm": 310
+   },
+   "fields_raw": "400W|310mm|3.0 Slots|16-pin (12V-2x6)|X (16GB GDDR7)|Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 150,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5070-ti",
+   "type": "gpu",
+   "name": "GeForce RTX 5070 Ti",
+   "name_raw": "GeForce RTX 5070 Ti",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "300W",
+    "length": "285mm",
+    "slots": "2.5 Slots",
+    "power_connector": "16-pin (12V-2x6)",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR7"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 300,
+    "length_mm": 285
+   },
+   "fields_raw": "300W|285mm|2.5 Slots|16-pin (12V-2x6)|X (16GB GDDR7)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 151,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5070",
+   "type": "gpu",
+   "name": "GeForce RTX 5070",
+   "name_raw": "GeForce RTX 5070",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "250W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "16-pin (12V-2x6) / 8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR7"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 250,
+    "length_mm": 242
+   },
+   "fields_raw": "250W|242mm|2.0 Slots|16-pin (12V-2x6) / 8-pin|X (12GB GDDR7)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 152,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5060-ti",
+   "type": "gpu",
+   "name": "GeForce RTX 5060 Ti",
+   "name_raw": "GeForce RTX 5060 Ti",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "180W",
+    "length": "220mm",
+    "slots": "2.0 Slots",
+    "power_connector": "16-pin (12V-2x6) / 8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR7"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 180,
+    "length_mm": 220
+   },
+   "fields_raw": "180W|220mm|2.0 Slots|16-pin (12V-2x6) / 8-pin|X (12GB GDDR7)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 153,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-5060",
+   "type": "gpu",
+   "name": "GeForce RTX 5060",
+   "name_raw": "GeForce RTX 5060",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "140W",
+    "length": "200mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR7"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 140,
+    "length_mm": 200
+   },
+   "fields_raw": "140W|200mm|2.0 Slots|8-pin|X (8GB GDDR7)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 154,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4090",
+   "type": "gpu",
+   "name": "GeForce RTX 4090",
+   "name_raw": "GeForce RTX 4090",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "450W",
+    "length": "304mm",
+    "slots": "3.5 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "24GB GDDR6X"
+    },
+    "tier": "Ultra Flagship"
+   },
+   "derived": {
+    "vram_gb": 24,
+    "tdp_w": 450,
+    "length_mm": 304
+   },
+   "fields_raw": "450W|304mm|3.5 Slots|16-pin (12VHPWR)|X (24GB GDDR6X)|Ultra Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 155,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4080-super",
+   "type": "gpu",
+   "name": "GeForce RTX 4080 SUPER",
+   "name_raw": "GeForce RTX 4080 SUPER",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "320W",
+    "length": "304mm",
+    "slots": "3.0 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6X"
+    },
+    "tier": "Flagship"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 320,
+    "length_mm": 304
+   },
+   "fields_raw": "320W|304mm|3.0 Slots|16-pin (12VHPWR)|X (16GB GDDR6X)|Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 156,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4080",
+   "type": "gpu",
+   "name": "GeForce RTX 4080",
+   "name_raw": "GeForce RTX 4080",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "320W",
+    "length": "304mm",
+    "slots": "3.0 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6X"
+    },
+    "tier": "Flagship"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 320,
+    "length_mm": 304
+   },
+   "fields_raw": "320W|304mm|3.0 Slots|16-pin (12VHPWR)|X (16GB GDDR6X)|Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 157,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4070-ti-super",
+   "type": "gpu",
+   "name": "GeForce RTX 4070 Ti SUPER",
+   "name_raw": "GeForce RTX 4070 Ti SUPER",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "285W",
+    "length": "285mm",
+    "slots": "2.5 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6X"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 285,
+    "length_mm": 285
+   },
+   "fields_raw": "285W|285mm|2.5 Slots|16-pin (12VHPWR)|X (16GB GDDR6X)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 158,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4070-ti",
+   "type": "gpu",
+   "name": "GeForce RTX 4070 Ti",
+   "name_raw": "GeForce RTX 4070 Ti",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "285W",
+    "length": "285mm",
+    "slots": "2.5 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6X"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 285,
+    "length_mm": 285
+   },
+   "fields_raw": "285W|285mm|2.5 Slots|16-pin (12VHPWR)|X (12GB GDDR6X)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 159,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4070-super",
+   "type": "gpu",
+   "name": "GeForce RTX 4070 SUPER",
+   "name_raw": "GeForce RTX 4070 SUPER",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "220W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6X"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 220,
+    "length_mm": 242
+   },
+   "fields_raw": "220W|242mm|2.0 Slots|16-pin (12VHPWR)|X (12GB GDDR6X)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 160,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4070",
+   "type": "gpu",
+   "name": "GeForce RTX 4070",
+   "name_raw": "GeForce RTX 4070",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "200W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin / 16-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6X"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 200,
+    "length_mm": 242
+   },
+   "fields_raw": "200W|242mm|2.0 Slots|8-pin / 16-pin|X (12GB GDDR6X)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 161,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4060-ti-16gb",
+   "type": "gpu",
+   "name": "GeForce RTX 4060 Ti (16GB)",
+   "name_raw": "GeForce RTX 4060 Ti (16GB)",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "165W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 165,
+    "length_mm": 242
+   },
+   "fields_raw": "165W|242mm|2.0 Slots|8-pin|X (16GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 162,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4060-ti-8gb",
+   "type": "gpu",
+   "name": "GeForce RTX 4060 Ti (8GB)",
+   "name_raw": "GeForce RTX 4060 Ti (8GB)",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "160W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 160,
+    "length_mm": 242
+   },
+   "fields_raw": "160W|242mm|2.0 Slots|8-pin|X (8GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 163,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-4060",
+   "type": "gpu",
+   "name": "GeForce RTX 4060",
+   "name_raw": "GeForce RTX 4060",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "115W",
+    "length": "210mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 115,
+    "length_mm": 210
+   },
+   "fields_raw": "115W|210mm|2.0 Slots|8-pin|X (8GB GDDR6)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 164,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-3060-12gb",
+   "type": "gpu",
+   "name": "GeForce RTX 3060 (12GB)",
+   "name_raw": "GeForce RTX 3060 (12GB)",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "170W",
+    "length": "242mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6"
+    },
+    "tier": "Entry"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 170,
+    "length_mm": 242
+   },
+   "fields_raw": "170W|242mm|2.0 Slots|8-pin|X (12GB GDDR6)|Entry",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 165,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-3050-8gb",
+   "type": "gpu",
+   "name": "GeForce RTX 3050 (8GB)",
+   "name_raw": "GeForce RTX 3050 (8GB)",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "130W",
+    "length": "200mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Entry"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 130,
+    "length_mm": 200
+   },
+   "fields_raw": "130W|200mm|2.0 Slots|8-pin|X (8GB GDDR6)|Entry",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 166,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-geforce-rtx-3050-6gb",
+   "type": "gpu",
+   "name": "GeForce RTX 3050 (6GB)",
+   "name_raw": "GeForce RTX 3050 (6GB)",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "70W",
+    "length": "170mm",
+    "slots": "2.0 Slots",
+    "power_connector": "슬롯 전력 전용 (무보조)",
+    "vram": {
+     "flag": false,
+     "detail": "6GB GDDR6"
+    },
+    "tier": "Budget"
+   },
+   "derived": {
+    "vram_gb": 6,
+    "tdp_w": 70,
+    "length_mm": 170
+   },
+   "fields_raw": "70W|170mm|2.0 Slots|슬롯 전력 전용 (무보조)|X (6GB GDDR6)|Budget",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 167,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-nvidia-rtx-6000-ada-generation",
+   "type": "gpu",
+   "name": "RTX 6000 Ada Generation",
+   "name_raw": "RTX 6000 Ada Generation",
+   "brand": "nvidia",
+   "brand_raw": "nvidia",
+   "specs": {
+    "tdp": "300W",
+    "length": "267mm",
+    "slots": "2.0 Slots",
+    "power_connector": "16-pin (12VHPWR)",
+    "vram": {
+     "flag": false,
+     "detail": "48GB GDDR6 ECC"
+    },
+    "tier": "Workstation"
+   },
+   "derived": {
+    "vram_gb": 48,
+    "tdp_w": 300,
+    "length_mm": 267
+   },
+   "fields_raw": "300W|267mm|2.0 Slots|16-pin (12VHPWR)|X (48GB GDDR6 ECC)|Workstation",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 168,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-8800-xt",
+   "type": "gpu",
+   "name": "Radeon RX 8800 XT",
+   "name_raw": "Radeon RX 8800 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "280W",
+    "length": "280mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 280,
+    "length_mm": 280
+   },
+   "fields_raw": "280W|280mm|2.5 Slots|8-pin x2|X (16GB GDDR6)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 169,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-8700-xt",
+   "type": "gpu",
+   "name": "Radeon RX 8700 XT",
+   "name_raw": "Radeon RX 8700 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "225W",
+    "length": "260mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2 / 8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 225,
+    "length_mm": 260
+   },
+   "fields_raw": "225W|260mm|2.5 Slots|8-pin x2 / 8-pin|X (12GB GDDR6)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 170,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-8600-xt",
+   "type": "gpu",
+   "name": "Radeon RX 8600 XT",
+   "name_raw": "Radeon RX 8600 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "160W",
+    "length": "230mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB/12GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 160,
+    "length_mm": 230
+   },
+   "fields_raw": "160W|230mm|2.0 Slots|8-pin|X (8GB/12GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 171,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7900-xtx",
+   "type": "gpu",
+   "name": "Radeon RX 7900 XTX",
+   "name_raw": "Radeon RX 7900 XTX",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "355W",
+    "length": "287mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2 / x3",
+    "vram": {
+     "flag": false,
+     "detail": "24GB GDDR6"
+    },
+    "tier": "Flagship"
+   },
+   "derived": {
+    "vram_gb": 24,
+    "tdp_w": 355,
+    "length_mm": 287
+   },
+   "fields_raw": "355W|287mm|2.5 Slots|8-pin x2 / x3|X (24GB GDDR6)|Flagship",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 172,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7900-xt",
+   "type": "gpu",
+   "name": "Radeon RX 7900 XT",
+   "name_raw": "Radeon RX 7900 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "315W",
+    "length": "276mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "20GB GDDR6"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 20,
+    "tdp_w": 315,
+    "length_mm": 276
+   },
+   "fields_raw": "315W|276mm|2.5 Slots|8-pin x2|X (20GB GDDR6)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 173,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7900-gre",
+   "type": "gpu",
+   "name": "Radeon RX 7900 GRE",
+   "name_raw": "Radeon RX 7900 GRE",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "268W",
+    "length": "280mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 268,
+    "length_mm": 280
+   },
+   "fields_raw": "268W|280mm|2.5 Slots|8-pin x2|X (16GB GDDR6)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 174,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7800-xt",
+   "type": "gpu",
+   "name": "Radeon RX 7800 XT",
+   "name_raw": "Radeon RX 7800 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "263W",
+    "length": "267mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 263,
+    "length_mm": 267
+   },
+   "fields_raw": "263W|267mm|2.5 Slots|8-pin x2|X (16GB GDDR6)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 175,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7700-xt",
+   "type": "gpu",
+   "name": "Radeon RX 7700 XT",
+   "name_raw": "Radeon RX 7700 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "245W",
+    "length": "267mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 245,
+    "length_mm": 267
+   },
+   "fields_raw": "245W|267mm|2.5 Slots|8-pin x2|X (12GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 176,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7600-xt",
+   "type": "gpu",
+   "name": "Radeon RX 7600 XT",
+   "name_raw": "Radeon RX 7600 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "190W",
+    "length": "241mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 190,
+    "length_mm": 241
+   },
+   "fields_raw": "190W|241mm|2.0 Slots|8-pin x2|X (16GB GDDR6)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 177,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-7600",
+   "type": "gpu",
+   "name": "Radeon RX 7600",
+   "name_raw": "Radeon RX 7600",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "165W",
+    "length": "204mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 165,
+    "length_mm": 204
+   },
+   "fields_raw": "165W|204mm|2.0 Slots|8-pin|X (8GB GDDR6)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 178,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6950-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6950 XT",
+   "name_raw": "Radeon RX 6950 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "335W",
+    "length": "330mm",
+    "slots": "2.8 Slots",
+    "power_connector": "8-pin x2 / x3",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 335,
+    "length_mm": 330
+   },
+   "fields_raw": "335W|330mm|2.8 Slots|8-pin x2 / x3|X (16GB GDDR6)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 179,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6900-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6900 XT",
+   "name_raw": "Radeon RX 6900 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "300W",
+    "length": "267mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "Enthusiast"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 300,
+    "length_mm": 267
+   },
+   "fields_raw": "300W|267mm|2.5 Slots|8-pin x2|X (16GB GDDR6)|Enthusiast",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 180,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6800-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6800 XT",
+   "name_raw": "Radeon RX 6800 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "300W",
+    "length": "267mm",
+    "slots": "2.5 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 300,
+    "length_mm": 267
+   },
+   "fields_raw": "300W|267mm|2.5 Slots|8-pin x2|X (16GB GDDR6)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 181,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6800",
+   "type": "gpu",
+   "name": "Radeon RX 6800",
+   "name_raw": "Radeon RX 6800",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "250W",
+    "length": "267mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "16GB GDDR6"
+    },
+    "tier": "High-End"
+   },
+   "derived": {
+    "vram_gb": 16,
+    "tdp_w": 250,
+    "length_mm": 267
+   },
+   "fields_raw": "250W|267mm|2.0 Slots|8-pin x2|X (16GB GDDR6)|High-End",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 182,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6750-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6750 XT",
+   "name_raw": "Radeon RX 6750 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "250W",
+    "length": "280mm",
+    "slots": "2.2 Slots",
+    "power_connector": "8-pin + 6-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 250,
+    "length_mm": 280
+   },
+   "fields_raw": "250W|280mm|2.2 Slots|8-pin + 6-pin|X (12GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 183,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6700-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6700 XT",
+   "name_raw": "Radeon RX 6700 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "230W",
+    "length": "267mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin + 6-pin",
+    "vram": {
+     "flag": false,
+     "detail": "12GB GDDR6"
+    },
+    "tier": "Mid-Range"
+   },
+   "derived": {
+    "vram_gb": 12,
+    "tdp_w": 230,
+    "length_mm": 267
+   },
+   "fields_raw": "230W|267mm|2.0 Slots|8-pin + 6-pin|X (12GB GDDR6)|Mid-Range",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 184,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6650-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6650 XT",
+   "name_raw": "Radeon RX 6650 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "180W",
+    "length": "240mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 180,
+    "length_mm": 240
+   },
+   "fields_raw": "180W|240mm|2.0 Slots|8-pin|X (8GB GDDR6)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 185,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6600-xt",
+   "type": "gpu",
+   "name": "Radeon RX 6600 XT",
+   "name_raw": "Radeon RX 6600 XT",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "160W",
+    "length": "240mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Mainstream"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 160,
+    "length_mm": 240
+   },
+   "fields_raw": "160W|240mm|2.0 Slots|8-pin|X (8GB GDDR6)|Mainstream",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 186,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-rx-6600",
+   "type": "gpu",
+   "name": "Radeon RX 6600",
+   "name_raw": "Radeon RX 6600",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "132W",
+    "length": "200mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin",
+    "vram": {
+     "flag": false,
+     "detail": "8GB GDDR6"
+    },
+    "tier": "Entry"
+   },
+   "derived": {
+    "vram_gb": 8,
+    "tdp_w": 132,
+    "length_mm": 200
+   },
+   "fields_raw": "132W|200mm|2.0 Slots|8-pin|X (8GB GDDR6)|Entry",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 187,
+   "warnings": []
+  },
+  {
+   "part_code": "gpu-amd-radeon-pro-w7900",
+   "type": "gpu",
+   "name": "Radeon PRO W7900",
+   "name_raw": "Radeon PRO W7900",
+   "brand": "amd",
+   "brand_raw": "amd",
+   "specs": {
+    "tdp": "295W",
+    "length": "280mm",
+    "slots": "2.0 Slots",
+    "power_connector": "8-pin x2",
+    "vram": {
+     "flag": false,
+     "detail": "48GB GDDR6 ECC"
+    },
+    "tier": "Workstation"
+   },
+   "derived": {
+    "vram_gb": 48,
+    "tdp_w": 295,
+    "length_mm": 280
+   },
+   "fields_raw": "295W|280mm|2.0 Slots|8-pin x2|X (48GB GDDR6 ECC)|Workstation",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 188,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-adata-xpg-legend-970-pro",
+   "type": "ssd",
+   "name": "XPG LEGEND 970 PRO",
+   "name_raw": "XPG LEGEND 970 PRO",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 191,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-adata-xpg-gammix-s70-blade",
+   "type": "ssd",
+   "name": "XPG GAMMIX S70 BLADE",
+   "name_raw": "XPG GAMMIX S70 BLADE",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "512GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|512GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 192,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-adata-legend-850",
+   "type": "ssd",
+   "name": "Legend 850",
+   "name_raw": "Legend 850",
+   "brand": "ADATA",
+   "brand_raw": "ADATA",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "512GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|512GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 193,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-corsair-mp700-pro-xt",
+   "type": "ssd",
+   "name": "MP700 PRO XT",
+   "name_raw": "MP700 PRO XT / MP700 PRO",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 194,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: MP700 PRO XT / MP700 PRO"
+   ]
+  },
+  {
+   "part_code": "ssd-corsair-mp700-pro",
+   "type": "ssd",
+   "name": "MP700 PRO",
+   "name_raw": "MP700 PRO XT / MP700 PRO",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 194,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: MP700 PRO XT / MP700 PRO"
+   ]
+  },
+  {
+   "part_code": "ssd-corsair-mp600-pro-lpx",
+   "type": "ssd",
+   "name": "MP600 PRO LPX",
+   "name_raw": "MP600 PRO LPX",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 195,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-corsair-mp600-mini",
+   "type": "ssd",
+   "name": "MP600 MINI",
+   "name_raw": "MP600 MINI",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": true,
+     "detail": ""
+    },
+    "capacity": "1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|O|1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 196,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-crucial-t705-nvme-ssd",
+   "type": "ssd",
+   "name": "T705 NVMe SSD",
+   "name_raw": "T705 NVMe SSD",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 197,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-crucial-t500",
+   "type": "ssd",
+   "name": "T500",
+   "name_raw": "T500",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 198,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-crucial-p3-plus",
+   "type": "ssd",
+   "name": "P3 Plus",
+   "name_raw": "P3 Plus",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 199,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-crucial-mx500",
+   "type": "ssd",
+   "name": "MX500",
+   "name_raw": "MX500",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|250GB / 500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 200,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-crucial-p310-2230",
+   "type": "ssd",
+   "name": "P310 2230",
+   "name_raw": "P310 2230",
+   "brand": "Crucial",
+   "brand_raw": "Crucial",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": true,
+     "detail": ""
+    },
+    "capacity": "1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|O|1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 201,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-gigabyte-aorus-gen5-14000-ssd",
+   "type": "ssd",
+   "name": "AORUS Gen5 14000 SSD",
+   "name_raw": "AORUS Gen5 14000 SSD",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 202,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-kingston-kc3000",
+   "type": "ssd",
+   "name": "KC3000",
+   "name_raw": "KC3000",
+   "brand": "Kingston",
+   "brand_raw": "Kingston",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "512GB / 1024GB / 2048GB / 4096GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|512GB / 1024GB / 2048GB / 4096GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 203,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-kingston-fury-renegade",
+   "type": "ssd",
+   "name": "Fury Renegade",
+   "name_raw": "Fury Renegade",
+   "brand": "Kingston",
+   "brand_raw": "Kingston",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 204,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-klevv-cras-c910",
+   "type": "ssd",
+   "name": "CRAS C910",
+   "name_raw": "CRAS C910",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 205,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-klevv-neo-n400",
+   "type": "ssd",
+   "name": "Neo N400",
+   "name_raw": "Neo N400",
+   "brand": "KLEVV",
+   "brand_raw": "KLEVV",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "120GB / 240GB / 480GB / 960GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|120GB / 240GB / 480GB / 960GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 206,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-lexar-nm790",
+   "type": "ssd",
+   "name": "NM790",
+   "name_raw": "NM790",
+   "brand": "Lexar",
+   "brand_raw": "Lexar",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "512GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|512GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 207,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-msi-spatium-m580-frozr",
+   "type": "ssd",
+   "name": "SPATIUM M580 FROZR",
+   "name_raw": "SPATIUM M580 FROZR",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 208,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-nextorage-ne5n-series",
+   "type": "ssd",
+   "name": "NE5N Series",
+   "name_raw": "NE5N Series",
+   "brand": "Nextorage",
+   "brand_raw": "Nextorage",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 209,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-pny-xlr8-cs3150-gen5",
+   "type": "ssd",
+   "name": "XLR8 CS3150 Gen5",
+   "name_raw": "XLR8 CS3150 Gen5",
+   "brand": "PNY",
+   "brand_raw": "PNY",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 210,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-pny-cs2241",
+   "type": "ssd",
+   "name": "CS2241",
+   "name_raw": "CS2241",
+   "brand": "PNY",
+   "brand_raw": "PNY",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 211,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-990-pro-w-heatsink-pcie-4-0-5-0",
+   "type": "ssd",
+   "name": "990 PRO w/ Heatsink (PCIe 4.0/5.0)",
+   "name_raw": "990 PRO w/ Heatsink (PCIe 4.0/5.0)",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 212,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-990-pro",
+   "type": "ssd",
+   "name": "990 PRO",
+   "name_raw": "990 PRO",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 213,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-980-pro",
+   "type": "ssd",
+   "name": "980 PRO",
+   "name_raw": "980 PRO",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|250GB / 500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 214,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-980-non-pro",
+   "type": "ssd",
+   "name": "980 (Non-Pro)",
+   "name_raw": "980 (Non-Pro)",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "PCIe 3.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 3.0 x4, NVMe|X (M.2 2280)|250GB / 500GB / 1000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 215,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-870-evo",
+   "type": "ssd",
+   "name": "870 EVO",
+   "name_raw": "870 EVO",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|250GB / 500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 216,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-samsung-870-qvo",
+   "type": "ssd",
+   "name": "870 QVO",
+   "name_raw": "870 QVO",
+   "brand": "Samsung",
+   "brand_raw": "Samsung",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB / 8000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|1000GB / 2000GB / 4000GB / 8000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 217,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-seagate-firecuda-530",
+   "type": "ssd",
+   "name": "FireCuda 530",
+   "name_raw": "FireCuda 530",
+   "brand": "Seagate",
+   "brand_raw": "Seagate",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 218,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-sk-hynix-platinum-p41",
+   "type": "ssd",
+   "name": "Platinum P41",
+   "name_raw": "Platinum P41",
+   "brand": "SK hynix",
+   "brand_raw": "SKhynix",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 219,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-sk-hynix-gold-p31",
+   "type": "ssd",
+   "name": "Gold P31",
+   "name_raw": "Gold P31",
+   "brand": "SK hynix",
+   "brand_raw": "SKhynix",
+   "specs": {
+    "interface": "PCIe 3.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 3.0 x4, NVMe|X (M.2 2280)|500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 220,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-sk-hynix-gold-s31",
+   "type": "ssd",
+   "name": "Gold S31",
+   "name_raw": "Gold S31",
+   "brand": "SK hynix",
+   "brand_raw": "SKhynix",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "250GB / 500GB / 1000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|250GB / 500GB / 1000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 221,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-teamgroup-t-force-cardea-z540",
+   "type": "ssd",
+   "name": "T-Force Cardea Z540",
+   "name_raw": "T-Force Cardea Z540",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "interface": "PCIe 5.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4, NVMe|X (M.2 2280)|1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 222,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-teamgroup-mp44l",
+   "type": "ssd",
+   "name": "MP44L",
+   "name_raw": "MP44L",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|250GB / 500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 223,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-teamgroup-cx2",
+   "type": "ssd",
+   "name": "CX2",
+   "name_raw": "CX2",
+   "brand": "TeamGroup",
+   "brand_raw": "TeamGroup",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 SATA"
+    },
+    "capacity": "256GB / 512GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 SATA)|256GB / 512GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 224,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-western-digital-wd-black-sn8100",
+   "type": "ssd",
+   "name": "WD_BLACK SN8100",
+   "name_raw": "WD_BLACK SN8100 / SN850X",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "PCIe 5.0 x4 / 4.0 x4",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB / 8000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4 / 4.0 x4|X (M.2 2280)|1000GB / 2000GB / 4000GB / 8000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 225,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: WD_BLACK SN8100 / SN850X",
+    "226행에 같은 제품이 다시 있습니다: WD_BLACK SN850X"
+   ]
+  },
+  {
+   "part_code": "ssd-western-digital-wd-black-sn850x",
+   "type": "ssd",
+   "name": "WD_BLACK SN850X",
+   "name_raw": "WD_BLACK SN8100 / SN850X",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "PCIe 5.0 x4 / 4.0 x4",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "1000GB / 2000GB / 4000GB / 8000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 5.0 x4 / 4.0 x4|X (M.2 2280)|1000GB / 2000GB / 4000GB / 8000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 225,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: WD_BLACK SN8100 / SN850X",
+    "226행에 같은 제품이 다시 있습니다: WD_BLACK SN850X"
+   ]
+  },
+  {
+   "part_code": "ssd-western-digital-wd-black-sn770",
+   "type": "ssd",
+   "name": "WD_BLACK SN770",
+   "name_raw": "WD_BLACK SN770",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|250GB / 500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 227,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-western-digital-wd-blue-sn580",
+   "type": "ssd",
+   "name": "WD Blue SN580",
+   "name_raw": "WD Blue SN580",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|X (M.2 2280)|250GB / 500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 228,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-western-digital-wd-blue-sa510",
+   "type": "ssd",
+   "name": "WD Blue SA510",
+   "name_raw": "WD Blue SA510",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "SATA III (6Gb/s)",
+    "small_form_factor": {
+     "flag": false,
+     "detail": "2.5인치 / M.2 2280"
+    },
+    "capacity": "250GB / 500GB / 1000GB / 2000GB / 4000GB"
+   },
+   "derived": {},
+   "fields_raw": "SATA III (6Gb/s)|X (2.5인치 / M.2 2280)|250GB / 500GB / 1000GB / 2000GB / 4000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 229,
+   "warnings": []
+  },
+  {
+   "part_code": "ssd-western-digital-wd-black-sn770m",
+   "type": "ssd",
+   "name": "WD_BLACK SN770M",
+   "name_raw": "WD_BLACK SN770M",
+   "brand": "Western Digital",
+   "brand_raw": "Western Digital",
+   "specs": {
+    "interface": "PCIe 4.0 x4, NVMe",
+    "small_form_factor": {
+     "flag": true,
+     "detail": ""
+    },
+    "capacity": "500GB / 1000GB / 2000GB"
+   },
+   "derived": {},
+   "fields_raw": "PCIe 4.0 x4, NVMe|O|500GB / 1000GB / 2000GB",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 230,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-asus-rog-thor-1200p2-gaming",
+   "type": "psu",
+   "name": "ROG THOR 1200P2 Gaming",
+   "name_raw": "ROG THOR 1200P2 Gaming",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "watt": "1200W",
+    "efficiency": "Platinum",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1200
+   },
+   "fields_raw": "1200W|Platinum||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 233,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-asus-rog-loki-sfx-l-1000w",
+   "type": "psu",
+   "name": "ROG LOKI SFX-L 1000W",
+   "name_raw": "ROG LOKI SFX-L 1000W",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "watt": "1000W",
+    "efficiency": "Platinum",
+    "form_factor": "SFX-L",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1000
+   },
+   "fields_raw": "1000W|Platinum||SFX-L|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 234,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-be-quiet-dark-power-pro-13-1300w",
+   "type": "psu",
+   "name": "Dark Power Pro 13 1300W",
+   "name_raw": "Dark Power Pro 13 1300W",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "watt": "1300W",
+    "efficiency": "Titanium",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1300
+   },
+   "fields_raw": "1300W|Titanium||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 235,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-be-quiet-pure-power-12-m-850w",
+   "type": "psu",
+   "name": "Pure Power 12 M 850W",
+   "name_raw": "Pure Power 12 M 850W",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Semi-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Semi-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 236,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-hydro-ptm-pro-1200w-atx-3-0",
+   "type": "psu",
+   "name": "Hydro PTM PRO 1200W ATX 3.0",
+   "name_raw": "Hydro PTM PRO 1200W ATX 3.0",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "1200W",
+    "efficiency": "Platinum",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1200
+   },
+   "fields_raw": "1200W|Platinum||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 237,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-hydro-g-pro-850w-atx-3-0",
+   "type": "psu",
+   "name": "HYDRO G PRO 850W ATX 3.0",
+   "name_raw": "HYDRO G PRO 850W ATX 3.0",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 238,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-vita-gm-850w-atx-3-1",
+   "type": "psu",
+   "name": "VITA GM 850W ATX 3.1",
+   "name_raw": "VITA GM 850W ATX 3.1",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 239,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-hydro-g-pro-750w-atx-3-0",
+   "type": "psu",
+   "name": "HYDRO G PRO 750W ATX 3.0",
+   "name_raw": "HYDRO G PRO 750W ATX 3.0",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 240,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-hyper-k-pro-600w",
+   "type": "psu",
+   "name": "HYPER K PRO 600W",
+   "name_raw": "HYPER K PRO 600W",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "600W",
+    "efficiency": "Bronze",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 600
+   },
+   "fields_raw": "600W |Bronze||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 241,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-fsp-hyper-k-pro-700w",
+   "type": "psu",
+   "name": "HYPER K PRO 700W",
+   "name_raw": "HYPER K PRO 700W",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "watt": "700W",
+    "efficiency": "Bronze",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 700
+   },
+   "fields_raw": "700W |Bronze||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 242,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-montech-century-ii-750w-atx-3-1",
+   "type": "psu",
+   "name": "Century II 750W ATX 3.1",
+   "name_raw": "Century II 750W ATX 3.1",
+   "brand": "Montech",
+   "brand_raw": "Montech",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 243,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-msi-meg-ai1300p-pcie5",
+   "type": "psu",
+   "name": "MEG Ai1300P PCIE5",
+   "name_raw": "MEG Ai1300P PCIE5",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "watt": "1300W",
+    "efficiency": "Platinum",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1300
+   },
+   "fields_raw": "1300W|Platinum||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 244,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-msi-mag-a750gl-pcie5",
+   "type": "psu",
+   "name": "MAG A750GL PCIE5",
+   "name_raw": "MAG A750GL PCIE5",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 245,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-gigabyte-ud750gm-pcie5",
+   "type": "psu",
+   "name": "UD750GM PCIE5",
+   "name_raw": "UD750GM PCIE5",
+   "brand": "GIGABYTE",
+   "brand_raw": "GIGABYTE",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 246,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-deepcool-px850g-atx-3-0",
+   "type": "psu",
+   "name": "PX850G ATX 3.0",
+   "name_raw": "PX850G ATX 3.0",
+   "brand": "Deepcool",
+   "brand_raw": "Deepcool",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 247,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-micronics-classic-ii-850w-atx-3-1",
+   "type": "psu",
+   "name": "Classic II 850W 풀모듈러 ATX 3.1",
+   "name_raw": "Classic II 850W 풀모듈러 ATX 3.1",
+   "brand": "Micronics",
+   "brand_raw": "Micronics",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 248,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-micronics-classic-ii-750w-atx-3-1",
+   "type": "psu",
+   "name": "Classic II 750W 풀모듈러 ATX 3.1",
+   "name_raw": "Classic II 750W 풀모듈러 ATX 3.1",
+   "brand": "Micronics",
+   "brand_raw": "Micronics",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 249,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-micronics-classic-ii-700w-atx-3-1",
+   "type": "psu",
+   "name": "Classic II 풀체인지 700W ATX 3.1",
+   "name_raw": "Classic II 풀체인지 700W ATX 3.1",
+   "brand": "Micronics",
+   "brand_raw": "Micronics",
+   "specs": {
+    "watt": "700W",
+    "efficiency": "Silver",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (12V-2x6 / 16-pin 포함)"
+   },
+   "derived": {
+    "watt": 700
+   },
+   "fields_raw": "700W |Silver||ATX|Non-Modular (12V-2x6 / 16-pin 포함)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 250,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-micronics-classic-ii-600w",
+   "type": "psu",
+   "name": "Classic II 풀체인지 600W",
+   "name_raw": "Classic II 풀체인지 600W",
+   "brand": "Micronics",
+   "brand_raw": "Micronics",
+   "specs": {
+    "watt": "600W",
+    "efficiency": "Silver",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 600
+   },
+   "fields_raw": "600W |Silver||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 251,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-maxelite-maxwell-primus-700w",
+   "type": "psu",
+   "name": "MAXWELL PRIMUS 700W",
+   "name_raw": "MAXWELL PRIMUS 700W",
+   "brand": "MAXELITE",
+   "brand_raw": "MAXELITE",
+   "specs": {
+    "watt": "700W",
+    "efficiency": "Standard",
+    "form_factor": "ATX",
+    "modular": "Semi-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 700
+   },
+   "fields_raw": "700W |Standard||ATX|Semi-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 252,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-thermaltake-toughpower-gf-a3-750w",
+   "type": "psu",
+   "name": "Toughpower GF A3 750W",
+   "name_raw": "Toughpower GF A3 750W",
+   "brand": "Thermaltake",
+   "brand_raw": "Thermaltake",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 253,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-superflower-sf-1000f14ht-leadex-vii-pro",
+   "type": "psu",
+   "name": "SF-1000F14HT LEADEX VII PRO",
+   "name_raw": "SF-1000F14HT LEADEX VII PRO",
+   "brand": "SuperFlower",
+   "brand_raw": "SuperFlower",
+   "specs": {
+    "watt": "1000W",
+    "efficiency": "Platinum",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1000
+   },
+   "fields_raw": "1000W|Platinum||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 254,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-superflower-sf-850f14xg-leadex-vii-gold",
+   "type": "psu",
+   "name": "SF-850F14XG LEADEX VII GOLD",
+   "name_raw": "SF-850F14XG LEADEX VII GOLD",
+   "brand": "SuperFlower",
+   "brand_raw": "SuperFlower",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 255,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-seasonic-prime-tx-1600-atx-3-0",
+   "type": "psu",
+   "name": "PRIME TX-1600 ATX 3.0",
+   "name_raw": "PRIME TX-1600 ATX 3.0",
+   "brand": "Seasonic",
+   "brand_raw": "Seasonic",
+   "specs": {
+    "watt": "1600W",
+    "efficiency": "Titanium",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1600
+   },
+   "fields_raw": "1600W|Titanium||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 256,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-seasonic-vertex-gx-1000-atx-3-0",
+   "type": "psu",
+   "name": "VERTEX GX-1000 ATX 3.0",
+   "name_raw": "VERTEX GX-1000 ATX 3.0",
+   "brand": "Seasonic",
+   "brand_raw": "Seasonic",
+   "specs": {
+    "watt": "1000W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1000
+   },
+   "fields_raw": "1000W|Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 257,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-seasonic-focus-gx-850-atx-3-0",
+   "type": "psu",
+   "name": "FOCUS GX-850 ATX 3.0",
+   "name_raw": "FOCUS GX-850 ATX 3.0",
+   "brand": "Seasonic",
+   "brand_raw": "Seasonic",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 258,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-seasonic-focus-gx-750-atx-3-0",
+   "type": "psu",
+   "name": "FOCUS GX-750 ATX 3.0",
+   "name_raw": "FOCUS GX-750 ATX 3.0",
+   "brand": "Seasonic",
+   "brand_raw": "Seasonic",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 259,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-antec-neoeco-850w-gold-atx-3-0",
+   "type": "psu",
+   "name": "NeoECO 850W GOLD ATX 3.0",
+   "name_raw": "NeoECO 850W GOLD ATX 3.0",
+   "brand": "Antec",
+   "brand_raw": "Antec",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 260,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-antec-atom-b650-80plus-bronze",
+   "type": "psu",
+   "name": "Atom B650 80PLUS Bronze",
+   "name_raw": "Atom B650 80PLUS Bronze",
+   "brand": "Antec",
+   "brand_raw": "Antec",
+   "specs": {
+    "watt": "650W",
+    "efficiency": "Bronze",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 650
+   },
+   "fields_raw": "650W |Bronze||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 261,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-abko-settler-ii-st-700w",
+   "type": "psu",
+   "name": "SETTLER-II ST-700W",
+   "name_raw": "SETTLER-II ST-700W",
+   "brand": "ABKO",
+   "brand_raw": "ABKO",
+   "specs": {
+    "watt": "700W",
+    "efficiency": "Standard",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 700
+   },
+   "fields_raw": "700W |Standard||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 262,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-enermax-revolution-d-f-x-750w",
+   "type": "psu",
+   "name": "Revolution D.F. X 750W",
+   "name_raw": "Revolution D.F. X 750W",
+   "brand": "Enermax",
+   "brand_raw": "Enermax",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 263,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-zalman-gigamax-iii-750w-80plus-bronze",
+   "type": "psu",
+   "name": "Gigamax III 750W 80PLUS Bronze",
+   "name_raw": "Gigamax III 750W 80PLUS Bronze",
+   "brand": "Zalman",
+   "brand_raw": "Zalman",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Bronze",
+    "form_factor": "ATX",
+    "modular": "Semi-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Bronze||ATX|Semi-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 264,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-zalman-megamax-ii-700w-80plus",
+   "type": "psu",
+   "name": "MegaMax II 700W 80PLUS",
+   "name_raw": "MegaMax II 700W 80PLUS",
+   "brand": "Zalman",
+   "brand_raw": "Zalman",
+   "specs": {
+    "watt": "700W",
+    "efficiency": "Standard",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 700
+   },
+   "fields_raw": "700W |Standard||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 265,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-zalman-ecomax-500w",
+   "type": "psu",
+   "name": "EcoMax 500W",
+   "name_raw": "EcoMax 500W",
+   "brand": "Zalman",
+   "brand_raw": "Zalman",
+   "specs": {
+    "watt": "500W",
+    "efficiency": "Standard",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 500
+   },
+   "fields_raw": "500W |Standard||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 266,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-corsair-hx1500i-atx-3-1",
+   "type": "psu",
+   "name": "HX1500i ATX 3.1",
+   "name_raw": "HX1500i ATX 3.1",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "watt": "1500W",
+    "efficiency": "Platinum",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 1500
+   },
+   "fields_raw": "1500W|Platinum||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 267,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-corsair-rm1000x-shift-atx-3-1",
+   "type": "psu",
+   "name": "RM1000x SHIFT ATX 3.1",
+   "name_raw": "RM1000x SHIFT ATX 3.1",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "watt": "1000W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (Side Connectors, 12V-2x6)"
+   },
+   "derived": {
+    "watt": 1000
+   },
+   "fields_raw": "1000W|Gold||ATX|Full-Modular (Side Connectors, 12V-2x6)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 268,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-corsair-rm850e-atx-3-1",
+   "type": "psu",
+   "name": "RM850e ATX 3.1",
+   "name_raw": "RM850e ATX 3.1",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 269,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-corsair-rm750e-atx-3-1",
+   "type": "psu",
+   "name": "RM750e ATX 3.1",
+   "name_raw": "RM750e ATX 3.1",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "watt": "750W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 750
+   },
+   "fields_raw": "750W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 270,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-cooler-master-mwe-gold-850-v3-atx-3-0",
+   "type": "psu",
+   "name": "MWE Gold 850 V3 ATX 3.0",
+   "name_raw": "MWE Gold 850 V3 ATX 3.0",
+   "brand": "Cooler Master",
+   "brand_raw": "Cooler Master",
+   "specs": {
+    "watt": "850W",
+    "efficiency": "Gold",
+    "form_factor": "ATX",
+    "modular": "Full-Modular (12V-2x6 / 16-pin)"
+   },
+   "derived": {
+    "watt": 850
+   },
+   "fields_raw": "850W |Gold||ATX|Full-Modular (12V-2x6 / 16-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 271,
+   "warnings": []
+  },
+  {
+   "part_code": "psu-cooler-master-mwe-bronze-650-v2",
+   "type": "psu",
+   "name": "MWE Bronze 650 V2",
+   "name_raw": "MWE Bronze 650 V2",
+   "brand": "Cooler Master",
+   "brand_raw": "Cooler Master",
+   "specs": {
+    "watt": "650W",
+    "efficiency": "Bronze",
+    "form_factor": "ATX",
+    "modular": "Non-Modular (PCIe 8-pin)"
+   },
+   "derived": {
+    "watt": 650
+   },
+   "fields_raw": "650W |Bronze||ATX|Non-Modular (PCIe 8-pin)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 272,
+   "warnings": []
+  },
+  {
+   "part_code": "case-corsair-4000d-airflow",
+   "type": "case",
+   "name": "4000D AIRFLOW",
+   "name_raw": "4000D / 5000D AIRFLOW",
+   "brand": "Corsair",
+   "brand_raw": "커세어 (Corsair)",
+   "specs": {
+    "board_support": "ATX / E-ATX",
+    "max_cooler_height": "170mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 170
+   },
+   "fields_raw": "ATX / E-ATX|170mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 275,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: 4000D / 5000D AIRFLOW"
+   ]
+  },
+  {
+   "part_code": "case-corsair-5000d-airflow",
+   "type": "case",
+   "name": "5000D AIRFLOW",
+   "name_raw": "4000D / 5000D AIRFLOW",
+   "brand": "Corsair",
+   "brand_raw": "커세어 (Corsair)",
+   "specs": {
+    "board_support": "ATX / E-ATX",
+    "max_cooler_height": "170mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 170
+   },
+   "fields_raw": "ATX / E-ATX|170mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 275,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: 4000D / 5000D AIRFLOW"
+   ]
+  },
+  {
+   "part_code": "case-corsair-6500x",
+   "type": "case",
+   "name": "6500X",
+   "name_raw": "6500X / 2500X",
+   "brand": "Corsair",
+   "brand_raw": "커세어 (Corsair)",
+   "specs": {
+    "board_support": "ATX / mATX",
+    "max_cooler_height": "190mm (6500X) / 183mm (2500X)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 190
+   },
+   "fields_raw": "ATX / mATX|190mm (6500X) / 183mm (2500X)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 276,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: 6500X / 2500X"
+   ]
+  },
+  {
+   "part_code": "case-corsair-2500x",
+   "type": "case",
+   "name": "2500X",
+   "name_raw": "6500X / 2500X",
+   "brand": "Corsair",
+   "brand_raw": "커세어 (Corsair)",
+   "specs": {
+    "board_support": "ATX / mATX",
+    "max_cooler_height": "190mm (6500X) / 183mm (2500X)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 190
+   },
+   "fields_raw": "ATX / mATX|190mm (6500X) / 183mm (2500X)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 276,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: 6500X / 2500X"
+   ]
+  },
+  {
+   "part_code": "case-lian-li-a4-h2o",
+   "type": "case",
+   "name": "A4-H2O",
+   "name_raw": "A4-H2O",
+   "brand": "Lian Li",
+   "brand_raw": "리안리 (Lian Li)",
+   "specs": {
+    "board_support": "Mini-ITX",
+    "max_cooler_height": "55mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 55
+   },
+   "fields_raw": "Mini-ITX|55mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 277,
+   "warnings": []
+  },
+  {
+   "part_code": "case-daven-apex-white",
+   "type": "case",
+   "name": "APEX White",
+   "name_raw": "APEX White",
+   "brand": "DAVEN",
+   "brand_raw": "데이븐 (DAVEN)",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "175mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 175
+   },
+   "fields_raw": "ATX|175mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 278,
+   "warnings": []
+  },
+  {
+   "part_code": "case-antec-c8-cableless",
+   "type": "case",
+   "name": "C8 CABLELESS",
+   "name_raw": "C8 CABLELESS",
+   "brand": "Antec",
+   "brand_raw": "안텍 (Antec)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "175mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 175
+   },
+   "fields_raw": "E-ATX / ATX|175mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 279,
+   "warnings": []
+  },
+  {
+   "part_code": "case-fsp-cut593-p",
+   "type": "case",
+   "name": "CUT593 P",
+   "name_raw": "CUT593 P",
+   "brand": "FSP",
+   "brand_raw": "FSP",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "175mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 175
+   },
+   "fields_raw": "E-ATX / ATX|175mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 280,
+   "warnings": []
+  },
+  {
+   "part_code": "case-darkflash-df2100-mesh",
+   "type": "case",
+   "name": "DF2100 Mesh",
+   "name_raw": "DF2100 Mesh",
+   "brand": "darkflash",
+   "brand_raw": "다크플래쉬",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 281,
+   "warnings": []
+  },
+  {
+   "part_code": "case-darkflash-dlm21-rgb-mesh",
+   "type": "case",
+   "name": "DLM21 RGB Mesh",
+   "name_raw": "DLM21 RGB Mesh",
+   "brand": "darkflash",
+   "brand_raw": "다크플래쉬",
+   "specs": {
+    "board_support": "mATX",
+    "max_cooler_height": "160mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 160
+   },
+   "fields_raw": "mATX|160mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 282,
+   "warnings": []
+  },
+  {
+   "part_code": "case-phanteks-eclipse-g500a",
+   "type": "case",
+   "name": "Eclipse G500A",
+   "name_raw": "Eclipse G500A",
+   "brand": "Phanteks",
+   "brand_raw": "판텍스 (Phanteks)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "185mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 185
+   },
+   "fields_raw": "E-ATX / ATX|185mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 283,
+   "warnings": []
+  },
+  {
+   "part_code": "case-micronics-eh1-geo",
+   "type": "case",
+   "name": "EH1-GEO",
+   "name_raw": "EH1-GEO",
+   "brand": "Micronics",
+   "brand_raw": "마이크로닉스",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 284,
+   "warnings": []
+  },
+  {
+   "part_code": "case-antec-flux-pro",
+   "type": "case",
+   "name": "FLUX Pro",
+   "name_raw": "FLUX Pro",
+   "brand": "Antec",
+   "brand_raw": "안텍 (Antec)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "190mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 190
+   },
+   "fields_raw": "E-ATX / ATX|190mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 285,
+   "warnings": []
+  },
+  {
+   "part_code": "case-abko-g40",
+   "type": "case",
+   "name": "G40 시그니처",
+   "name_raw": "G40 시그니처",
+   "brand": "ABKO",
+   "brand_raw": "앱코 (ABKO)",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 286,
+   "warnings": []
+  },
+  {
+   "part_code": "case-nzxt-h5-flow",
+   "type": "case",
+   "name": "H5 Flow",
+   "name_raw": "H5 Flow",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 287,
+   "warnings": []
+  },
+  {
+   "part_code": "case-nzxt-h6-flow-rgb",
+   "type": "case",
+   "name": "H6 Flow RGB",
+   "name_raw": "H6 Flow RGB",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "163mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 163
+   },
+   "fields_raw": "ATX|163mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 288,
+   "warnings": []
+  },
+  {
+   "part_code": "case-nzxt-h7-flow",
+   "type": "case",
+   "name": "H7 Flow",
+   "name_raw": "H7 Flow",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "185mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 185
+   },
+   "fields_raw": "ATX|185mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 289,
+   "warnings": []
+  },
+  {
+   "part_code": "case-nzxt-h9-elite",
+   "type": "case",
+   "name": "H9 Elite",
+   "name_raw": "H9 Elite / Flow",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 290,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: H9 Elite / Flow"
+   ]
+  },
+  {
+   "part_code": "case-nzxt-h9-flow",
+   "type": "case",
+   "name": "H9 Flow",
+   "name_raw": "H9 Elite / Flow",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 290,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: H9 Elite / Flow"
+   ]
+  },
+  {
+   "part_code": "case-cooler-master-haf-500",
+   "type": "case",
+   "name": "HAF 500",
+   "name_raw": "HAF 500",
+   "brand": "Cooler Master",
+   "brand_raw": "쿨러마스터",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "167mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 167
+   },
+   "fields_raw": "E-ATX / ATX|167mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 291,
+   "warnings": []
+  },
+  {
+   "part_code": "case-montech-king-95-pro",
+   "type": "case",
+   "name": "KING 95 PRO",
+   "name_raw": "KING 95 PRO",
+   "brand": "Montech",
+   "brand_raw": "몬텍 (Montech)",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "175mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 175
+   },
+   "fields_raw": "ATX|175mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 292,
+   "warnings": []
+  },
+  {
+   "part_code": "case-lian-li-lancool-216",
+   "type": "case",
+   "name": "LANCOOL 216",
+   "name_raw": "LANCOOL 216 / 217",
+   "brand": "Lian Li",
+   "brand_raw": "리안리 (Lian Li)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "180.5mm (216) / 180mm (217)"
+   },
+   "derived": {},
+   "fields_raw": "E-ATX / ATX|180.5mm (216) / 180mm (217)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 293,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: LANCOOL 216 / 217"
+   ]
+  },
+  {
+   "part_code": "case-lian-li-lancool-217",
+   "type": "case",
+   "name": "LANCOOL 217",
+   "name_raw": "LANCOOL 216 / 217",
+   "brand": "Lian Li",
+   "brand_raw": "리안리 (Lian Li)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "180.5mm (216) / 180mm (217)"
+   },
+   "derived": {},
+   "fields_raw": "E-ATX / ATX|180.5mm (216) / 180mm (217)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 293,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: LANCOOL 216 / 217"
+   ]
+  },
+  {
+   "part_code": "case-cooler-master-masterbox-nr200p-v2",
+   "type": "case",
+   "name": "MasterBox NR200P V2",
+   "name_raw": "MasterBox NR200P V2",
+   "brand": "Cooler Master",
+   "brand_raw": "쿨러마스터",
+   "specs": {
+    "board_support": "Mini-ITX",
+    "max_cooler_height": "67mm (수랭 전용 설계)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 67
+   },
+   "fields_raw": "Mini-ITX|67mm (수랭 전용 설계)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 294,
+   "warnings": []
+  },
+  {
+   "part_code": "case-ssupd-meshlicious",
+   "type": "case",
+   "name": "Meshlicious",
+   "name_raw": "Meshlicious / Meshroom S",
+   "brand": "SSUPD",
+   "brand_raw": "SSUPD",
+   "specs": {
+    "board_support": "Mini-ITX / mATX",
+    "max_cooler_height": "73mm (4슬롯 GPU 모드 시 53mm)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 73
+   },
+   "fields_raw": "Mini-ITX / mATX|73mm (4슬롯 GPU 모드 시 53mm)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 295,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: Meshlicious / Meshroom S"
+   ]
+  },
+  {
+   "part_code": "case-ssupd-meshroom-s",
+   "type": "case",
+   "name": "Meshroom S",
+   "name_raw": "Meshlicious / Meshroom S",
+   "brand": "SSUPD",
+   "brand_raw": "SSUPD",
+   "specs": {
+    "board_support": "Mini-ITX / mATX",
+    "max_cooler_height": "73mm (4슬롯 GPU 모드 시 53mm)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 73
+   },
+   "fields_raw": "Mini-ITX / mATX|73mm (4슬롯 GPU 모드 시 53mm)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 295,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: Meshlicious / Meshroom S"
+   ]
+  },
+  {
+   "part_code": "case-fractal-design-mood",
+   "type": "case",
+   "name": "Mood",
+   "name_raw": "Mood",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "mATX / ITX",
+    "max_cooler_height": "114mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 114
+   },
+   "fields_raw": "mATX / ITX|114mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 296,
+   "warnings": []
+  },
+  {
+   "part_code": "case-jonsbo-n3",
+   "type": "case",
+   "name": "N3",
+   "name_raw": "N3 / N4",
+   "brand": "JONSBO",
+   "brand_raw": "JONSBO",
+   "specs": {
+    "board_support": "Mini-ITX / mATX",
+    "max_cooler_height": "130mm (N3) / 165mm (N4)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 130
+   },
+   "fields_raw": "Mini-ITX / mATX|130mm (N3) / 165mm (N4)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 297,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: N3 / N4"
+   ]
+  },
+  {
+   "part_code": "case-jonsbo-n4",
+   "type": "case",
+   "name": "N4",
+   "name_raw": "N3 / N4",
+   "brand": "JONSBO",
+   "brand_raw": "JONSBO",
+   "specs": {
+    "board_support": "Mini-ITX / mATX",
+    "max_cooler_height": "130mm (N3) / 165mm (N4)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 130
+   },
+   "fields_raw": "Mini-ITX / mATX|130mm (N3) / 165mm (N4)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 297,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: N3 / N4"
+   ]
+  },
+  {
+   "part_code": "case-fractal-design-north",
+   "type": "case",
+   "name": "North",
+   "name_raw": "North / North XL",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "ATX / E-ATX",
+    "max_cooler_height": "170mm (North) / 185mm (North XL)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 170
+   },
+   "fields_raw": "ATX / E-ATX|170mm (North) / 185mm (North XL)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 298,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: North / North XL"
+   ]
+  },
+  {
+   "part_code": "case-fractal-design-north-xl",
+   "type": "case",
+   "name": "North XL",
+   "name_raw": "North / North XL",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "ATX / E-ATX",
+    "max_cooler_height": "170mm (North) / 185mm (North XL)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 170
+   },
+   "fields_raw": "ATX / E-ATX|170mm (North) / 185mm (North XL)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 298,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: North / North XL"
+   ]
+  },
+  {
+   "part_code": "case-lian-li-o11-dynamic-evo-xl",
+   "type": "case",
+   "name": "O11 Dynamic EVO XL",
+   "name_raw": "O11 Dynamic EVO XL",
+   "brand": "Lian Li",
+   "brand_raw": "리안리 (Lian Li)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "167mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 167
+   },
+   "fields_raw": "E-ATX / ATX|167mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 299,
+   "warnings": []
+  },
+  {
+   "part_code": "case-lian-li-o11-vision",
+   "type": "case",
+   "name": "O11 Vision",
+   "name_raw": "O11 Vision",
+   "brand": "Lian Li",
+   "brand_raw": "리안리 (Lian Li)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "167mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 167
+   },
+   "fields_raw": "E-ATX / ATX|167mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 300,
+   "warnings": []
+  },
+  {
+   "part_code": "case-zalman-p30",
+   "type": "case",
+   "name": "P30",
+   "name_raw": "P30",
+   "brand": "Zalman",
+   "brand_raw": "잘만 (Zalman)",
+   "specs": {
+    "board_support": "mATX",
+    "max_cooler_height": "173mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 173
+   },
+   "fields_raw": "mATX|173mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 301,
+   "warnings": []
+  },
+  {
+   "part_code": "case--pray-30-plus",
+   "type": "case",
+   "name": "PRAY 30 PLUS",
+   "name_raw": "PRAY 30 PLUS",
+   "brand": "아이구주",
+   "brand_raw": "아이구주",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 302,
+   "warnings": []
+  },
+  {
+   "part_code": "case-asus-proart-pa602",
+   "type": "case",
+   "name": "ProArt PA602",
+   "name_raw": "ProArt PA602",
+   "brand": "ASUS",
+   "brand_raw": "ASUS",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "190mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 190
+   },
+   "fields_raw": "E-ATX / ATX|190mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 303,
+   "warnings": []
+  },
+  {
+   "part_code": "case-be-quiet-pure-base-500dx",
+   "type": "case",
+   "name": "Pure Base 500DX",
+   "name_raw": "Pure Base 500DX",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "190mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 190
+   },
+   "fields_raw": "ATX|190mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 304,
+   "warnings": []
+  },
+  {
+   "part_code": "case-3rsys-quiet-l600-quiet",
+   "type": "case",
+   "name": "Quiet L600 Quiet",
+   "name_raw": "Quiet L600 Quiet",
+   "brand": "3RSYS",
+   "brand_raw": "3RSYS",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "180mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 180
+   },
+   "fields_raw": "ATX|180mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 305,
+   "warnings": []
+  },
+  {
+   "part_code": "case-fractal-design-ridge",
+   "type": "case",
+   "name": "Ridge",
+   "name_raw": "Ridge",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "Mini-ITX",
+    "max_cooler_height": "70mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 70
+   },
+   "fields_raw": "Mini-ITX|70mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 306,
+   "warnings": []
+  },
+  {
+   "part_code": "case-be-quiet-shadow-base-800-fx",
+   "type": "case",
+   "name": "Shadow Base 800 FX",
+   "name_raw": "Shadow Base 800 FX",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "180mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 180
+   },
+   "fields_raw": "E-ATX / ATX|180mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 307,
+   "warnings": []
+  },
+  {
+   "part_code": "case-formd-t1-v2-1",
+   "type": "case",
+   "name": "T1 V2.1",
+   "name_raw": "T1 V2.1",
+   "brand": "FormD",
+   "brand_raw": "FormD",
+   "specs": {
+    "board_support": "Mini-ITX",
+    "max_cooler_height": "48mm ~ 73mm (수정형 슬롯 설정에 따름)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 48
+   },
+   "fields_raw": "Mini-ITX|48mm ~ 73mm (수정형 슬롯 설정에 따름)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 308,
+   "warnings": []
+  },
+  {
+   "part_code": "case-fractal-design-terra",
+   "type": "case",
+   "name": "Terra",
+   "name_raw": "Terra",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "Mini-ITX",
+    "max_cooler_height": "48mm ~ 77mm (가변 가이드 설정에 따름)"
+   },
+   "derived": {
+    "max_cooler_height_mm": 48
+   },
+   "fields_raw": "Mini-ITX|48mm ~ 77mm (가변 가이드 설정에 따름)",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 309,
+   "warnings": []
+  },
+  {
+   "part_code": "case-jonsbo-tk-2",
+   "type": "case",
+   "name": "TK-2",
+   "name_raw": "TK-2 / TK-3",
+   "brand": "JONSBO",
+   "brand_raw": "JONSBO",
+   "specs": {
+    "board_support": "ATX / mATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX / mATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 310,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: TK-2 / TK-3"
+   ]
+  },
+  {
+   "part_code": "case-jonsbo-tk-3",
+   "type": "case",
+   "name": "TK-3",
+   "name_raw": "TK-2 / TK-3",
+   "brand": "JONSBO",
+   "brand_raw": "JONSBO",
+   "specs": {
+    "board_support": "ATX / mATX",
+    "max_cooler_height": "165mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 165
+   },
+   "fields_raw": "ATX / mATX|165mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 310,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: TK-2 / TK-3"
+   ]
+  },
+  {
+   "part_code": "case-fractal-design-torrent",
+   "type": "case",
+   "name": "Torrent",
+   "name_raw": "Torrent",
+   "brand": "Fractal Design",
+   "brand_raw": "프랙탈 디자인",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "188mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 188
+   },
+   "fields_raw": "E-ATX / ATX|188mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 311,
+   "warnings": []
+  },
+  {
+   "part_code": "case-micronics-wizmax-ml-420-view",
+   "type": "case",
+   "name": "WIZMAX ML-420 View",
+   "name_raw": "WIZMAX ML-420 View",
+   "brand": "Micronics",
+   "brand_raw": "마이크로닉스",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "180mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 180
+   },
+   "fields_raw": "E-ATX / ATX|180mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 312,
+   "warnings": []
+  },
+  {
+   "part_code": "case-hyte-y40",
+   "type": "case",
+   "name": "Y40",
+   "name_raw": "Y40",
+   "brand": "HYTE",
+   "brand_raw": "하이트 (HYTE)",
+   "specs": {
+    "board_support": "ATX",
+    "max_cooler_height": "160mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 160
+   },
+   "fields_raw": "ATX|160mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 313,
+   "warnings": []
+  },
+  {
+   "part_code": "case-hyte-y70-touch-infinite",
+   "type": "case",
+   "name": "Y70 Touch Infinite",
+   "name_raw": "Y70 Touch Infinite",
+   "brand": "HYTE",
+   "brand_raw": "하이트 (HYTE)",
+   "specs": {
+    "board_support": "E-ATX / ATX",
+    "max_cooler_height": "180mm"
+   },
+   "derived": {
+    "max_cooler_height_mm": 180
+   },
+   "fields_raw": "E-ATX / ATX|180mm",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 314,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-3rsys-socoool-ranni-xy-360-argb",
+   "type": "cooler",
+   "name": "Socoool RANNI XY 360 ARGB",
+   "name_raw": "Socoool RANNI XY 360 ARGB",
+   "brand": "3RSYS",
+   "brand_raw": "3RSYS",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 317,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-3rsys-socoool-rc1900-argb",
+   "type": "cooler",
+   "name": "Socoool RC1900 ARGB",
+   "name_raw": "Socoool RC1900 ARGB",
+   "brand": "3RSYS",
+   "brand_raw": "3RSYS",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "156",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 156
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|156|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 318,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-3rsys-socoool-rc310-argb",
+   "type": "cooler",
+   "name": "Socoool RC310 ARGB",
+   "name_raw": "Socoool RC310 ARGB",
+   "brand": "3RSYS",
+   "brand_raw": "3RSYS",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "153",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 153
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1700/1200/115x, AM5/AM4|153|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 319,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-be-quiet-silent-loop-3-420mm",
+   "type": "cooler",
+   "name": "Silent Loop 3 420mm",
+   "name_raw": "Silent Loop 3 420mm",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "420"
+   },
+   "derived": {
+    "radiator_mm": 420
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700/1200/115x, AM5/AM4|-|420",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 320,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-be-quiet-dark-rock-pro-6",
+   "type": "cooler",
+   "name": "Dark Rock Pro 6",
+   "name_raw": "Dark Rock Pro 6",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "169",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 169
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1851/1700/1200/115x, AM5/AM4|169|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 321,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-be-quiet-pure-rock-pro-3",
+   "type": "cooler",
+   "name": "Pure Rock Pro 3",
+   "name_raw": "Pure Rock Pro 3",
+   "brand": "be quiet!",
+   "brand_raw": "be quiet!",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "155",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 155
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1851/1700/1200/115x, AM5/AM4|155|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 322,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-gamdias-aura-gl240-v2",
+   "type": "cooler",
+   "name": "AURA GL240 V2",
+   "name_raw": "AURA GL240 V2",
+   "brand": "GAMDIAS",
+   "brand_raw": "GAMDIAS",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 323,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-id-cooling-is-55-argb",
+   "type": "cooler",
+   "name": "IS-55 ARGB",
+   "name_raw": "IS-55 ARGB",
+   "brand": "ID-COOLING",
+   "brand_raw": "ID-COOLING",
+   "specs": {
+    "cooler_type": "Air (Low-Profile)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "55",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 55
+   },
+   "fields_raw": "Air (Low-Profile)|LGA1700/1200/115x, AM5/AM4|55|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 324,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-msi-mag-coreliquid-a13-360",
+   "type": "cooler",
+   "name": "MAG CoreLiquid A13 360",
+   "name_raw": "MAG CoreLiquid A13 360",
+   "brand": "MSI",
+   "brand_raw": "MSI",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700/1200, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700/1200, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 325,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-pccooler-paladin-s9-argb",
+   "type": "cooler",
+   "name": "PALADIN S9 ARGB",
+   "name_raw": "PALADIN S9 ARGB",
+   "brand": "PCCOOLER",
+   "brand_raw": "PCCOOLER",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "156",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 156
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|156|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 326,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-pccooler-paladin-400",
+   "type": "cooler",
+   "name": "PALADIN 400",
+   "name_raw": "PALADIN 400",
+   "brand": "PCCOOLER",
+   "brand_raw": "PCCOOLER",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "157",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 157
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1700/1200/115x, AM5/AM4|157|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 327,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-noctua-nh-d15-g2",
+   "type": "cooler",
+   "name": "NH-D15 G2",
+   "name_raw": "NH-D15 G2",
+   "brand": "Noctua",
+   "brand_raw": "Noctua",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "168",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 168
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1851/1700/1200/115x, AM5/AM4|168|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 328,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-noctua-nh-l9i-17xx",
+   "type": "cooler",
+   "name": "NH-L9i-17xx",
+   "name_raw": "NH-L9i-17xx / NH-L9a-AM5",
+   "brand": "Noctua",
+   "brand_raw": "Noctua",
+   "specs": {
+    "cooler_type": "Air (Low-Profile)",
+    "socket": "LGA1700 (i) / AM5 (a)",
+    "height": "37",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 37
+   },
+   "fields_raw": "Air (Low-Profile)|LGA1700 (i) / AM5 (a)|37|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 329,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: NH-L9i-17xx / NH-L9a-AM5"
+   ]
+  },
+  {
+   "part_code": "cooler-noctua-nh-l9a-am5",
+   "type": "cooler",
+   "name": "NH-L9a-AM5",
+   "name_raw": "NH-L9i-17xx / NH-L9a-AM5",
+   "brand": "Noctua",
+   "brand_raw": "Noctua",
+   "specs": {
+    "cooler_type": "Air (Low-Profile)",
+    "socket": "LGA1700 (i) / AM5 (a)",
+    "height": "37",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 37
+   },
+   "fields_raw": "Air (Low-Profile)|LGA1700 (i) / AM5 (a)|37|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 329,
+   "warnings": [
+    "한 행에 2개 제품이라 쪼갰습니다: NH-L9i-17xx / NH-L9a-AM5"
+   ]
+  },
+  {
+   "part_code": "cooler-noctua-nh-l12s",
+   "type": "cooler",
+   "name": "NH-L12S",
+   "name_raw": "NH-L12S",
+   "brand": "Noctua",
+   "brand_raw": "Noctua",
+   "specs": {
+    "cooler_type": "Air (Low-Profile)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "70",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 70
+   },
+   "fields_raw": "Air (Low-Profile)|LGA1700/1200/115x, AM5/AM4|70|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 330,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-noctua-nh-p1",
+   "type": "cooler",
+   "name": "NH-P1",
+   "name_raw": "NH-P1",
+   "brand": "Noctua",
+   "brand_raw": "Noctua",
+   "specs": {
+    "cooler_type": "Air (Passive)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "158",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 158
+   },
+   "fields_raw": "Air (Passive)|LGA1700/1200/115x, AM5/AM4|158|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 331,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-darkflash-nebula-dn-360s-argb",
+   "type": "cooler",
+   "name": "NEBULA DN-360S ARGB",
+   "name_raw": "NEBULA DN-360S ARGB",
+   "brand": "darkflash",
+   "brand_raw": "darkflash",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 332,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-darkflash-nebula-dn-240-argb",
+   "type": "cooler",
+   "name": "NEBULA DN-240 ARGB",
+   "name_raw": "NEBULA DN-240 ARGB",
+   "brand": "darkflash",
+   "brand_raw": "darkflash",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 333,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-deepcool-mystique-360",
+   "type": "cooler",
+   "name": "MYSTIQUE 360",
+   "name_raw": "MYSTIQUE 360",
+   "brand": "Deepcool",
+   "brand_raw": "Deepcool",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 334,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-deepcool-ls520-se",
+   "type": "cooler",
+   "name": "LS520 SE",
+   "name_raw": "LS520 SE",
+   "brand": "Deepcool",
+   "brand_raw": "Deepcool",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 335,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-deepcool-ag620-g2",
+   "type": "cooler",
+   "name": "AG620 G2 (블랙)",
+   "name_raw": "AG620 G2 (블랙)",
+   "brand": "Deepcool",
+   "brand_raw": "Deepcool",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "157",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 157
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|157|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 336,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-deepcool-ag400-g2",
+   "type": "cooler",
+   "name": "AG400 G2",
+   "name_raw": "AG400 G2",
+   "brand": "Deepcool",
+   "brand_raw": "Deepcool",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "150",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 150
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1700/1200/115x, AM5/AM4|150|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 337,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-lian-li-hydroshift-ii-oled-curved-360",
+   "type": "cooler",
+   "name": "HydroShift II OLED Curved 360",
+   "name_raw": "HydroShift II OLED Curved 360",
+   "brand": "Lian Li",
+   "brand_raw": "Lian Li",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 338,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-valkyrie-gl360-argb",
+   "type": "cooler",
+   "name": "GL360 ARGB",
+   "name_raw": "GL360 ARGB",
+   "brand": "Valkyrie",
+   "brand_raw": "Valkyrie",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x/2066, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x/2066, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 339,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-thermalright-peerless-assassin-120-se",
+   "type": "cooler",
+   "name": "Peerless Assassin 120 SE",
+   "name_raw": "Peerless Assassin 120 SE",
+   "brand": "Thermalright",
+   "brand_raw": "Thermalright",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "155",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 155
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|155|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 340,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-thermalright-phantom-spirit-120-evo",
+   "type": "cooler",
+   "name": "Phantom Spirit 120 EVO",
+   "name_raw": "Phantom Spirit 120 EVO",
+   "brand": "Thermalright",
+   "brand_raw": "Thermalright",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "157",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 157
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|157|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 341,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-thermalright-assassin-x-120-refined-se",
+   "type": "cooler",
+   "name": "Assassin X 120 Refined SE",
+   "name_raw": "Assassin X 120 Refined SE",
+   "brand": "Thermalright",
+   "brand_raw": "Thermalright",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "148",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 148
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1700/1200/115x, AM5/AM4|148|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 342,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-thermalright-axp90-x47-full-copper",
+   "type": "cooler",
+   "name": "AXP90-X47 FULL COPPER",
+   "name_raw": "AXP90-X47 FULL COPPER",
+   "brand": "Thermalright",
+   "brand_raw": "Thermalright",
+   "specs": {
+    "cooler_type": "Air (Low-Profile)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "47",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 47
+   },
+   "fields_raw": "Air (Low-Profile)|LGA1700/1200/115x, AM5/AM4|47|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 343,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-thermaltake-magfloe-420-ultra",
+   "type": "cooler",
+   "name": "MAGFloe 420 Ultra",
+   "name_raw": "MAGFloe 420 Ultra",
+   "brand": "Thermaltake",
+   "brand_raw": "Thermaltake",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "420"
+   },
+   "derived": {
+    "radiator_mm": 420
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|420",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 344,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-superflower-cooldex-st4-argb",
+   "type": "cooler",
+   "name": "Cooldex ST4 ARGB",
+   "name_raw": "Cooldex ST4 ARGB",
+   "brand": "SuperFlower",
+   "brand_raw": "SuperFlower",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "155",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 155
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|155|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 345,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-arctic-liquid-freezer-iii-pro-360",
+   "type": "cooler",
+   "name": "Liquid Freezer III Pro 360",
+   "name_raw": "Liquid Freezer III Pro 360",
+   "brand": "ARCTIC",
+   "brand_raw": "ARCTIC",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700,AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700,AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 346,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-arctic-liquid-freezer-iii-240-argb",
+   "type": "cooler",
+   "name": "Liquid Freezer III 240 ARGB",
+   "name_raw": "Liquid Freezer III 240 ARGB",
+   "brand": "ARCTIC",
+   "brand_raw": "ARCTIC",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 347,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-arctic-freezer-36",
+   "type": "cooler",
+   "name": "Freezer 36",
+   "name_raw": "Freezer 36",
+   "brand": "ARCTIC",
+   "brand_raw": "ARCTIC",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1851/1700, AM5/AM4",
+    "height": "159",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 159
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1851/1700, AM5/AM4|159|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 348,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-zalman-cnps9x-perfecta",
+   "type": "cooler",
+   "name": "CNPS9X PERFECTA",
+   "name_raw": "CNPS9X PERFECTA",
+   "brand": "Zalman",
+   "brand_raw": "Zalman",
+   "specs": {
+    "cooler_type": "Air (Single-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "156",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 156
+   },
+   "fields_raw": "Air (Single-Tower)|LGA1700/1200/115x, AM5/AM4|156|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 349,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-g-skill-royal-shield-h36",
+   "type": "cooler",
+   "name": "Royal Shield H36",
+   "name_raw": "Royal Shield H36",
+   "brand": "G.SKILL",
+   "brand_raw": "G.SKILL",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "158",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 158
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|158|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 350,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-corsair-icue-link-titanium-rx120-rgb-360",
+   "type": "cooler",
+   "name": "iCUE LINK TITANIUM RX120 RGB 360",
+   "name_raw": "iCUE LINK TITANIUM RX120 RGB 360",
+   "brand": "Corsair",
+   "brand_raw": "Corsair",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 351,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-cooler-master-masterliquid-240-atmos",
+   "type": "cooler",
+   "name": "MasterLiquid 240 Atmos",
+   "name_raw": "MasterLiquid 240 Atmos",
+   "brand": "Cooler Master",
+   "brand_raw": "Cooler Master",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 352,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-cooler-master-v8-ace-3dhp",
+   "type": "cooler",
+   "name": "V8 Ace 3DHP",
+   "name_raw": "V8 Ace 3DHP",
+   "brand": "Cooler Master",
+   "brand_raw": "Cooler Master",
+   "specs": {
+    "cooler_type": "Air (Dual-Tower)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "165",
+    "radiator": "-"
+   },
+   "derived": {
+    "height_mm": 165
+   },
+   "fields_raw": "Air (Dual-Tower)|LGA1700/1200/115x, AM5/AM4|165|-",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 353,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-nzxt-kraken-elite-360-rgb-v2",
+   "type": "cooler",
+   "name": "Kraken Elite 360 RGB v2",
+   "name_raw": "Kraken Elite 360 RGB v2",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1851/1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1851/1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 354,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-nzxt-kraken-240-rgb",
+   "type": "cooler",
+   "name": "Kraken 240 RGB",
+   "name_raw": "Kraken 240 RGB",
+   "brand": "NZXT",
+   "brand_raw": "NZXT",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "240"
+   },
+   "derived": {
+    "radiator_mm": 240
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|240",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 355,
+   "warnings": []
+  },
+  {
+   "part_code": "cooler-tryx-panorama-360-argb",
+   "type": "cooler",
+   "name": "PANORAMA 360 ARGB",
+   "name_raw": "PANORAMA 360 ARGB",
+   "brand": "TRYX",
+   "brand_raw": "TRYX",
+   "specs": {
+    "cooler_type": "Liquid (AIO)",
+    "socket": "LGA1700/1200/115x, AM5/AM4",
+    "height": "-",
+    "radiator": "360"
+   },
+   "derived": {
+    "radiator_mm": 360
+   },
+   "fields_raw": "Liquid (AIO)|LGA1700/1200/115x, AM5/AM4|-|360",
+   "spec_url": "",
+   "cpu_support_url": "",
+   "row": 356,
+   "warnings": []
+  }
+ ]
+}
