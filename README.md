@@ -509,6 +509,7 @@ uvicorn app.main:app --reload --port 8000
 | `docs/decisions/0006-…` | 왜 협상 에이전트에게는 도구를 주지 않는가 — **도구를 추가하기 전에** |
 | `docs/decisions/0007-…` | 왜 목업을 3단계의 사양으로 삼았는가 |
 | `docs/decisions/0008-…` | 왜 리뷰 기본값이 합성인가 |
+| `docs/decisions/0009-…` | 왜 조작 확률을 LLM 단독 채점에 맡기지 않는가 — **`RISK_MODE=llm` 을 켜기 전에** |
 | `docs/wiki_대조_20260907.md` | 9/5~9/7 회의가 뒤집은 것 — **방향이 왜 이렇게 됐는지** |
 
 ## 라이선스와 오픈소스 사용 고지
