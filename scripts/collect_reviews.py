@@ -595,23 +595,16 @@ def collect(args) -> None:
     probe_doc = json.loads(PROBE_OUT.read_text())
     results = [r for r in probe_doc["results"] if r.get("total")]
 
-    # 부품군별 카테고리 최빈값과 다른 것은 뺀다 — 완제품 PC 가 섞이는 자리를 막는다.
-    modal: dict[str, str] = {}
-    for t in {r["type"] for r in results}:
-        c = Counter(next(x for x in r["candidates"] if "rejected" not in x)["cate"]
-                    for r in results if r["type"] == t)
-        modal[t] = c.most_common(1)[0][0]
-    kept, dropped = [], []
-    for r in results:
-        best = next(x for x in r["candidates"] if "rejected" not in x)
-        (kept if best["cate"] == modal[r["type"]] else dropped).append((r, best))
-    if dropped:
-        print(f"카테고리가 달라 뺀 품목 {len(dropped)}개:",
-              ", ".join(r["part_code"] for r, _ in dropped[:5]))
+    # 분류 코드는 `pick()` 이 이미 `TYPE_CATE` 허용 목록으로 걸렀다. 여기서
+    # **최빈값**으로 한 번 더 거르던 것을 걷어냈다 — 한 부품군에 코드가 여럿인
+    # 경우(cpu 는 인텔 113973 · AMD 113990)에 소수 쪽이 통째로 빠진다.
+    # 실제로 인텔 CPU 18품목이 이 필터에 걸려 수집 대상에서 사라졌다.
+    kept = [(r, next(x for x in r["candidates"] if "rejected" not in x)) for r in results]
 
     kept.sort(key=lambda rb: rb[0]["total"], reverse=True)
     if args.balanced:
-        per = max(1, args.top // len(modal))
+        types = {r["type"] for r, _ in kept} or {"?"}
+        per = max(1, args.top // len(types))
         picked, seen = [], Counter()
         for r, b in kept:
             if seen[r["type"]] < per:
