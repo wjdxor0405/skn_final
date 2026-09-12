@@ -21,7 +21,7 @@
 | 설명서 RAG       | Markdown 청크화, DB 적재·게시, pgvector+키워드 검색, 검색·인용 기록, 권한·철회 검사                  | 관리자 CLI 중심. 단일 가상 유모차 자료로 회귀 평가. PDF/OCR·S3·전체 추천 UI 연결 미구현 |
 | 임베딩           | Bedrock Titan v2 어댑터와 명시적 `local-test` 1024차원 벡터                                          | Bedrock 실모델 품질 평가는 미수행. local-test는 어휘 해시 벡터                          |
 | 리뷰·데이터 도구 | PC 합성 리뷰 요약 생성, 공식 스펙 수집 스크립트, 유아용품 상품 생성 코드                             | 운영 리뷰 작성·집계·학습 파이프라인 미구현. 상품 생성 기본 사전 파일 누락               |
-| 리뷰 관계·행동 축 | 공개 리뷰 데이터(Amazon Reviews'23)에서 리뷰어–상품 그래프의 **관측 사실**(7일 몰림·공유 리뷰어·계정 구성)을 배치로 산출하고 데모 부품 25종에 연결. 계약 리더(`ProductRiskStore`)까지 | 조작 라벨이 없어 탐지율·정제 후 평점은 산출하지 않음(`cleaned_rating`은 null). `GET /reviews/summary`·[3-B] 리뷰축·[5] 설명 연결은 별도 브랜치(`feat/review-wiring`). 수집기·`author_ref` 저장은 미구현 |
+| 리뷰 관계·행동 축 | 공개 리뷰 데이터(Amazon Reviews'23)에서 리뷰어–상품 그래프의 **관측 사실**(7일 몰림·공유 리뷰어·계정 구성)을 배치로 산출하고 데모 부품 25종에 연결. 계약 리더(`ProductRiskStore`)까지 | 조작 라벨이 없어 탐지율·정제 후 평점은 산출하지 않음(`cleaned_rating`은 null). `GET /reviews/summary`·[3-B] 리뷰축·[5] 설명에 연결됨. 수집기·`author_ref` 저장은 미구현 |
 
 ## 빠른 시작
 
@@ -163,6 +163,7 @@ uv run python -m src.workers.review_cleanse_worker data/amazon23/electronics_edg
     --meta data/amazon23/electronics_meta.tsv --category "Computer Components|Data Storage" `
     --out data/amazon23/pcparts_product_risk.json                 # 43.9M건 ≈ 12GB·6분. 대조군은 같은 부류로
 uv run python -m src.workers.review_cleanse_worker --lookup amd-ryzen-5-5600   # 부품 하나의 카드
+uv run python main.py computer_pass                               # 결과표 아래 "리뷰 관측" 줄
 ```
 
 - 산출 JSON(`data/amazon23/pcparts_product_risk.json`, 5MB)이 없는 환경에서는 `ProductRiskStore`가 `None`이고
@@ -182,7 +183,8 @@ OpenAPI에는 업무·개발용 22개 작업과 `/health` 1개가 등록되어 �
 | 인증   | `POST /auth/request-code`, `/auth/verify`, `/auth/logout`, `GET /auth/me`                                                                                  | 이메일 코드·JWT·세션 병합 미구현   |
 | 세션   | `POST /session`, `POST /session/{list_id}/category`, `/message`, `/answer`, `/recommend`, `PATCH /session/{list_id}/slot`, `GET /session/{list_id}/result` | 계약·진입점 중심, 서비스 구현 필요 |
 | 리스트 | `POST /lists/{list_id}/confirm`, `GET /lists/{list_id}/report`, `GET /lists`                                                                               | 확정·저장·리포트 미구현            |
-| 리뷰   | `GET /reviews/pending`, `POST /reviews/part`, `/reviews/build`, `/reviews/{review_id}/publish`, `GET /reviews/summary/{product_key}`                       | 작성·게시·운영 집계 미구현         |
+| 리뷰   | `GET /reviews/pending`, `POST /reviews/part`, `/reviews/build`, `/reviews/{review_id}/publish`                                                            | 작성·게시·운영 집계 미구현. 작성 요청의 `telemetry`(폼 계측값, 횟수·시간만) 계약은 확정 |
+| 리뷰 요약 | `GET /reviews/summary/{product_key}`                                                                                                                    | 동작 — 관계 축 관측 + 합성 데모 블록(표지 포함). 인증 없음 |
 
 설명서 RAG는 CLI·서비스 함수로 구현되어 있으며 별도 HTTP 엔드포인트를 제공하지 않습니다. 공통 `src/db` 연결 풀은 미구현이지만 RAG CLI·검색 함수는 psycopg 직접 연결과 `RagRepo`
 를 사용합니다.
