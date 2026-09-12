@@ -56,3 +56,9 @@ CONFIG_DIR: Path = ROOT / "config"
 CATEGORY_DIR: Path = CONFIG_DIR / "categories"
 SCENARIO_DIR: Path = DATA_DIR / "scenarios"
 FRONTEND_DIR: Path = ROOT / "frontend"
+
+# 리뷰 관계·행동 축 — 배치(review_cleanse_worker) 산출물과 데모 부품 ↔ ASIN 매핑.
+# 산출 JSON 이 없으면 ProductRiskStore 는 None 이고 호출자는 "관측 없음" 으로 다룬다
+REVIEW_RISK_JSON: Path = DATA_DIR / "amazon23" / "pcparts_product_risk.json"   # 대조군 = PC 부품 (Computer Components|Data Storage)
+PARTS_ASIN_MAP: Path = DATA_DIR / "parts_asin_map.csv"
+REVIEW_SUMMARIES_DEMO: Path = DATA_DIR / "review_summaries.json"     # 합성 데모 (is_synthetic=true) — 항목별 평가·요약 3건
