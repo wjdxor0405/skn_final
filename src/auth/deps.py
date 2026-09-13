@@ -10,7 +10,7 @@ class Principal:
         self.user_id = user_id
         self.browser_token = browser_token
 
-def optional_principal(authorization: str | None = Header(default=None), browser_token_header: str | None = Header(default=None, alias="X-Browser-Token"), browser_token_cookie: str | None = Cookie(default=None, alias="browser_token")) -> Principal:
+def optional_principal(authorization: str | None = Header(default=None), browser_token_header: str | None = Header(default=None, alias="X-Browser-Token"), browser_token_cookie: str | None = Cookie(default=None, alias="truefit_guest")) -> Principal:
     user_id = None
     if authorization is not None:
         scheme, _, token = authorization.partition(" ")

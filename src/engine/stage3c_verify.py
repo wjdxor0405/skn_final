@@ -67,6 +67,45 @@ def verify_set(build: BuildResult, scenario: dict, round_index: int, log: LogFn)
     return VerificationResult(list_id=build.list_id, category=domain, mode="set", targets=[tgt])
 
 
+def verify_build(build: BuildResult, category: str, log: LogFn = lambda _m: None) -> VerificationResult:
+    """DB 경로([추천 실행])의 세트 검증 — 규칙 스캐폴드.
+
+    검사AI↔변호인AI 디베이트·리뷰 진위·RAG 근거는 담당 팀원이 채운다. 여기서는
+    link_check/예산 기반 규칙 confidence 로 파이프라인을 완성한다.
+    """
+    log("[3-C] 세트 검증 (규칙 스캐폴드) ...")
+    issues: list[Issue] = []
+    penalty = 0
+    for axis, state in (build.link_check or {}).items():
+        s = str(state).lower()
+        if "fail" in s or "미충족" in s or "over" in s:
+            issues.append(Issue(axis=axis, tool_result=state, judge="위반", penalty=20))
+            penalty += 20
+        elif "pending" in s or "근사" in s:
+            issues.append(Issue(axis=axis, tool_result=state, judge="확인 필요", penalty=6))
+            penalty += 6
+
+    budget = build.budget or {}
+    used_pct = budget.get("used_pct")
+    if used_pct is None and budget.get("max"):
+        used_pct = round(budget.get("used", 0) / budget["max"] * 100, 1)
+    if used_pct and used_pct > 110:
+        issues.append(Issue(axis="예산", tool_result=f"{used_pct}%", judge="초과", penalty=15))
+        penalty += 15
+
+    gray = ["리뷰 진위 (담당 팀원)", "RAG 근거 (담당 팀원)"]
+    confidence = max(0, 100 - penalty)
+    passed = confidence >= CONFIDENCE_THRESHOLD
+    log(f"      신뢰도 {confidence} · 회색축 {gray} · {'통과' if passed else '기준 미달'}")
+
+    tgt = VerificationTarget(
+        subject="세트 전체", confidence=confidence, passed=passed, rounds=1,
+        issues=issues, gray_axes=gray,
+        transcript=[{"round": 1, "issues": [i.model_dump() for i in issues]}],
+    )
+    return VerificationResult(list_id=build.list_id, category=category, mode="set", targets=[tgt])
+
+
 def problem_slot(scenario: dict, round_index: int) -> str | None:
     """이번 라운드가 지목한 재탐색 대상 슬롯."""
     rounds = scenario["verify"]["rounds"]

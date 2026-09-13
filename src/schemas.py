@@ -9,8 +9,6 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.dto import RecommendationResult
-
 
 # ── auth ──
 class RequestCodeIn(BaseModel):
@@ -29,7 +27,6 @@ class TokenOut(BaseModel):
 # ── session (S1~S3) ──
 class SessionOut(BaseModel):
     list_id: str
-    browser_token: str
 
 
 class CategoryIn(BaseModel):
@@ -38,12 +35,12 @@ class CategoryIn(BaseModel):
 
 
 class MessageIn(BaseModel):
-    text: str
+    text: str = Field(max_length=500)
 
 
 class AnswerIn(BaseModel):
     question_id: str
-    selected: list[str]
+    selected: list[Any]
 
 
 class SlotPatchIn(BaseModel):
@@ -51,91 +48,147 @@ class SlotPatchIn(BaseModel):
     value: Any | None = None
 
 
-class ConditionStateOut(BaseModel):
-    slots: dict[str, Any]
-    assumed: dict[str, Any]
-    missing: list[str]
-    next_questions: list[dict]
-    can_recommend: bool
-
-
-# ── recommend / result (S4) ──
-class RecommendResultOut(BaseModel):
-    """저장된 추천 실행 결과의 공개 API 계약.
-
-    DB 행 또는 파이프라인 내부 DTO를 그대로 직렬화하지 않고
-    ``recommendation_result_out``에서 이 모델로 변환한다.
-    """
-
-    recommendation_run_id: str
-    list_id: str
-    revision_id: str
-    status: str                      # running | done | failed | conflict
-    candidates: list["RecommendationCandidateOut"] = Field(default_factory=list)
-    error_code: str | None = None
-
-
-class RecommendationEvidenceOut(BaseModel):
-    """응답 직전에 다시 권한 검사를 통과한 설명서 인용."""
-
-    evidence_id: str
+# ── 조건 대화 (§D-4-1) ──
+class MessageOut(BaseModel):
+    id: str
+    role: str
     text: str
-    locator: dict[str, Any] = Field(default_factory=dict)
-    file_sha256: str | None = None
-    review_status: str | None = None
+    created_at: str
 
 
-class RecommendationCandidateOut(BaseModel):
+class FieldOut(BaseModel):
+    key: str
+    label: str
+    value: Any = None
+    display: str | None = None
+    status: str            # confirmed | assumed | missing
+    editable: bool = True
+
+
+class NextQuestionOut(BaseModel):
+    id: str
+    field: str
+    text: str
+    select: str             # single | multi | free
+    options: list[dict] = Field(default_factory=list)
+
+
+class ConditionState(BaseModel):
+    list_id: str
+    category: str | None = None
+    messages: list[MessageOut] = Field(default_factory=list)
+    fields: list[FieldOut] = Field(default_factory=list)
+    next_question: NextQuestionOut | None = None
+    can_recommend: bool = False
+    accepts_spec_file: bool = False
+
+
+# ── recommend / result (§D-4-2) ──
+class RecommendIn(BaseModel):
+    strategy: Optional[Literal["default", "alternative"]] = "default"
+
+
+class RecommendAcceptedOut(BaseModel):
+    """POST /recommend 의 202 응답 — 실행을 접수했을 뿐, 결과는 GET /result 로 폴링."""
+
+    run_id: str
+    status: str = "running"
+
+
+class ProgressStepOut(BaseModel):
+    step: str
+    label: str
+    status: str          # done | running | pending
+
+
+class TextStatusOut(BaseModel):
+    """LLM 등 비동기로 채워지는 문장 필드 공통 모양."""
+
+    status: str           # pending | ready | failed
+    text: str | None = None
+
+
+class ExplanationOut(BaseModel):
+    status: str            # pending | ready | failed
+    headline: str | None = None
+    text: str | None = None
+
+
+class ProductOut(BaseModel):
     product_key: str
-    variant_key: str | None = None
-    product_name: str
-    price: int | None = None
-    eligibility_status: str
-    verification_status: str
-    coverage_status: str
-    reason: str | None = None
-    evidence: list[RecommendationEvidenceOut] = Field(default_factory=list)
-    error_code: str | None = None
+    variant_id: str | None = None
+    name: str
+    brand: str = ""
+    spec_summary: str | None = None
+    image_url: str | None = None
+    purchase_url: str | None = None
 
 
-def recommendation_result_out(result: RecommendationResult) -> RecommendResultOut:
-    """서비스 내부 추천 DTO를 공개 HTTP DTO로 명시적으로 변환한다.
+class ReviewBriefOut(BaseModel):
+    total_count: int
+    excluded_ratio: float
+    rating_refined: float
 
-    저장소가 반환하는 DB 행을 API 응답으로 직접 노출하지 않도록 서비스 계층은
-    먼저 ``RecommendationResult``를 만들고 이 경계를 통과해야 한다.
-    """
 
-    return RecommendResultOut(
-        recommendation_run_id=result.recommendation_run_id,
-        list_id=result.list_id,
-        revision_id=result.revision_id,
-        status=result.status,
-        candidates=[
-            RecommendationCandidateOut(
-                product_key=candidate.product_key,
-                variant_key=candidate.variant_key,
-                product_name=candidate.product_name,
-                price=candidate.price,
-                eligibility_status=candidate.eligibility_status,
-                verification_status=candidate.verification_status,
-                coverage_status=candidate.coverage_status,
-                reason=candidate.reason,
-                evidence=[
-                    RecommendationEvidenceOut(
-                        evidence_id=evidence.evidence_id,
-                        text=evidence.text,
-                        locator=evidence.locator,
-                        file_sha256=evidence.file_sha256,
-                        review_status=evidence.review_status,
-                    )
-                    for evidence in candidate.evidence
-                ],
-                error_code=candidate.error_code,
-            )
-            for candidate in result.candidates
-        ],
-        error_code=result.error_code,
-    )
+class ItemOut(BaseModel):
+    item_id: str
+    slot: str
+    slot_label: str
+    product: ProductOut
+    price: int
+    price_source: str = "synthetic"       # synthetic | observed
+    price_observed_at: str | None = None
+    qty: int = 1
+    selected: bool = True
+    timing: str = "now"                    # now | soon | later
+    budget_share: float | None = None
+    review: ReviewBriefOut | None = None
+    reason: TextStatusOut
+    checks: TextStatusOut
+    alternatives_count: int = 0
+
+
+class TotalsOut(BaseModel):
+    selected_price: int
+    selected_units: int
+    budget_remaining: int | None = None
+    over_budget: bool = False
+
+
+class VerificationIssueOut(BaseModel):
+    axis: str
+    severity: str            # minor | major
+    text: str
+
+
+class VerificationOut(BaseModel):
+    status: str               # pending | ready | failed
+    confidence: int | None = None
+    issues: list[VerificationIssueOut] = Field(default_factory=list)
+
+
+class RecommendErrorOut(BaseModel):
+    code: str
+    message: str
+
+
+class RecommendResultOut(BaseModel):
+    """저장된 추천 실행 결과의 공개 API 계약 (docs/frontend_외부수정요청.md §D-4-2)."""
+
+    list_id: str
+    run_id: str
+    status: str                      # running | done | failed
+    progress: list[ProgressStepOut] = Field(default_factory=list)
+    category: str
+    conditions_summary: str = ""
+    budget_max: int | None = None
+    items: list[ItemOut] = Field(default_factory=list)
+    totals: TotalsOut | None = None
+    verification: VerificationOut = Field(default_factory=lambda: VerificationOut(status="pending"))
+    explanation: ExplanationOut = Field(default_factory=lambda: ExplanationOut(status="pending"))
+    reasoning_log: list[dict] = Field(default_factory=list)
+    data_notice: str = "상품·가격·리뷰는 합성 데이터입니다."
+    error: RecommendErrorOut | None = None
 
 
 # ── list confirm (S5-a) / report (S5-b) ──

@@ -2,19 +2,36 @@
 
 [테이블_명세서 v6](../docs/db/table_spec.md) 의 58개 테이블 (12개 스키마) DDL. **RDS / Aurora PostgreSQL 16 호환** 을 전제로 작성.
 
-## 사전 준비
+## 사전 준비 — Docker 필수 아님
 
-- Windows에서는 Docker Desktop을 설치하고 WSL2 엔진을 활성화한다.
-- 설치 후 IDE를 완전히 재시작하고 새 터미널에서 `docker version`으로 PATH 반영을 확인한다.
-- 기본 포트 5432가 사용 중이면 점유 프로세스를 중지하거나 `docker-compose.yml`의 호스트 포트를 바꾸고 `DATABASE_URL`에도 같은 포트를 사용한다.
-- 공용 개발 DB는 두지 않는다. 각자 로컬 Docker DB에 마이그레이션을 적용한 뒤 동일한 멱등 적재 스크립트로 데이터를 재현한다.
+로컬 PostgreSQL을 띄우는 방법은 둘 다 동등합니다. **DB 엔진 자체(PostgreSQL + pgvector)는 고정**이지만(§AWS 호환 원칙 참고 — RAG 임베딩이 pgvector 의존), 그걸 로컬에 "어떻게" 띄우느냐는 자유입니다. AWS 배포(RDS)는 관리형 서비스라 로컬을 Docker로 했는지 conda로 했는지와 무관합니다.
+
+**방법 A — conda (Docker Desktop 설치 불필요, 추천)**
+```bash
+conda create -p ./pgenv -c conda-forge postgresql=16 pgvector -y
+./pgenv/Library/bin/pg_ctl -D ./pgdata initdb
+./pgenv/Library/bin/pg_ctl -D ./pgdata -o "-p 5432" start
+```
+
+**방법 B — Docker**
+- Docker Desktop 설치 + WSL2 엔진 활성화, 설치 후 IDE 재시작 후 `docker version`으로 확인.
+- 기본 포트 5432가 사용 중이면 점유 프로세스를 중지하거나 `docker-compose.yml`의 호스트 포트를 바꾸고 `DATABASE_URL`에도 같은 포트를 사용.
+
+공용 개발 DB는 두지 않는다 — 각자 로컬 DB에 마이그레이션을 적용한 뒤 동일한 멱등 적재 스크립트로 데이터를 재현한다.
 
 ## 실행
 
+**한 번에 (추천)** — 마이그레이션 + 기준 데이터 + 카탈로그를 순서대로 전부 적용:
 ```bash
-# 로컬 PG (컨테이너)
-docker compose up -d
+DATABASE_URL=postgresql://truefit:truefit@localhost:5432/truefit python db/setup_all.py
+```
+
+**단계별로 직접**:
+```bash
+# 방법 B(Docker)라면 먼저: docker compose up -d
 DATABASE_URL=postgresql://truefit:truefit@localhost:5432/truefit python db/migrate.py up
+DATABASE_URL=postgresql://truefit:truefit@localhost:5432/truefit python db/seed.py
+DATABASE_URL=postgresql://truefit:truefit@localhost:5432/truefit python db/seed_catalog.py
 
 # 현황
 python db/migrate.py status
