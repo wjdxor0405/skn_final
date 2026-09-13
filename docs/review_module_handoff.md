@@ -17,7 +17,8 @@
 | 3 | `src/engine/stage3b_rank.py` · `config.REVIEW_AXIS_EXCESS` | 리뷰축 0.5 stub → 관측 없음 0.5 · 관측됨 0.75 · **대조군 중앙값 2배 초과 지표 있음 0.25**. 넘은 지표는 `REVIEW_OBS:` 플래그. 규칙에 드는 지표는 `burst7` · `prolific_rate` 둘뿐(1건 계정 비율은 실측 라벨에서 방향이 반대라 뺐다). 출시 첫 주 몰림은 안 센다 | **담당 3** — 순위 규칙은 담당 5 가 직접 바꾸지 않는다. 이 값은 제안이고 반영·조정은 담당 3 |
 | 4 | `src/engine/stage5_explain.py` · `src/pipeline.py`(1줄) · `main.py` | 슬롯별 한 줄("리뷰 49건 관측 — 7일 몰림 18.4% (부류 중앙값 5.5%) — 검토 권장") + 주의 문구("상품 단위 신호이며 개별 리뷰의 진위가 아닙니다") | 담당 2 (조립) |
 | 5 | `db/migrations/0010_review_summary_relation_axis.sql` | `evidence.review_summary` 에 NULL 허용 `author_ref`(소스별 솔트 해시) · `review_posted_at` + 인덱스 둘. `collected_at` 으로 채우지 않는다 | **담당 2** — 아래 마이그레이션 메모 |
-| 6 | `tests/test_review_summary_api.py` · `test_review_telemetry.py` · `test_stage5_review_line.py` · `test_rank_review_axis.py` | 각 조각의 테스트. httpx 없으면 API 테스트만 skip | 조각과 함께 |
+| 6 | `src/services/recommendation_service.py`(DB 추천 경로) | **`stage5_explain.run(..., rank=rank)`** — 빼면 리뷰 관측이 전 슬롯 "없음" 이 된다(기본값이 `None` 이라 조용히). 그리고 `explanation.review_line_by_slot` · `caveats` · 슬롯별 `evidence` 를 `reasoning_log` · `explanation_text` 에 싣는다 | 담당 2 (조립) |
+| 7 | `tests/test_review_summary_api.py` · `test_review_telemetry.py` · `test_stage5_review_line.py` · `test_rank_review_axis.py` · `test_review_trace.py` · `test_risk_store_states.py` | 각 조각의 테스트. httpx 없으면 API 테스트만 skip | 조각과 함께 |
 
 ## 마이그레이션 메모 — 별도 파일보다 축소 마이그레이션에 포함을 권한다
 
@@ -54,6 +55,36 @@ DB 스키마 축소(58 → 35)가 진행 중이면 이 두 컬럼은 **그 마�
 유아용품 대조군을 PC 추천에 물리면 에러 없이 **틀린 중앙값과 비교한 관측 사실**이 나오므로, 아예 쓰지 않는다.
 넷 다 추천을 죽이지 않는다(전에는 잘린 파일이 `KeyError` 로 추천 전체를 죽였다).
 
+## 관측 사실이 화면에 나가는 자리
+
+`reasoning_log`(추천 과정 기록)와 `explanation_text` 다. 프론트의 **「추천 과정 보기」** 타임라인에 그려진다:
+
+```
+▸ [리뷰 관측]              리뷰 관측 3/8 슬롯
+▸ [리뷰 관측 · 케이스]      케이스 관측 사실 3건 (점수 아님)
+     리뷰 449건 중 15건(3.3%)이 7일 안에 몰림 — 전체 상품 중앙값 5.5% ·
+     리뷰어 411명이 다른 상품에서도 함께 나타남 (연결 상품 4246개) — 중앙값 60명 / 903개 ·
+     5점 비율 77% — 중앙값 67% — 확인: https://www.amazon.com/dp/B0BFH9M9CY
+```
+
+슬롯마다 한 단계로 나눈다 — 화면이 `detail` 을 한 단락으로 그려서, 세 슬롯의 문장 아홉 개를
+한 단락에 넣으면 읽을 수 없다. 관측이 하나도 없으면 단계를 만들지 않는다("깨끗했다" 와
+"볼 리뷰가 없었다" 는 다른 말이다).
+
+**쓰지 않은 자리 둘, 이유와 함께:**
+
+- `ItemOut.review`(`ReviewBriefOut`) — 필드가 `total_count` · `excluded_ratio` · `rating_refined` 이고
+  **셋 다 필수**다. 뒤 둘은 결정 0001 로 낼 수 없다. "제외 0건" 으로 채우면 화면이
+  "조작 제외 전후 평점" 으로 그려서 **클렌징이 돌아 아무것도 못 찾은 것처럼** 읽힌다.
+  그래서 비워 둔다 — 부품 카드 라벨이 "리뷰 정보 없음" 으로 나오는 것이 이 때문이다
+- `ItemOut.checks`("구매 전 확인") — [3-C] 스펙 검증 문장의 자리다. 섞으면 나중에 서로 덮는다
+
+**`product_key` 주의.** `GET /session/{id}/result` 는 `catalog.product.model`(제품명 원문)을
+`product_key` 로 내보내는데 `[3-B]` 후보는 슬러그를 쓴다(`catalog.product` 에 슬러그 컬럼이 없어
+저장할 때 사라진다). 그래서 화면의 리뷰 버튼이 전부 404 였다. `review_service.candidate_keys()` 가
+받는 쪽에서 흡수하지만, **근본 해결은 결과 조립이 슬러그를 내보내는 것**이다. 지금은 변환 규칙이
+`catalog_repo` 와 `review_service` 두 곳에 있어 갈리면 다시 404 가 된다.
+
 ## 이 모듈이 내지 않는 것
 
 - **정제 후 평점 · 정제 비율** — `cleaned_rating` · `cleanse_ratio` 는 항상 null (결정 0001). 상품 단위 신호라
@@ -67,3 +98,7 @@ DB 스키마 축소(58 → 35)가 진행 중이면 이 두 컬럼은 **그 마�
 2. `pcparts_product_risk.json` 을 `data/amazon23/` 에 두고 `uv run python -m src.workers.review_cleanse_worker --lookup amd-ryzen-5-5600`
 3. API 띄워 `GET /reviews/summary/amd-ryzen-5-5600` — 실측 블록 + 데모 블록이 분리돼 나오는가
 4. `uv run python main.py computer_pass` — 결과표 아래 "리뷰 관측" 줄, 총액이 바뀐다(리뷰축이 순위에 들어가므로)
+5. 실 DB 로 끝까지: `docker run -d --name truefit-pg -e POSTGRES_USER=truefit -e POSTGRES_PASSWORD=truefit
+   -e POSTGRES_DB=truefit -p 5433:5432 pgvector/pgvector:pg16` → `DATABASE_URL=...:5433/truefit python db/setup_all.py`
+   → `uvicorn src.api:app`. 브라우저에서 컴퓨터 → 조건 → 추천 → **「추천 과정 보기」** 에 리뷰 관측 단계가 뜬다.
+   (5432 에 다른 PostgreSQL 이 있으면 포트를 비켜 쓴다)
