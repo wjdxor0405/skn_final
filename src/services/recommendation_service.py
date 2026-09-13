@@ -80,6 +80,7 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
     from src.repo.engine_repo import EngineRepo
     from src.repo.plan_repo import PlanRepo
     from src.repo.product_repo import ProductRepo
+    from src.services import review_service
 
     noop = lambda _m: None  # noqa: E731
     try:
@@ -105,7 +106,9 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
             build = stage4_optimize.run(rank, spec, noop)
             build.list_id = str(revision_id)
             verification = stage3c_verify.verify_build(build, category, noop)
-            explanation = stage5_explain.run(build, verification, noop)
+            # rank 를 넘겨야 [3-B] 가 후보에 남긴 리뷰 관측 플래그를 [5] 가 읽는다.
+            # 빼면 모든 슬롯이 "관측 없음" 이 되고, 감점만 남고 근거가 사라진다 (기본값이 None 이라 조용히).
+            explanation = stage5_explain.run(build, verification, noop, rank=rank)
 
             reason_by_slot = {it.slot: it.reason for it in explanation.items}
             for item in build.items:
@@ -129,14 +132,22 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
                     checked_at=datetime.now(timezone.utc),
                 )
 
+            # [5] 의 리뷰 관측(review_line_by_slot)·확인 필요(caveats)를 저장 경로에 싣는다.
+            # 여기서 안 실으면 [3-B] 감점은 되는데 "왜" 가 화면에 안 간다 (review_service 주석 참고).
+            trace = [{"step": s, "title": s, "detail": d} for s, d in [
+                ("조건 정리", f"카테고리 {category}, 예산 {values.get('budget_max'):,}원" if values.get("budget_max") else "조건 정리"),
+                ("후보 수집", f"세트 {len(build.items)}개 부품"),
+                ("설명 생성", explanation.headline),
+            ]]
+            review_step = review_service.review_trace_step(explanation.review_line_by_slot)
+            if review_step is not None:
+                trace.insert(-1, review_step)
+
             erepo.set_explanation(
                 run_id, headline=explanation.headline,
-                text="\n".join(f"- {it.reason}" for it in explanation.items),
-                reasoning_log=[{"step": s, "title": s, "detail": d} for s, d in [
-                    ("조건 정리", f"카테고리 {category}, 예산 {values.get('budget_max'):,}원" if values.get("budget_max") else "조건 정리"),
-                    ("후보 수집", f"세트 {len(build.items)}개 부품"),
-                    ("설명 생성", explanation.headline),
-                ]],
+                text=review_service.explanation_text_with_caveats(
+                    [it.reason for it in explanation.items], explanation.caveats),
+                reasoning_log=trace,
             )
             erepo.complete_run(run_id)
     except Exception:  # noqa: BLE001 — 실패해도 running으로 영원히 남지 않게 별도 커넥션으로 failed 처리
