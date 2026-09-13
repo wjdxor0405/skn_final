@@ -68,13 +68,24 @@ class ProductRiskStore:
     # 양성(기저율 42.8%), prolific_rate 는 단독 AUC 0.797 로 방향이 맞았다.
     EXCESS_KEYS = ("burst7", "prolific_rate")
 
+    # 산출물이 갖춰야 하는 최상위 키. 손으로 전달되는 5MB 파일이라 잘리거나 다른 파일이
+    # 올 수 있다 — 그때 KeyError 로 추천 전체가 죽으면 안 된다(호출자가 "관측 없음" 으로 다룬다).
+    REQUIRED_KEYS = ("meta", "controls", "products", "cards")
+
     def __init__(self, path: str | Path, alias_csv: str | Path | None = None):
         self.path = Path(path)
         data = json.loads(self.path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError(f"{self.path.name}: 최상위가 객체가 아니다")
+        missing = [k for k in self.REQUIRED_KEYS if k not in data]
+        if missing:
+            raise ValueError(f"{self.path.name}: 필수 키 없음 {missing} — 이 배치의 산출물이 아니다")
         self.meta: dict = data["meta"]
         self.controls: dict = data["controls"]
         self.products: dict = data["products"]
-        self.cards: dict = {c["product_key"]: c for grp in data["cards"].values() for c in grp}
+        # product_key 없는 카드는 건너뛴다 — 한 항목이 깨졌다고 전체를 버리지 않는다
+        self.cards: dict = {c["product_key"]: c for grp in data["cards"].values() for c in grp
+                            if isinstance(c, dict) and c.get("product_key")}
         # 데모 부품 슬러그 → ASIN (scripts/map_parts_to_asin.py). 엔진 키와 요약 키 둘 다 받는다
         self.alias: dict[str, str] = {}
         if alias_csv and Path(alias_csv).exists():
@@ -164,18 +175,60 @@ class ProductRiskStore:
 
 _default_store: ProductRiskStore | None = None
 _default_store_tried = False
+_default_store_reason = "not_loaded"
+
+# 산출물을 못 쓰는 이유. "관측 없음" 한 문장으로 뭉치면 팀원이 파일을 안 받았다는 것을
+# 영원히 모른다 — 문턱 미만과 파일 없음은 화면에 같은 말로 나가면 안 된다.
+RISK_STORE_OK = "ok"
+RISK_STORE_MISSING = "missing"
+RISK_STORE_INVALID = "invalid"
+RISK_STORE_SCOPE_MISMATCH = "scope_mismatch"
 
 
 def default_risk_store() -> ProductRiskStore | None:
-    """config.REVIEW_RISK_JSON 의 산출물을 한 번만 읽어 공유한다. 파일이 없으면 None — 호출자는 "관측 없음" 으로.
+    """config.REVIEW_RISK_JSON 의 산출물을 한 번만 읽어 공유한다. 못 쓰면 None — 호출자는 "관측 없음" 으로.
+
+    못 쓰는 경우가 넷이고 이유를 `risk_store_reason()` 으로 남긴다: 파일 없음 · 읽기/형식 실패 ·
+    대조군 범위 불일치 · 정상. 형식 실패로 추천이 죽지 않게 여기서 막는다.
     테스트는 `_default_store`·`_default_store_tried` 를 monkeypatch 한다."""
-    global _default_store, _default_store_tried
+    global _default_store, _default_store_tried, _default_store_reason
     if not _default_store_tried:
         _default_store_tried = True
-        from src.config import PARTS_ASIN_MAP, REVIEW_RISK_JSON
-        if REVIEW_RISK_JSON.exists():
-            _default_store = ProductRiskStore(REVIEW_RISK_JSON, PARTS_ASIN_MAP)
+        from src.config import PARTS_ASIN_MAP, REVIEW_RISK_CONTROL_SCOPE, REVIEW_RISK_JSON
+        if not REVIEW_RISK_JSON.exists():
+            _default_store_reason = RISK_STORE_MISSING
+            return None
+        try:
+            store = ProductRiskStore(REVIEW_RISK_JSON, PARTS_ASIN_MAP)
+        except (ValueError, OSError, json.JSONDecodeError) as exc:
+            _default_store_reason = f"{RISK_STORE_INVALID}: {exc}"
+            return None
+        scope = store.meta.get("control_scope")
+        if REVIEW_RISK_CONTROL_SCOPE and scope != REVIEW_RISK_CONTROL_SCOPE:
+            # 조용히 틀린 중앙값과 비교하는 것보다 관측을 안 내는 게 낫다
+            _default_store_reason = f"{RISK_STORE_SCOPE_MISMATCH}: {scope!r} (기대 {REVIEW_RISK_CONTROL_SCOPE!r})"
+            return None
+        _default_store, _default_store_reason = store, RISK_STORE_OK
     return _default_store
+
+
+def risk_store_reason() -> str:
+    """산출물 상태 — RISK_STORE_OK 또는 이유 문자열. 적재를 아직 시도 안 했으면 시도한다."""
+    default_risk_store()
+    return _default_store_reason
+
+
+def risk_store_note() -> str:
+    """관측이 없을 때 화면에 붙일 "왜". 원인을 문턱 미만으로 뭉개지 않는다."""
+    reason = risk_store_reason()
+    if reason == RISK_STORE_OK:
+        return "리뷰 수 문턱 미만이거나 데이터 기간 밖"
+    if reason == RISK_STORE_MISSING:
+        from src.config import REVIEW_RISK_JSON
+        return f"산출물 미탑재 — {REVIEW_RISK_JSON.name}"
+    if reason.startswith(RISK_STORE_SCOPE_MISMATCH):
+        return f"대조군 범위 불일치 — {reason.split(': ', 1)[-1]}"
+    return f"산출물을 읽지 못함 — {reason.split(': ', 1)[-1]}"
 
 
 # 관측 지표 → 사람이 읽는 이름. 랭킹 flags 와 [5] 설명이 같이 쓴다

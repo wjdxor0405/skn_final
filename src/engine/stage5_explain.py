@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from src.dto import BuildResult, Explanation, ExplanationItem, RankResult, VerificationResult
 from src.engine import LogFn
-from src.repo.review_repo import OBS_LABEL, default_risk_store, is_obs_flag, parse_obs_flag
+from src.repo.review_repo import OBS_LABEL, default_risk_store, is_obs_flag, parse_obs_flag, risk_store_note
 
 _AXIS_MAP = {"가격": "가격", "성능": "성능", "밸런스": "호환성", "호환여유": "호환성"}
 
@@ -28,7 +28,9 @@ def _ranked_flags(rank: RankResult | None, slot: str, product_key: str) -> list[
 def _review_line(product_key: str, flags: list[str]) -> tuple[str, list[dict], str | None]:
     """(슬롯 한 줄, 근거 목록, 주의 문장 또는 None). flags 가 없으면 관측 없음."""
     if not flags:
-        return "리뷰 관측 없음 (리뷰 수 문턱 미만이거나 데이터 기간 밖)", [], None
+        # 왜 없는지를 원인별로 말한다 — 산출물 미탑재를 "문턱 미만" 으로 보이게 하면
+        # 파일을 안 받은 사람이 그 사실을 모른다
+        return f"리뷰 관측 없음 ({risk_store_note()})", [], None
     store = default_risk_store()
     facts = store.get(product_key) if store else None
     n = int(facts["n"]) if facts else 0

@@ -63,3 +63,7 @@ REVIEW_RISK_JSON: Path = DATA_DIR / "amazon23" / "pcparts_product_risk.json"   #
 PARTS_ASIN_MAP: Path = DATA_DIR / "parts_asin_map.csv"
 REVIEW_SUMMARIES_DEMO: Path = DATA_DIR / "review_summaries.json"     # 합성 데모 (is_synthetic=true) — 항목별 평가·요약 3건
 REVIEW_AXIS_EXCESS: float = 2.0       # [3-B] 관측값이 대조군 중앙값의 몇 배를 넘으면 "검토 필요" 로 보는가 (영어 실측 라벨에서만 확인한 랭킹용 문턱)
+# 산출물의 meta.control_scope 가 이 값과 다르면 관측을 쓰지 않는다.
+# 대조군은 같은 부류여야 한다 — 전체 중앙값을 PC 부품에 대면 다작 계정 비율만으로 절반이 걸린다.
+# 틀린 대조군은 에러를 내지 않고 "틀린 중앙값과 비교한 관측 사실" 을 내므로 조용히 지나간다.
+REVIEW_RISK_CONTROL_SCOPE: str = "Computer Components|Data Storage"

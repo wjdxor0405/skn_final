@@ -10,7 +10,8 @@ from __future__ import annotations
 from src.config import PENDING_SCORE_PENALTY, REVIEW_AXIS_EXCESS, TOP_N_DEFAULT, TOP_N_IMPACT
 from src.dto import Candidate, HardFilterResult, RankResult, RequirementSpec, Slots
 from src.engine import LogFn
-from src.repo.review_repo import OBS_FLAG_OBSERVED, default_risk_store, format_obs_flag
+from src.repo.review_repo import (OBS_FLAG_OBSERVED, RISK_STORE_OK, default_risk_store, format_obs_flag,
+                                 risk_store_note, risk_store_reason)
 
 _IMPACT_SLOTS = {"GPU", "CPU"}
 
@@ -60,6 +61,11 @@ def _score(cand: Candidate, ideal_tier: float | None, slot_budget: int) -> Candi
 
 def run(hf: HardFilterResult, spec: RequirementSpec, slots: Slots, log: LogFn) -> RankResult:
     log("[3-B] 적합도 · 병목 순위 ...")
+    # 산출물을 못 쓰면 리뷰축이 전 후보에서 0.5(모름) 고정이라 구성이 달라진다.
+    # 조용히 지나가면 "리뷰가 적은 상품들" 로 오해하므로 한 번 알린다.
+    reason = risk_store_reason()
+    if reason != RISK_STORE_OK:
+        log(f"      ⚠ 리뷰축 비활성 — {risk_store_note()} (리뷰 관측 0건으로 계산)")
     rr = RankResult(weights_used=dict(_WEIGHTS))
     purpose = slots.values.get("purpose", "game")
     res = slots.values.get("resolution", "FHD_144")
