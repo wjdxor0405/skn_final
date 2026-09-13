@@ -25,6 +25,25 @@ def _stores():
     return default_risk_store(), _demo_file
 
 
+def candidate_keys(product_key: str) -> list[str]:
+    """받은 키를 그대로, 그리고 엔진이 쓰는 슬러그 모양으로도 찾아본다.
+
+    저장 경로에서 `product_key` 가 가리키는 값이 갈아탄다 — [3-B] 후보는 슬러그
+    (`asus-tuf-gaming-b650-plus-wifi`)를 쓰는데, `GET /session/{id}/result` 는
+    `catalog.product.model`(제품명 원문 `ASUS TUF GAMING B650-PLUS WIFI`)을 같은 이름으로
+    내보낸다. 화면은 그 값을 그대로 이 엔드포인트에 넘기므로 전부 404 가 됐다.
+
+    근본 원인은 후보 수집·결과 조립 쪽(슬러그를 DB 에 남기지 않는다)이고 이 모듈의 자리가
+    아니다. 그래서 여기서는 **받는 쪽에서 흡수만** 한다 — 저쪽이 고쳐지면 첫 후보가 바로 맞고
+    이 함수는 아무 일도 하지 않는다. 변환 규칙이 두 곳에 생기는 것이 대가다.
+    """
+    keys = [product_key]
+    slug = product_key.strip().lower().replace(" ", "-")
+    if slug and slug not in keys:
+        keys.append(slug)
+    return keys
+
+
 def get_summary(product_key: str) -> ReviewSummaryOut:
     """S5 리뷰 상세. 실측(관계·행동 축 관측)과 합성 데모 블록을 분리해 낸다.
 
@@ -33,13 +52,18 @@ def get_summary(product_key: str) -> ReviewSummaryOut:
     - 항목별 평가·요약 3건은 지금 합성 데모뿐이라 `synthetic_demo` 에 표지와 함께 둔다
     """
     store, demo = _stores()
-    facts = store.get(product_key) if store else None
-    d = demo.get(product_key) if demo else None
+    key, facts, d = product_key, None, None
+    for cand in candidate_keys(product_key):
+        facts = store.get(cand) if store else None
+        d = demo.get(cand) if demo else None
+        if facts is not None or d is not None:
+            key = cand
+            break
     if facts is None and d is None:
         raise NotFound(f"리뷰 요약 없음: {product_key}", field="product_key")
 
     if facts is not None:
-        auth = store.get_review_authenticity(product_key)
+        auth = store.get_review_authenticity(key)
         risk = auth["product_manipulation_risk"]
         ref = risk.get("product_ref")
         risk_out = ProductRiskOut(
@@ -63,7 +87,7 @@ def get_summary(product_key: str) -> ReviewSummaryOut:
             sources=d.get("sources", []), collected_at=d.get("collected_at"))
 
     return ReviewSummaryOut(
-        product_key=product_key, product_name=d.get("product_name") if d else None,
+        product_key=key, product_name=d.get("product_name") if d else None,
         orig_rating=orig, total_reviews=total, confidence_note=note,
         product_manipulation_risk=risk_out, synthetic_demo=synthetic)
 

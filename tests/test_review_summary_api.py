@@ -58,3 +58,18 @@ def test_unobserved_demo_part_returns_demo_block_only(client):
 def test_unknown_key_is_404_envelope(client):
     r = client.get("/reviews/summary/nope")
     assert r.status_code == 404 and r.json()["error"]["code"] == "not_found"
+
+
+# ── 결과 응답의 product_key 가 슬러그가 아닐 때 ─────────────────────────────
+# GET /session/{id}/result 는 catalog.product.model(제품명 원문)을 product_key 로 내보내고
+# 화면이 그 값을 이 엔드포인트에 그대로 넘긴다. 슬러그만 받으면 전부 404 가 된다.
+def test_candidate_keys_adds_slug_form():
+    from src.services.review_service import candidate_keys
+    assert candidate_keys("ASUS TUF GAMING B650-PLUS WIFI") == [
+        "ASUS TUF GAMING B650-PLUS WIFI", "asus-tuf-gaming-b650-plus-wifi"]
+
+
+def test_candidate_keys_keeps_slug_first_and_does_not_duplicate():
+    """저쪽이 슬러그를 내보내게 고쳐지면 첫 후보가 바로 맞고 변환은 일어나지 않는다."""
+    from src.services.review_service import candidate_keys
+    assert candidate_keys("asus-tuf-gaming-b650-plus-wifi") == ["asus-tuf-gaming-b650-plus-wifi"]
