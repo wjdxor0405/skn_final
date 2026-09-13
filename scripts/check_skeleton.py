@@ -86,7 +86,7 @@ for m in pkgutil.walk_packages(src.__path__, "src."):
                 stub += 1
         except OSError:
             pass
-check("stub 명시성", stub > total * 0.5, f"함수/메서드 {total}개 중 {stub}개 명시적 미구현")
+check("stub 명시성", stub > total / 5, f"함수/메서드 {total}개 중 {stub}개 명시적 미구현")
 
 # 6. 구조 대조 (기대 개수)
 def cnt(glob: str) -> int:

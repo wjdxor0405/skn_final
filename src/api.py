@@ -11,15 +11,26 @@
 """
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.config import APP_NAME, FRONTEND_DIR
+from src.db import close_pool
 from src.errors import TruefitError
 from src.routers import auth, dev, lists, reviews, session
 
-app = FastAPI(title=f"{APP_NAME} API (skeleton)")
+
+@asynccontextmanager
+async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    yield
+    close_pool()
+
+
+app = FastAPI(title=f"{APP_NAME} API (skeleton)", lifespan=_lifespan)
 
 app.include_router(auth.router)
 app.include_router(session.router)
