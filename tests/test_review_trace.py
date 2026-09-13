@@ -90,3 +90,40 @@ def test_unobserved_slot_evidence_is_not_leaked():
     """관측 없음인 슬롯에 evidence 가 섞여 들어와도 단계를 만들지 않는다."""
     steps = review_trace_steps({"CPU": NONE_LINE}, {"CPU": OBS})
     assert steps == []
+
+
+# ── 순위를 낮춘 후보 ─────────────────────────────────────────────────────────
+# 추천된 8개는 대개 "특이 없음" 이다 — 걸린 후보가 감점을 받아 밀려나기 때문이다.
+# 그래서 축이 실제로 한 일(덜 보여준 것)이 화면에 하나도 안 나왔다.
+from src.services.review_service import review_demotion_step  # noqa: E402
+
+DEMOTED = {
+    "케이스": [{"name": "ASUS Prime AP201", "over": [("burst7", 0.20, 0.055)]}],
+    "메인보드": [{"name": "ASUS ROG STRIX Z790-E", "over": [("burst7", 0.135, 0.055)]}],
+}
+
+
+def test_demotion_step_names_the_candidates_and_numbers():
+    step = review_demotion_step(DEMOTED)
+    assert step is not None
+    assert "2개" in step["title"]
+    assert "ASUS Prime AP201" in step["detail"] and "ASUS ROG STRIX Z790-E" in step["detail"]
+    assert "7일 몰림 20.0%" in step["detail"] and "부류 중앙값 5.5%" in step["detail"]
+
+
+def test_demotion_is_not_described_as_exclusion():
+    """낮춘 것은 제외가 아니다 — 후보에 남아 있고 순위만 내려갔다. 되돌릴 수 있는 자리다."""
+    step = review_demotion_step(DEMOTED)
+    assert "제외 아님" in step["title"]
+    assert "순위만 내렸습니다" in step["detail"]
+    assert "제외했" not in step["detail"] and "삭제" not in step["detail"]
+
+
+@pytest.mark.parametrize("bad", [
+    None,
+    {},
+    {"케이스": []},
+    {"케이스": [{"name": "X", "over": []}]},      # 넘긴 지표가 없으면 낮춘 게 아니다
+])
+def test_no_step_when_nothing_demoted(bad):
+    assert review_demotion_step(bad) is None

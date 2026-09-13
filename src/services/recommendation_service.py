@@ -80,6 +80,7 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
     from src.repo.engine_repo import EngineRepo
     from src.repo.plan_repo import PlanRepo
     from src.repo.product_repo import ProductRepo
+    from src.repo.review_repo import is_obs_flag, parse_obs_flag
     from src.services import review_service
 
     noop = lambda _m: None  # noqa: E731
@@ -144,6 +145,20 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
             evidence_by_slot = {it.slot: it.evidence for it in explanation.items if it.evidence}
             for step in review_service.review_trace_steps(explanation.review_line_by_slot, evidence_by_slot):
                 trace.insert(-1, step)
+
+            # 리뷰축이 순위를 낮춘 후보 — 추천된 것들은 대개 "특이 없음" 이라(걸린 것이 밀려나므로)
+            # 축이 실제로 한 일이 화면에 안 나온다. rank 는 알고 있으니 꺼내 싣는다.
+            demoted: dict[str, list[dict]] = {}
+            for slot, info in rank.slots.items():
+                for c in info.get("ranked", []):
+                    over = [pair for pair in
+                            (parse_obs_flag(f) for f in c.get("flags", []) if is_obs_flag(f))
+                            if pair is not None]
+                    if over:
+                        demoted.setdefault(slot, []).append({"name": c.get("name", "?"), "over": over})
+            demotion = review_service.review_demotion_step(demoted)
+            if demotion is not None:
+                trace.insert(-1, demotion)
 
             erepo.set_explanation(
                 run_id, headline=explanation.headline,

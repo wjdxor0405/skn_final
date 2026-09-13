@@ -9,7 +9,7 @@ from uuid import UUID
 
 from src.config import REVIEW_SUMMARIES_DEMO
 from src.errors import NotFound
-from src.repo.review_repo import ReviewSummaryDemoFile, default_risk_store
+from src.repo.review_repo import OBS_LABEL, ReviewSummaryDemoFile, default_risk_store
 from src.schemas import ProductRiskOut, ReviewSummaryOut, ReviewTelemetry, SyntheticDemoOut
 
 TELEMETRY_KEY = "telemetry"
@@ -191,6 +191,33 @@ def review_trace_steps(review_line_by_slot: dict[str, str],
             "detail": detail,
         })
     return steps
+
+
+def review_demotion_step(demoted_by_slot: dict[str, list[dict]] | None) -> dict | None:
+    """리뷰축이 **순위를 낮춘 후보**를 reasoning_log 한 단계로. 없으면 None.
+
+    추천된 8개는 대개 "특이 없음" 이다 — 걸린 후보가 감점을 받아 밀려나기 때문이다. 그래서
+    축이 실제로 한 일(덜 보여준 것)이 화면에 하나도 안 나온다. 랭킹은 알고 있는데 안 말한다.
+
+    낮춘 것은 **제외가 아니다.** 후보 목록에 그대로 남아 있고 순위만 내려갔다 — 되돌릴 수 있는
+    자리라 검증 없이 쓴다는 것이 이 축을 랭킹에만 쓰는 근거다(`docs/decisions/0001`).
+    그래서 문장도 "제외" 가 아니라 "순위를 낮췄다" 로 쓴다.
+
+    `demoted_by_slot`: {슬롯: [{"name": 상품명, "over": [(지표, 값, 중앙값), ...]}, ...]}
+    """
+    rows = [(slot, d) for slot, ds in (demoted_by_slot or {}).items() for d in ds if d.get("over")]
+    if not rows:
+        return None
+    parts = []
+    for slot, d in rows:
+        facts = " · ".join(f"{OBS_LABEL.get(k, k)} {100 * v:.1f}% (부류 중앙값 {100 * m:.1f}%)"
+                           for k, v, m in d["over"])
+        parts.append(f"{slot} {d.get('name', '?')} — {facts}")
+    return {
+        "step": f"{REVIEW_TRACE_STEP} · 순위 조정",
+        "title": f"관측 때문에 순위를 낮춘 후보 {len(rows)}개 (제외 아님)",
+        "detail": " · ".join(parts) + " — 후보 목록에는 남아 있고 순위만 내렸습니다",
+    }
 
 
 def explanation_text_with_caveats(item_reasons: list[str], caveats: list[str]) -> str:

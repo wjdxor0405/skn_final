@@ -82,3 +82,45 @@ def test_card_without_product_key_is_skipped(reset_store, tmp_path):
     p = _point_at(tmp_path, json.dumps(data))
     store = ProductRiskStore(p)
     assert set(store.cards) == {"B001"}
+
+
+# ── 출시 첫 주 몰림 ─────────────────────────────────────────────────────────
+# 출시 주에 몰린 것은 조작이 아니라 출시다(산출물 전체에서 몰림 2배 초과 상품의 11.9%).
+# 랭킹 신호에서는 빼되 **카드에는 그 이유를 적어야** 한다 — 적지 않으면 검토자가
+# "중앙값의 3배인데 왜 검토 권장이 안 붙었나" 를 알 수 없다.
+LAUNCH = {
+    "meta": {"control_scope": "Computer Components|Data Storage"},
+    "controls": {"burst7": 0.05, "shared_reviewers": 60, "deg": 900, "p5": 0.67},
+    "products": {"A": {"n": 100, "burst7": 0.3, "burst7_count": 30, "burst7_start_day": 105,
+                       "first_day": 100, "shared_reviewers": 70, "deg": 1000, "p5": 0.8},
+                 "B": {"n": 100, "burst7": 0.3, "burst7_count": 30, "burst7_start_day": 400,
+                       "first_day": 100, "shared_reviewers": 70, "deg": 1000, "p5": 0.8}},
+    "cards": {},
+}
+
+
+@pytest.fixture
+def launch_store(tmp_path):
+    p = tmp_path / "risk.json"
+    p.write_text(json.dumps(LAUNCH), encoding="utf-8")
+    return ProductRiskStore(p)
+
+
+def test_launch_burst_is_dropped_from_ranking_signal(launch_store):
+    assert [k for k, _, _ in launch_store.excess("A")] == []        # 출시 5일째 → 뺀다
+    assert "burst7" in [k for k, _, _ in launch_store.excess("B")]  # 300일째 → 남긴다
+
+
+def test_launch_burst_says_why_on_the_card(launch_store):
+    """반박에 필요한 사실을 쥐고 안 주면 안 된다."""
+    a = launch_store.observations("A")[0]
+    assert "출시 첫 주" in a and "랭킹 신호에서 뺐다" in a
+    assert "30건" in a and "전체 상품 중앙값" in a      # 관측 자체는 그대로 보인다
+    assert "출시 첫 주" not in launch_store.observations("B")[0]
+
+
+def test_launch_rule_lives_in_one_place(launch_store):
+    """excess() 와 observations() 가 같은 판정을 쓴다 — 갈리면 화면과 랭킹이 어긋난다."""
+    assert launch_store.is_launch_burst(LAUNCH["products"]["A"]) is True
+    assert launch_store.is_launch_burst(LAUNCH["products"]["B"]) is False
+    assert launch_store.is_launch_burst({}) is False          # 날짜가 없으면 판정하지 않는다

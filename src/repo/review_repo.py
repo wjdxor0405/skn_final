@@ -104,17 +104,31 @@ class ProductRiskStore:
 
     LAUNCH_WINDOW_DAYS = 7
 
+    @classmethod
+    def is_launch_burst(cls, f: dict) -> bool:
+        """몰림 구간이 그 상품의 첫 리뷰로부터 LAUNCH_WINDOW_DAYS 안에 있나.
+
+        규칙을 여기 한 곳에 둔다 — `excess()`(랭킹에서 뺀다)와 `observations()`(카드에 이유를
+        적는다)가 같은 판정을 써야 한다. 같은 규칙을 두 곳에 쓰다 갈라진 적이 있다.
+        """
+        start, first = f.get("burst7_start_day"), f.get("first_day")
+        return start is not None and first is not None and start - first <= cls.LAUNCH_WINDOW_DAYS
+
     def excess(self, product_key: str) -> list[tuple[str, float, float]]:
         """대조군 중앙값과 나란히 둔 관측값 — (지표, 값, 중앙값). 판정이 아니라 '검토자가 볼 것' 의 목록.
 
-        출시 첫 주의 몰림은 뺀다 — 몰림이 중앙값 2배를 넘는 상품의 14% 가 출시 주에 몰린 것이었다
-        (Electronics 실측). 그건 조작이 아니라 출시다. 카드에는 그대로 보이고, 랭킹 신호에서만 뺀다.
+        출시 첫 주의 몰림은 뺀다 — 그건 조작이 아니라 출시다. 카드에는 그대로 보이고(이유도 적는다),
+        랭킹 신호에서만 뺀다. PC 부품 산출물 실측: 몰림이 중앙값 2배를 넘는 상품 915개 중 **109개
+        (11.9%)** 가 출시 첫 주였다(Electronics 전체에서는 약 14%).
+
+        **출시주가 아니라고 조작인 것은 아니다.** 남는 806개에도 할인·이벤트·인플루언서 언급·재입고·
+        시즌성·리뷰 요청 메일 일괄 발송 같은 무해한 설명이 그대로 남아 있고, 이 데이터에는 조작
+        라벨이 없어 그중 몇 %가 조작인지 우리는 모른다. 그래서 판정하지 않고 관측 사실만 낸다.
         """
         f = self.get(product_key)
         if not f:
             return []
-        launch_burst = (f.get("burst7_start_day") is not None and f.get("first_day") is not None
-                        and f["burst7_start_day"] - f["first_day"] <= self.LAUNCH_WINDOW_DAYS)
+        launch_burst = self.is_launch_burst(f)
         out = []
         for k in self.EXCESS_KEYS:
             if k == "burst7" and launch_burst:
@@ -136,9 +150,14 @@ class ProductRiskStore:
         if not f:
             return []
         m = self.controls
+        # 출시 첫 주 몰림이면 그렇다고 적는다. 적지 않으면 검토자가 "중앙값의 3배인데 왜
+        # 검토 권장이 안 붙었나" 를 알 수 없고, 반박에 필요한 사실을 우리가 쥐고 안 주는 것이 된다.
+        burst = (f"리뷰 {int(f['n'])}건 중 {int(f['burst7_count'])}건({100*f['burst7']:.1f}%)이 7일 안에 몰림"
+                 f" — 전체 상품 중앙값 {100*m['burst7']:.1f}%")
+        if self.is_launch_burst(f):
+            burst += " (출시 첫 주 — 조작이 아니라 출시일 수 있어 랭킹 신호에서 뺐다)"
         return [
-            f"리뷰 {int(f['n'])}건 중 {int(f['burst7_count'])}건({100*f['burst7']:.1f}%)이 7일 안에 몰림"
-            f" — 전체 상품 중앙값 {100*m['burst7']:.1f}%",
+            burst,
             f"리뷰어 {int(f['shared_reviewers'])}명이 다른 상품에서도 함께 나타남 (연결 상품 {int(f['deg'])}개)"
             f" — 중앙값 {m['shared_reviewers']:.0f}명 / {m['deg']:.0f}개",
             f"5점 비율 {100*f['p5']:.0f}% — 중앙값 {100*m['p5']:.0f}%",
