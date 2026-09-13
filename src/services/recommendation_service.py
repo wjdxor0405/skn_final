@@ -139,9 +139,11 @@ def execute_recommendation(revision_id: UUID, run_id: UUID) -> None:
                 ("후보 수집", f"세트 {len(build.items)}개 부품"),
                 ("설명 생성", explanation.headline),
             ]]
-            review_step = review_service.review_trace_step(explanation.review_line_by_slot)
-            if review_step is not None:
-                trace.insert(-1, review_step)
+            # 관측 문장(7일 몰림 · 공유 리뷰어 · 5점 비율)은 슬롯별 evidence 에 있다.
+            # 그것까지 실어야 검토자가 확인·반박할 수 있다 — 요약만으로는 못 한다.
+            evidence_by_slot = {it.slot: it.evidence for it in explanation.items if it.evidence}
+            for step in review_service.review_trace_steps(explanation.review_line_by_slot, evidence_by_slot):
+                trace.insert(-1, step)
 
             erepo.set_explanation(
                 run_id, headline=explanation.headline,

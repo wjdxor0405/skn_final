@@ -8,23 +8,24 @@ import pytest
 from src.services.review_service import (
     REVIEW_TRACE_STEP,
     explanation_text_with_caveats,
-    review_trace_step,
+    review_trace_steps,
 )
 
 NONE_LINE = "리뷰 관측 없음 (리뷰 수 문턱 미만이거나 데이터 기간 밖)"
 
 
-def test_trace_step_carries_observed_slots():
-    step = review_trace_step({
+def test_summary_step_carries_observed_slots():
+    steps = review_trace_steps({
         "CPU": NONE_LINE,
         "메인보드": "리뷰 173건 관측 — 대조군 중앙값 대비 특이 없음",
         "케이스": "리뷰 449건 관측 — 7일 몰림 18% (부류 중앙값 5.5%)",
     })
-    assert step is not None
-    assert step["step"] == REVIEW_TRACE_STEP
-    assert "2/3 슬롯" in step["title"]
-    assert "메인보드" in step["detail"] and "케이스" in step["detail"]
-    assert "CPU" not in step["detail"]          # 관측 없는 슬롯은 싣지 않는다
+    assert len(steps) == 1                     # evidence 를 안 주면 요약 하나
+    head = steps[0]
+    assert head["step"] == REVIEW_TRACE_STEP
+    assert "2/3 슬롯" in head["title"]
+    assert "메인보드" in head["detail"] and "케이스" in head["detail"]
+    assert "CPU" not in head["detail"]         # 관측 없는 슬롯은 싣지 않는다
 
 
 @pytest.mark.parametrize("lines", [
@@ -32,9 +33,9 @@ def test_trace_step_carries_observed_slots():
     {"CPU": NONE_LINE, "GPU": NONE_LINE},       # 전부 관측 없음
     None,
 ])
-def test_trace_step_absent_when_nothing_observed(lines):
+def test_no_steps_when_nothing_observed(lines):
     """"리뷰를 봤지만 깨끗했다" 와 "볼 리뷰가 없었다" 를 같게 보이지 않게 한다."""
-    assert review_trace_step(lines) is None
+    assert review_trace_steps(lines) == []
 
 
 def test_explanation_text_appends_caveats():
@@ -51,3 +52,41 @@ def test_explanation_text_without_caveats_is_reasons_only():
     text = explanation_text_with_caveats(["CPU — 조건 충족"], [])
     assert text == "- CPU — 조건 충족"
     assert "확인이 필요한 것" not in text
+
+
+# ── 관측 문장이 화면까지 가는지 ─────────────────────────────────────────────
+# "7일 안에 몰림", "리뷰어가 다른 상품에서도 나타남" 은 [5] 가 슬롯별 evidence 로
+# 만들어 두는데, 서비스가 reason 만 꺼내 쓰던 탓에 화면에 가지 않았다.
+OBS = [
+    {"kind": "review_observation",
+     "text": "리뷰 449건 중 15건(3.3%)이 7일 안에 몰림 — 전체 상품 중앙값 5.5%",
+     "verify_url": "https://www.amazon.com/dp/B0BFH9M9CY"},
+    {"kind": "review_observation",
+     "text": "리뷰어 411명이 다른 상품에서도 함께 나타남 (연결 상품 4246개) — 중앙값 60명 / 903개",
+     "verify_url": "https://www.amazon.com/dp/B0BFH9M9CY"},
+    {"kind": "review_observation", "text": "5점 비율 77% — 중앙값 67%"},
+]
+
+
+def test_observation_sentences_become_their_own_step():
+    steps = review_trace_steps({"케이스": "리뷰 449건 관측 — 대조군 중앙값 대비 특이 없음"},
+                               {"케이스": OBS})
+    assert len(steps) == 2                                  # 요약 + 슬롯 하나
+    detail = steps[1]["detail"]
+    assert "7일 안에 몰림" in detail
+    assert "다른 상품에서도 함께 나타남" in detail
+    assert "중앙값" in detail                                # 대조군을 항상 옆에 둔다
+    assert "확인: https://www.amazon.com/dp/B0BFH9M9CY" in detail
+    assert "점수 아님" in steps[1]["title"]
+
+
+def test_slot_without_evidence_gets_no_extra_step():
+    steps = review_trace_steps({"케이스": "리뷰 449건 관측 — 대조군 중앙값 대비 특이 없음"},
+                               {"케이스": [{"kind": "x"}]})   # text 없는 항목뿐
+    assert len(steps) == 1
+
+
+def test_unobserved_slot_evidence_is_not_leaked():
+    """관측 없음인 슬롯에 evidence 가 섞여 들어와도 단계를 만들지 않는다."""
+    steps = review_trace_steps({"CPU": NONE_LINE}, {"CPU": OBS})
+    assert steps == []

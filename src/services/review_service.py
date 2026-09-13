@@ -144,21 +144,44 @@ def list_pending_for_user(user_id: UUID) -> dict:
 REVIEW_TRACE_STEP = "리뷰 관측"
 
 
-def review_trace_step(review_line_by_slot: dict[str, str]) -> dict | None:
-    """[5] 의 슬롯별 리뷰 관측 문장을 reasoning_log 한 단계로. 관측이 없으면 None.
+def review_trace_steps(review_line_by_slot: dict[str, str],
+                       evidence_by_slot: dict[str, list[dict]] | None = None) -> list[dict]:
+    """[5] 의 리뷰 관측을 reasoning_log 단계들로. 관측이 없으면 빈 목록.
 
-    관측이 하나도 없을 때 단계를 만들지 않는다 — "리뷰를 봤지만 깨끗했다" 와
+    첫 단계는 요약(N/M 슬롯), 이어서 **관측 문장이 있는 슬롯마다 한 단계**다.
+    "리뷰 449건 중 15건(3.3%)이 7일 안에 몰림 — 전체 상품 중앙값 5.5%" 처럼
+    값과 대조군 중앙값을 그 자리에 풀어 쓴 문장이고, 점수가 아니다. 검토자가
+    확인·반박할 수 있어야 하므로 원 상품 주소(verify_url)도 같이 낸다.
+
+    슬롯마다 나누는 이유: 화면이 detail 을 한 단락으로 그린다. 세 슬롯의 문장
+    아홉 개를 한 단락에 넣으면 읽을 수 없다.
+
+    관측이 하나도 없으면 단계를 만들지 않는다 — "리뷰를 봤지만 깨끗했다" 와
     "볼 리뷰가 없었다" 는 다른 말이고, 뒤쪽을 앞쪽으로 보이게 하면 안 된다.
     """
     observed = {slot: line for slot, line in (review_line_by_slot or {}).items()
                 if line and not line.startswith("리뷰 관측 없음")}
     if not observed:
-        return None
-    return {
+        return []
+    steps = [{
         "step": REVIEW_TRACE_STEP,
         "title": f"{REVIEW_TRACE_STEP} {len(observed)}/{len(review_line_by_slot)} 슬롯",
         "detail": " · ".join(f"{slot} {line}" for slot, line in observed.items()),
-    }
+    }]
+    for slot in observed:
+        facts = [e for e in (evidence_by_slot or {}).get(slot, []) if e.get("text")]
+        if not facts:
+            continue
+        detail = " · ".join(e["text"] for e in facts)
+        verify = next((e.get("verify_url") for e in facts if e.get("verify_url")), None)
+        if verify:
+            detail += f" — 확인: {verify}"
+        steps.append({
+            "step": f"{REVIEW_TRACE_STEP} · {slot}",
+            "title": f"{slot} 관측 사실 {len(facts)}건 (점수 아님)",
+            "detail": detail,
+        })
+    return steps
 
 
 def explanation_text_with_caveats(item_reasons: list[str], caveats: list[str]) -> str:
