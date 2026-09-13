@@ -67,3 +67,6 @@ REVIEW_AXIS_EXCESS: float = 2.0       # [3-B] 관측값이 대조군 중앙값�
 # 대조군은 같은 부류여야 한다 — 전체 중앙값을 PC 부품에 대면 다작 계정 비율만으로 절반이 걸린다.
 # 틀린 대조군은 에러를 내지 않고 "틀린 중앙값과 비교한 관측 사실" 을 내므로 조용히 지나간다.
 REVIEW_RISK_CONTROL_SCOPE: str = "Computer Components|Data Storage"
+# 규칙 기반 "의심 지표 2개+ 리뷰 수". 조작 판정이 아니다 — 리뷰 단위 라벨이 없어 정밀도를 못 잰다.
+# 파일이 자기 방법·한계를 담고 있다(method · limits · baseline). 없으면 이 문장을 내지 않는다.
+REVIEW_SUSPECT_COUNTS: Path = DATA_DIR / "review_suspect_counts.json"

@@ -297,3 +297,65 @@ class ReviewSummaryDemoFile:
 
     def get(self, product_key: str) -> dict | None:
         return self.rows.get(product_key)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 규칙 기반 "의심 지표 2개+ 리뷰 수" 리더
+# ─────────────────────────────────────────────────────────────────────────────
+class SuspectCountFile:
+    """`data/review_suspect_counts.json` 을 읽어 상품별 문장 하나로 낸다.
+
+    **이 수는 조작으로 판정된 리뷰 수가 아니다.** 정의된 지표(몰림·다작 계정·1건 계정·
+    단기 활동·구매 미확인) 중 2개 이상에 걸린 리뷰 수다. 리뷰 단위 라벨이 없어 정밀도를
+    잴 수 없고, "2개 이상" 이라는 문턱도 근거로 정한 값이 아니다.
+
+    그래서 문장에 **항상 셋을 같이** 낸다 — 건수 · 이항 95% CI · 전체 기준선. 숫자만 내면
+    n=30 과 n=3,830 이 같은 무게로 읽힌다(실제로 n=37 의 21.6% 는 CI 가 [9.8, 38.2] 다).
+    CI 하한이 기준선을 넘지 않으면 "구별되지 않음" 이라고 쓴다.
+    """
+
+    def __init__(self, path: str | Path):
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        self.method: dict = data.get("method", {})
+        self.limits: list = data.get("limits", [])
+        self.baseline: dict = data.get("baseline", {})
+        self.products: dict = data.get("products", {})
+
+    def get(self, product_key: str) -> dict | None:
+        return self.products.get(product_key)
+
+    def sentence(self, product_key: str) -> str | None:
+        """검토자가 읽을 한 줄. 없으면 None."""
+        v = self.get(product_key)
+        if not v or not v.get("n"):
+            return None
+        n, k = int(v["n"]), int(v["ge2"])
+        lo, hi = (v.get("ci2") or [0.0, 100.0])[:2]
+        base = self.baseline.get("rate_pct")
+        verdict = ""
+        if base is not None:
+            verdict = " · 기준선 초과" if lo > base else " · 기준선과 구별되지 않음"
+        base_txt = f" (데모 상품 전체 {base}%)" if base is not None else ""
+        return (f"리뷰 {n}건 중 {k}건({100*k/n:.1f}%)이 의심 지표 2개 이상에 걸림"
+                f"{base_txt} — 95% 신뢰구간 [{lo}, {hi}]{verdict}")
+
+
+_suspect_file: SuspectCountFile | None = None
+_suspect_tried = False
+
+# 문장 출처 표시 — 이 수가 판정이 아니라 규칙 집계라는 것을 문장과 함께 항상 붙인다
+SUSPECT_SOURCE = "규칙 기반 집계 — 조작 판정 아님 (지표 2개+, 정답 라벨 없음)"
+
+
+def default_suspect_counts() -> SuspectCountFile | None:
+    """config.REVIEW_SUSPECT_COUNTS 를 한 번만 읽는다. 없거나 깨지면 None — 문장을 안 낸다."""
+    global _suspect_file, _suspect_tried
+    if not _suspect_tried:
+        _suspect_tried = True
+        from src.config import REVIEW_SUSPECT_COUNTS
+        if REVIEW_SUSPECT_COUNTS.exists():
+            try:
+                _suspect_file = SuspectCountFile(REVIEW_SUSPECT_COUNTS)
+            except (ValueError, OSError, json.JSONDecodeError):
+                _suspect_file = None
+    return _suspect_file

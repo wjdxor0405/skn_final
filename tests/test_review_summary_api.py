@@ -53,9 +53,16 @@ def test_observations_reach_summaries_with_their_source(client):
     """화면에 문장을 실을 칸이 summaries 뿐이다. 리뷰 발췌로 읽히지 않게 출처를 밝힌다."""
     j = client.get("/reviews/summary/amd-ryzen-5-5600").json()
     assert j["summaries"], "관측 문장이 화면에 갈 자리에 없다"
-    assert any("7일 안에 몰림" in e["text"] for e in j["summaries"])
-    assert all(e["source"] == review_service.OBSERVATION_SOURCE for e in j["summaries"])
+    obs = [e for e in j["summaries"] if e["source"] == review_service.OBSERVATION_SOURCE]
+    assert any("7일 안에 몰림" in e["text"] for e in obs)
     assert "리뷰 본문 아님" in review_service.OBSERVATION_SOURCE
+    # 규칙 기반 의심 건수가 섞여 들어오면 **출처가 달라야** 한다 — 관측 사실과 성격이 다르다
+    from src.repo.review_repo import SUSPECT_SOURCE
+    assert all(e["source"] in (review_service.OBSERVATION_SOURCE, SUSPECT_SOURCE)
+               for e in j["summaries"])
+    for e in j["summaries"]:
+        if e["source"] == SUSPECT_SOURCE:
+            assert "의심 지표" in e["text"] and "신뢰구간" in e["text"]
     # 합성 요약이 실측 자리로 새지 않는다
     assert j["summaries"] != j["synthetic_demo"]["top_summaries"]
 

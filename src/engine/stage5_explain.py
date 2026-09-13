@@ -11,7 +11,8 @@ from __future__ import annotations
 
 from src.dto import BuildResult, Explanation, ExplanationItem, RankResult, VerificationResult
 from src.engine import LogFn
-from src.repo.review_repo import OBS_LABEL, default_risk_store, is_obs_flag, parse_obs_flag, risk_store_note
+from src.repo.review_repo import (OBS_LABEL, default_risk_store, default_suspect_counts,
+                                 is_obs_flag, parse_obs_flag, risk_store_note)
 
 _AXIS_MAP = {"가격": "가격", "성능": "성능", "밸런스": "호환성", "호환여유": "호환성"}
 
@@ -40,6 +41,11 @@ def _review_line(product_key: str, flags: list[str]) -> tuple[str, list[dict], s
         ref = store.resolve(product_key)
         evidence = [{"kind": "review_observation", "text": t, "verify_url": f"https://www.amazon.com/dp/{ref}"}
                     for t in store.observations(product_key)]
+        # 규칙 기반 의심 건수 — kind 를 달리 둬서 관측 사실과 구별한다(정밀도를 못 재는 값이다)
+        sus = default_suspect_counts()
+        line = sus.sentence(product_key) if sus else None
+        if line:
+            evidence.append({"kind": "review_suspect_rule", "text": line, "verify_url": None})
     if not over:
         return f"리뷰 {n}건 관측 — 대조군 중앙값 대비 특이 없음", evidence, None
     parts = [f"{OBS_LABEL.get(k, k)} {100 * v:.1f}% (부류 중앙값 {100 * m:.1f}%)" for k, v, m in over]

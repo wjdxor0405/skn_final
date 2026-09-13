@@ -9,7 +9,8 @@ from uuid import UUID
 
 from src.config import REVIEW_SUMMARIES_DEMO
 from src.errors import NotFound
-from src.repo.review_repo import OBS_LABEL, ReviewSummaryDemoFile, default_risk_store
+from src.repo.review_repo import (OBS_LABEL, SUSPECT_SOURCE, ReviewSummaryDemoFile,
+                                 default_risk_store, default_suspect_counts)
 from src.schemas import ProductRiskOut, ReviewSummaryOut, ReviewTelemetry, SyntheticDemoOut
 
 TELEMETRY_KEY = "telemetry"
@@ -80,6 +81,11 @@ def get_summary(product_key: str) -> ReviewSummaryOut:
         # (오버레이에 관측 사실 전용 칸이 생기면 그쪽으로 옮긴다)
         summaries = [{"text": t, "source": OBSERVATION_SOURCE, "observed_at": None}
                      for t in risk["evidence"]]
+        # 규칙 기반 의심 건수 — 판정이 아니라는 표시(SUSPECT_SOURCE)를 문장과 함께 붙인다
+        sus = default_suspect_counts()
+        line = sus.sentence(key) if sus else None
+        if line:
+            summaries.append({"text": line, "source": SUSPECT_SOURCE, "observed_at": None})
     else:
         risk_out = ProductRiskOut(evidence=[], reliable_range=None)
         orig, total, summaries = None, 0, []
