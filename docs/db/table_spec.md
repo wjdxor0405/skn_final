@@ -1483,8 +1483,8 @@ PC 전체 리뷰를 작성할 때 장착된 부품을 고정한다.
 | `summary` | `text` | N | — | — | 대표 요약 |
 | `normalized_rating` | `numeric(3,2)` | Y | — | — | 공통 5점 척도로 변환한 값 |
 | `collected_at` | `timestamptz` | N | — | — | 수집·처리 시각 |
-| `author_ref` | `text` | Y | — | — | 외부 작성자 식별자의 **소스별 솔트 해시**. 원식별자 미저장. 관계·행동 축(공유 리뷰어·신규성·간격)용 (0007) |
-| `review_posted_at` | `timestamptz` | Y | — | — | 리뷰가 원 소스에 게시된 시각. `collected_at`(수집 시각)과 다르다. 7일 몰림·간격 계산용 (0007) |
+| `author_ref` | `text` | Y | — | — | 외부 작성자 식별자의 **소스별 솔트 해시**. 원식별자 미저장. 관계·행동 축(공유 리뷰어·신규성·간격)용 (0010) |
+| `review_posted_at` | `timestamptz` | Y | — | — | 리뷰가 원 소스에 게시된 시각. `collected_at`(수집 시각)과 다르다. 7일 몰림·간격 계산용 (0010) |
 | `processing_version` | `text` | N | — | — | 요약·정제 버전 |
 | `cleaning_status` | `text` | N | — | — | retained/excluded/pending |
 | `exclusion_reason` | `text` | Y | — | — | 제외 사유 |
@@ -1506,7 +1506,7 @@ PC 전체 리뷰를 작성할 때 장착된 부품을 고정한다.
 
 - PK/UNIQUE 인덱스 및 각 FK 선두 인덱스를 기본으로 한다. 중복 인덱스는 합친다.
 - (subject_id,status,cleaning_status)
-- 부분 (author_ref) WHERE author_ref IS NOT NULL · 부분 (subject_id,review_posted_at) WHERE review_posted_at IS NOT NULL (0007)
+- 부분 (author_ref) WHERE author_ref IS NOT NULL · 부분 (subject_id,review_posted_at) WHERE review_posted_at IS NOT NULL (0010)
 
 <a id="table-43"></a>
 

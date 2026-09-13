@@ -2,7 +2,7 @@
 
 - 날짜: 2026-09-11
 - 상태: 채택
-- 관련: `db/migrations/0007_review_summary_relation_axis.sql` · 명세서 §42 ·
+- 관련: `db/migrations/0010_review_summary_relation_axis.sql` · 명세서 §42 ·
   `src/workers/relation_axis.py`
 
 ## 맥락
@@ -38,7 +38,7 @@
 ## 결정
 
 1. `evidence.review_summary` 에 `author_ref text NULL`·`review_posted_at timestamptz NULL` 을 추가한다
-   (`0007_review_summary_relation_axis.sql`). 부분 인덱스 둘
+   (`0010_review_summary_relation_axis.sql`). 부분 인덱스 둘
 2. `author_ref` 는 **소스별 솔트 해시** — `hash(salt[source_id] || external_author_id)`. 원식별자는
    저장하지 않고 역산하지 않는다. 소스가 다르면 같은 사람이라도 다른 값이다(소스 간 연결은
    이 컬럼의 목적이 아니다)
@@ -53,8 +53,10 @@
 
 ## 대가
 
-- 팀 운영 테이블을 건드린다. upstream 합의가 필요하다. 마이그레이션 번호는 같은 날 upstream 에
-  들어온 `0006_rag_active_profile` 뒤인 `0007` 이고, 가드 트리거는 `0008` 이후로 밀렸다
+- 팀 운영 테이블을 건드린다. upstream 합의가 필요하다. 마이그레이션 번호는 처음 `0006_rag_active_profile`
+  뒤인 `0007` 로 잡았으나, upstream 이 `0007~0009` 를 먼저 쓰는 바람에 **2026-09-12 에 `0010` 으로 다시
+  밀었다**(아래 대가의 "번호 재조정" 이 그대로 현실화한 것이다). 번호를 우리가 정할 수 없는 것이 이
+  결정의 상시 비용이다
 - 해시라도 한 사람의 리뷰들을 잇는 **가명 식별자**다. 개인정보 처리 관점의 검토(수집 대상 소스의
   약관, 보관 기간)가 필요했고 **2026-09-11 팀 확인을 받았다.** 이 ADR 은 그 검토를 대신하지 않는다
 - upstream 반영은 **나중에 한 번에** 올리기로 했다(2026-09-11 합의). 그동안 팀 테이블이 갈라지는
@@ -64,3 +66,18 @@
   계정 단위는 "정의된 비율" 을 함께 낸다
 - 수집기 구현이 한 단계 늘어난다 — 작성자 필드를 노출하지 않는 소스가 있으면 그 소스는 이 축에서
   빠진다
+
+## 추기 — 2026-09-13
+
+upstream 의 DB 축소(58→35, `docs/db/db_schema_reduction_proposal_2026-09-12.md`)가 이 ADR 이 기대던
+앵커 둘을 없앤다. **결정은 유지된다** — `evidence.review_summary` 는 축소안에서 "병합 금지" 로 유지
+확정돼 컬럼이 붙을 집은 살아 있다. 다만 위 결정의 근거 문장 둘이 가리킬 곳을 잃는다:
+
+- **결정 3** 은 `review_posted_at` 의 의미를 `dataset.review_sample.review_posted_at` 과 "같은 이름·같은
+  의미" 로 맞췄는데, `dataset` 스키마 4개가 전부 삭제(로컬 파일 전환)된다. **의미 정의를 이 ADR 이
+  직접 지게 된다** — "리뷰가 원 소스에 게시된 시각. 우리가 수집한 시각(`collected_at`)이 아니다."
+- **결정 4** 의 `community.review_revision.published_at` 은 `review` + `review_revision` 병합으로
+  테이블이 사라진다. `origin='first_party'` 채우는 규칙을 병합 테이블 기준으로 다시 써야 한다
+
+둘 다 컬럼 요구는 아니다. 이 ADR 이 요구하는 테이블 변경은 여전히 `review_summary` 두 컬럼 + 부분
+인덱스 둘 하나뿐이다.
