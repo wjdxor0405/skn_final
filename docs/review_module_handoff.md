@@ -13,7 +13,7 @@
 | # | 파일 | 무엇 | 누구 |
 | --- | --- | --- | --- |
 | 1 | `src/schemas.py` | `ReviewTelemetry`(폼 계측값, 횟수·시간만 · `extra="forbid"`) · `ProductRiskOut` · `SyntheticDemoOut` · `ReviewSummaryOut`. develop 의 `Field(default_factory=dict)` 관행에 맞췄다 | 담당 2 (공통 DTO) |
-| 2 | `src/services/review_service.py` · `src/routers/reviews.py` | `GET /reviews/summary/{product_key}` — 실측 블록과 합성 데모 블록(`is_synthetic: true`) 분리. 산출 JSON 없는 환경은 데모만 | 담당 2 (리뷰 서비스 조립) |
+| 2 | `src/services/review_service.py` · `src/routers/reviews.py` | `GET /reviews/summary/{product_key}` — **프론트 계약(`docs/frontend_외부수정요청.md` §D-4-2 `ReviewSummary`) 이름을 따른다.** 낼 수 있는 것(`total_count` · `rating_raw` · `summaries` · `data_notice`)은 채우고 못 내는 것은 **이름을 바꾸지 않고 null**. 실측 블록과 합성 데모 블록(`is_synthetic: true`)은 분리. 산출 JSON 없는 환경은 데모만 | 담당 2 (리뷰 서비스 조립) |
 | 3 | `src/engine/stage3b_rank.py` · `config.REVIEW_AXIS_EXCESS` | 리뷰축 0.5 stub → 관측 없음 0.5 · 관측됨 0.75 · **대조군 중앙값 2배 초과 지표 있음 0.25**. 넘은 지표는 `REVIEW_OBS:` 플래그. 규칙에 드는 지표는 `burst7` · `prolific_rate` 둘뿐(1건 계정 비율은 실측 라벨에서 방향이 반대라 뺐다). 출시 첫 주 몰림은 안 센다 | **담당 3** — 순위 규칙은 담당 5 가 직접 바꾸지 않는다. 이 값은 제안이고 반영·조정은 담당 3 |
 | 4 | `src/engine/stage5_explain.py` · `src/pipeline.py`(1줄) · `main.py` | 슬롯별 한 줄("리뷰 49건 관측 — 7일 몰림 18.4% (부류 중앙값 5.5%) — 검토 권장") + 주의 문구("상품 단위 신호이며 개별 리뷰의 진위가 아닙니다") | 담당 2 (조립) |
 | 5 | `db/migrations/0010_review_summary_relation_axis.sql` | `evidence.review_summary` 에 NULL 허용 `author_ref`(소스별 솔트 해시) · `review_posted_at` + 인덱스 둘. `collected_at` 으로 채우지 않는다 | **담당 2** — 아래 마이그레이션 메모 |
@@ -76,7 +76,9 @@ DB 스키마 축소(58 → 35)가 진행 중이면 이 두 컬럼은 **그 마�
 - `ItemOut.review`(`ReviewBriefOut`) — 필드가 `total_count` · `excluded_ratio` · `rating_refined` 이고
   **셋 다 필수**다. 뒤 둘은 결정 0001 로 낼 수 없다. "제외 0건" 으로 채우면 화면이
   "조작 제외 전후 평점" 으로 그려서 **클렌징이 돌아 아무것도 못 찾은 것처럼** 읽힌다.
-  그래서 비워 둔다 — 부품 카드 라벨이 "리뷰 정보 없음" 으로 나오는 것이 이 때문이다
+  그래서 비워 둔다 — 부품 카드 라벨이 "리뷰 정보 없음" 으로 나오는 것이 이 때문이다.
+  **두 필드를 선택(nullable)으로 바꾸면** `리뷰 449건` 만 띄울 수 있다. 단 프론트가
+  `(review.excluded_ratio || 0)` 로 `null` 을 0 으로 단정하므로 그쪽도 같이 고쳐야 한다
 - `ItemOut.checks`("구매 전 확인") — [3-C] 스펙 검증 문장의 자리다. 섞으면 나중에 서로 덮는다
 
 **`product_key` 주의.** `GET /session/{id}/result` 는 `catalog.product.model`(제품명 원문)을
