@@ -269,19 +269,35 @@ class SyntheticDemoOut(BaseModel):
 
 
 class ReviewSummaryOut(BaseModel):
-    """S5 리뷰 상세 — `get_review_authenticity` 계약(기획서 §10-6)과 같은 최상위 키.
+    """S5 리뷰 상세 — 프론트 계약(`docs/frontend_외부수정요청.md` §D-4-2 `ReviewSummary`) 의 이름을 따른다.
 
-    실측 필드(orig_rating · total_reviews · product_manipulation_risk)와 합성 데모 블록을 섞지 않는다.
-    cleaned_rating · cleanse_ratio 는 판정기가 없어 항상 null 이다(docs/decisions/0001).
+    **못 내는 값도 이름을 바꾸지 않고 null 로 둔다.** 전에는 이름을 달리 지었는데(`total_reviews`·
+    `orig_rating`), 화면이 계약 이름을 읽으므로 실제로 낼 수 있는 리뷰 건수까지 **"리뷰 0건"** 으로
+    나갔다. 없는 값을 0 으로 단정하는 것이 빈 칸보다 나쁘다.
+
+    낼 수 없는 것과 이유:
+
+    - `excluded_count` · `excluded_ratio` · `rating_refined` — 판정기가 없다(`docs/decisions/0001`).
+      관계·행동 축은 상품 단위 신호라 **개별 리뷰를 하나도 빼지 않는다.** 몰림 15건을 `excluded_count`
+      에 넣으면 화면이 "449건 중 15건 제외" 로 그려서 우리가 그 15건을 조작으로 판정하고 뺐다는
+      말이 된다. 몰림은 출시·이벤트로도 생긴다(몰림 2배 초과 상품의 14%가 출시 주였다)
+    - `distribution_refined` — "후" 가 없으므로 없다
+    - `distribution_raw` — 산출물에 5점·1점 비율만 있고 4·3·2 가 없다. 부분만 내면 화면이 나머지를
+      0% 로 그려서 없는 분포를 단정한다
+
+    실측과 합성은 섞지 않는다 — 합성값은 `synthetic_demo` 안에만, `is_synthetic` 표지와 함께.
     """
     product_key: str
+    total_count: int = 0
+    excluded_count: None = None
+    excluded_ratio: None = None
+    rating_raw: Optional[float] = None
+    rating_refined: None = None
+    distribution_raw: dict[str, float] = {}
+    distribution_refined: dict[str, float] = {}
+    summaries: list[dict[str, Any]] = []
+    data_notice: str
+    # ── 계약 밖 추가 ──
     product_name: Optional[str] = None
-    orig_rating: Optional[float] = None
-    cleaned_rating: None = None
-    cleanse_ratio: None = None
-    axis_scores: dict[str, Any] = {}             # 실측 없음 — 비어 있다. 합성값은 synthetic_demo 에
-    total_reviews: int = 0
-    top_summaries: list[dict[str, Any]] = []     # 위와 같음
-    confidence_note: str
     product_manipulation_risk: ProductRiskOut
     synthetic_demo: Optional[SyntheticDemoOut] = None

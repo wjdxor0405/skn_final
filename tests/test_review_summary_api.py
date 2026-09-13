@@ -35,23 +35,43 @@ def client(tmp_path, monkeypatch):
     return TestClient(app)
 
 
-def test_observed_part_has_evidence_and_null_cleaned_rating(client):
+def test_observed_part_fills_contract_names_and_nulls_the_verdicts(client):
+    """계약 이름(total_count · rating_raw)으로 낸다 — 이름을 달리 지으면 화면이 "리뷰 0건" 을 낸다."""
     j = client.get("/reviews/summary/amd-ryzen-5-5600").json()
-    assert j["orig_rating"] == 4.5 and j["total_reviews"] == 120
-    assert j["cleaned_rating"] is None and j["cleanse_ratio"] is None      # 판정기 없음
+    assert j["total_count"] == 120 and j["rating_raw"] == 4.5              # 낼 수 있는 것은 채운다
+    assert j["rating_refined"] is None                                     # 판정기 없음
+    assert j["excluded_count"] is None and j["excluded_ratio"] is None
+    assert j["distribution_raw"] == {} and j["distribution_refined"] == {}  # 4·3·2점이 없어 안 낸다
     risk = j["product_manipulation_risk"]
     assert risk["score"] is None and risk["reliable_range"] is True
     assert any("7일 안에 몰림" in e for e in risk["evidence"]) and risk["product_ref"] == "ASIN1"
     assert j["synthetic_demo"]["is_synthetic"] is True                     # 합성 블록은 표지와 함께 분리
     assert "합성" in j["synthetic_demo"]["note"] and j["synthetic_demo"]["cleaned_rating"] is not None
-    assert j["axis_scores"] == {} and j["top_summaries"] == []             # 최상위엔 실측만
+
+
+def test_observations_reach_summaries_with_their_source(client):
+    """화면에 문장을 실을 칸이 summaries 뿐이다. 리뷰 발췌로 읽히지 않게 출처를 밝힌다."""
+    j = client.get("/reviews/summary/amd-ryzen-5-5600").json()
+    assert j["summaries"], "관측 문장이 화면에 갈 자리에 없다"
+    assert any("7일 안에 몰림" in e["text"] for e in j["summaries"])
+    assert all(e["source"] == review_service.OBSERVATION_SOURCE for e in j["summaries"])
+    assert "리뷰 본문 아님" in review_service.OBSERVATION_SOURCE
+    # 합성 요약이 실측 자리로 새지 않는다
+    assert j["summaries"] != j["synthetic_demo"]["top_summaries"]
+
+
+def test_burst_count_is_not_reported_as_excluded(client):
+    """몰림 24건을 excluded_count 로 내면 화면이 "24건 제외" 로 그린다 — 우리는 아무것도 빼지 않았다."""
+    j = client.get("/reviews/summary/amd-ryzen-5-5600").json()
+    assert j["excluded_count"] is None
+    assert "24" not in str(j["excluded_count"]) and j["excluded_ratio"] is None
 
 
 def test_unobserved_demo_part_returns_demo_block_only(client):
     j = client.get("/reviews/summary/intel-core-i5-14400f").json()
-    assert j["total_reviews"] == 0 and j["orig_rating"] is None
-    assert j["product_manipulation_risk"]["evidence"] == []
-    assert "관측 없음" in j["confidence_note"]
+    assert j["total_count"] == 0 and j["rating_raw"] is None
+    assert j["product_manipulation_risk"]["evidence"] == [] and j["summaries"] == []
+    assert "관측 없음" in j["data_notice"]
     assert j["synthetic_demo"]["axis_scores"]                             # 항목별 평가는 데모에서
 
 

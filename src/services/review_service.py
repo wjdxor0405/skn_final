@@ -14,6 +14,10 @@ from src.schemas import ProductRiskOut, ReviewSummaryOut, ReviewTelemetry, Synth
 
 TELEMETRY_KEY = "telemetry"
 
+# summaries[].source — 이 문장이 리뷰 발췌가 아니라 상품 단위 집계 사실이라는 표시.
+# 계약의 예시가 "합성 리뷰 요약" 을 쓰는 것과 같은 자리다.
+OBSERVATION_SOURCE = "관계·행동 축 관측 (리뷰 본문 아님)"
+
 _demo_file: ReviewSummaryDemoFile | None = None
 
 
@@ -71,9 +75,14 @@ def get_summary(product_key: str) -> ReviewSummaryOut:
             controls=risk.get("controls", {}), control_scope=store.meta.get("control_scope"),
             product_ref=ref, verify_url=f"https://www.amazon.com/dp/{ref}" if ref else None)
         orig, total, note = auth["orig_rating"], auth["total_reviews"], auth["confidence_note"]
+        # 관측 문장을 계약의 summaries 자리에 낸다. 화면에 문장을 실을 칸이 여기뿐이다.
+        # source 로 출처를 밝혀 리뷰 발췌로 읽히지 않게 한다 — 이건 본문이 아니라 집계 사실이다.
+        # (오버레이에 관측 사실 전용 칸이 생기면 그쪽으로 옮긴다)
+        summaries = [{"text": t, "source": OBSERVATION_SOURCE, "observed_at": None}
+                     for t in risk["evidence"]]
     else:
         risk_out = ProductRiskOut(evidence=[], reliable_range=None)
-        orig, total = None, 0
+        orig, total, summaries = None, 0, []
         note = ("관측 없음 — 이 상품은 관계·행동 축 산출물에 없다(리뷰 수 문턱 미만이거나 데이터 기간 밖). "
                 "정제 평점·제외 비율은 산출하지 않는다.")
 
@@ -88,7 +97,7 @@ def get_summary(product_key: str) -> ReviewSummaryOut:
 
     return ReviewSummaryOut(
         product_key=key, product_name=d.get("product_name") if d else None,
-        orig_rating=orig, total_reviews=total, confidence_note=note,
+        total_count=total, rating_raw=orig, summaries=summaries, data_notice=note,
         product_manipulation_risk=risk_out, synthetic_demo=synthetic)
 
 
