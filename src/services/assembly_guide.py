@@ -113,7 +113,7 @@ def compat_line(row: dict) -> str | None:
 def memory_profile_name(cpu_name: str | None) -> str:
     name = (cpu_name or "").lower()
     if "ryzen" in name or "amd" in name or "라이젠" in name:
-        return "EXPO(메모리가 XMP만 지원하면 XMP·DOCP)"
+        return "EXPO(XMP만 지원하는 메모리는 보드에 따라 XMP·DOCP·A-XMP로 표시)"
     if "intel" in name or "인텔" in name or "core" in name or "코어" in name:
         return "XMP"
     return "XMP(인텔) 또는 EXPO(AMD)"

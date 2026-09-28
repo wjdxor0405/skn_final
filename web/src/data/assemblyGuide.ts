@@ -3,7 +3,7 @@ import type { CurrentPlan } from '../state/types'
 // 목업 예시 문장입니다. 실제 서비스에서는 부품별 조립 가이드 API 응답으로 교체합니다.
 export function assemblyGuide(plan: CurrentPlan): string[] {
   if (plan.mode === 'new') return [
-    '정전기 방지 장갑을 착용하고 케이스를 평평한 곳에 놓아주세요.',
+    '정전기 방지 손목띠를 차거나 금속을 만져 정전기를 빼고, 케이스를 평평한 곳에 놓아주세요.',
     '메인보드에 CPU와 쿨러를 먼저 장착해요.',
     '케이스에 메인보드를 고정한 뒤 파워서플라이와 그래픽카드를 연결해요.',
   ]

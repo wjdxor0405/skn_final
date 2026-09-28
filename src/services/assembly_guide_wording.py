@@ -76,8 +76,9 @@ def _(m):
 
 @_ok("power", r"^CPU( 최대)? ([\d.]+)W \+ GPU ([\d.]+)W = ([\d.]+)W ≤ 파워 ([\d.]+)W × ([\d.]+) = ([\d.]+)W$")
 def _(m):
-    return (f"CPU{m[1] or ''} {m[2]}W와 그래픽카드 {m[3]}W를 합쳐 {m[4]}W — 파워 {m[5]}W의 안전 범위({m[7]}W) 안이라 "
-            "용량이 충분합니다.")
+    # 계수(0.9)는 추천엔진 규칙이다. 업계 기준처럼 읽히지 않게 서비스 기준이라고 밝힌다.
+    pct = round(float(m[6]) * 100)
+    return f"CPU{m[1] or ''} {m[2]}W와 그래픽카드 {m[3]}W를 합쳐 {m[4]}W — 파워 {m[5]}W의 {pct}%({m[7]}W)보다 낮아 이 서비스의 용량 기준을 통과합니다."
 
 
 @_ok("socket", r"^CPU .+\((.+?)\) = 메인보드 .+\((.+?)\)$")
@@ -92,7 +93,7 @@ def _(m):
 
 @_ok("cooler_socket", r"^CPU 소켓 (\S+) ∈ 쿨러 지원 소켓 (.+)$")
 def _(m):
-    return f"쿨러가 {m[1]} 소켓을 지원합니다 — 쿨러 상자의 브래킷 중 {m[1]}용을 골라 쓰세요."
+    return f"쿨러가 {m[1]} 소켓을 지원합니다 — 쿨러 설명서에서 {m[1]}용 장착 방법(다른 소켓과 같은 부품일 수 있음)을 확인해 쓰세요."
 
 
 @_ok("motherboard_case", r"^메인보드 (\S+) → 케이스가 지원 (.+)$")
@@ -109,7 +110,7 @@ def _(m):
 def _(m):
     modules, slots = int(m[1]), int(m[2])
     if modules == 1:
-        where = "메인보드 설명서가 권장하는 슬롯(대개 A2 표시)"
+        where = "메인보드 설명서가 권장하는 슬롯에 꽂으세요(제조사마다 A 또는 B 슬롯)"
     elif modules == 2 and slots >= 4:
         where = "A2·B2 슬롯(대개 CPU 쪽에서 2번째·4번째)에 나눠 꽂아야 듀얼 채널로 동작합니다"
     elif modules == slots:
@@ -121,7 +122,8 @@ def _(m):
 
 @_ok("ram_speed", r"^RAM (\d+)MT/s ≤ 메인보드 최대 (\d+)MT/s$")
 def _(m):
-    return f"메모리 {m[1]}MT/s는 메인보드가 지원하는 속도(최대 {m[2]}MT/s) 안입니다 — BIOS에서 메모리 프로필을 켜면 이 속도로 동작합니다."
+    return (f"메모리 {m[1]}MT/s는 메인보드 지원 범위(최대 {m[2]}MT/s) 안입니다 — BIOS에서 메모리 프로필을 켜면 대개 이 속도로 "
+            "동작하지만, CPU나 메모리 개수에 따라 낮아질 수 있습니다.")
 
 
 @_ok("m2", r"^M\.2 슬롯 (\d+)개( · SSD PCIe ([\d.]+) ≤ 슬롯 최대 ([\d.]+))?$")
@@ -139,7 +141,7 @@ def _(m):
 
 @_ok("radiator", r"^라디에이터 (\d+)mm → 케이스 (.+) 장착 가능$")
 def _(m):
-    return f"수랭 라디에이터({m[1]}mm)는 케이스 {m[2]}에 달 수 있습니다."
+    return f"케이스 사양상 수랭 라디에이터({m[1]}mm)를 {m[2]}에 달 수 있습니다 — 두께·메모리 높이 제한은 케이스 설명서를 확인하세요."
 
 
 _MISSING_TAIL = " — 스펙 정보가 부족해 확인하지 못했습니다."
@@ -201,7 +203,7 @@ def storage_cable(row: dict | None) -> str | None:
 def cable_list(rows: dict[str, dict]) -> str:
     """새 PC 조립에서 파워에서 뽑아 둘 케이블 목록. 모르는 개수는 추측하지 않고 확인할 곳을 말한다."""
     parts = ["메인보드 24핀 1개",
-             "CPU 보조전원(메인보드 왼쪽 위 8핀 커넥터 수만큼 — 1개 또는 2개)",
+             "CPU 보조전원(보드 왼쪽 위 커넥터 수만큼: 8핀, 8+4핀, 8+8핀 — 자리가 있으면 모두 꽂기를 권장)",
              gpu_cable(rows.get("gpu_connector"))]
     storage = storage_cable(rows.get("m2"))
     if storage:

@@ -188,7 +188,7 @@ def test_cpu_upgrade_updates_bios_first_and_reseats_the_cooler():
 
 def test_ram_upgrade_reminds_to_turn_the_memory_profile_back_on():
     after = _step(ag.build("upgrade", _items("RAM"))["text"], "교체 뒤")
-    assert any("다시 켜야" in line for line in after)
+    assert any("꺼져 있으면 다시 켭니다" in line for line in after)
 
 
 @pytest.mark.parametrize("slot", ["메인보드", "케이스"])
