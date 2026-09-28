@@ -50,6 +50,10 @@ def apply_alternative(conn, list_id: UUID, principal: Principal, slots: list[str
     if kept_specs:
         repo.upsert_condition(revision["id"], "current_specs", {"value": kept_specs}, "extracted")
     repo.upsert_condition(revision["id"], "upgrade_parts", {"value": slots}, "explicit")
+    # 출처 표시 — 사용자는 견적의 나머지 부품을 아직 갖고 있지 않다. 리포트 조립 가이드가 이 계획을 업그레이드
+    # (기존 부품 분리)가 아니라 새 PC 조립으로 안내하려면 일반 업그레이드와 구분돼야 한다. 카테고리 slot_schema 밖의
+    # 키라 조건 대화 에이전트가 쓰거나 조건 칩에 나오지 않는다.
+    repo.upsert_condition(revision["id"], "plan_origin", {"value": "quote_review", "source_list_id": str(list_id)}, "explicit")
     for key in ("purpose", "resolution", "priority", "budget_max"):
         if conditions.get(key) is not None:
             repo.upsert_condition(revision["id"], key, {"value": conditions[key]}, "explicit")

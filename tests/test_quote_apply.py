@@ -77,6 +77,24 @@ def test_kept_parts_survive_as_the_current_specs_condition(client):
     assert client.get(f"/session/{new_list_id}").json()["accepts_spec_file"] is True
 
 
+def test_the_new_plan_is_marked_as_coming_from_a_quote_review(client):
+    """리포트 조립 가이드가 이 계획을 업그레이드(기존 부품 분리)가 아니라 새 PC 조립으로 안내하려면 출처가 남아야 한다."""
+    import psycopg
+    from uuid import UUID
+
+    from src.repo.plan_repo import PlanRepo
+
+    list_id = _reviewed(client, FULL_COND)
+    new_list_id = client.post(f"/pc/reviews/{list_id}/apply", json={"slots": ["GPU"]}).json()["list_id"]
+    with psycopg.connect(DSN, prepare_threshold=None) as conn:
+        repo = PlanRepo(conn)
+        rows = repo.load_full(repo.get_current_revision(UUID(new_list_id))["id"])["conditions"]
+    origin = next(r["value"] for r in rows if r["condition_key"] == "plan_origin")
+    assert origin == {"value": "quote_review", "source_list_id": list_id}
+    # 조건 칩·필드 목록에는 나오지 않는다(카테고리 fields 밖의 키)
+    assert "plan_origin" not in {f["key"] for f in client.get(f"/session/{new_list_id}").json()["fields"]}
+
+
 # ── 조건이 부족하면 추천을 바로 시작하지 않는다 ──────────────────────────────────────────
 
 def test_without_conditions_the_plan_is_created_but_not_recommended_yet(client):
