@@ -98,7 +98,7 @@ function ReportView({ report }: { report: SavedSetup }) {
             <ol className="guide-steps">
               {report.careGuide.map((step, i) => <li key={i}>
                 {step.title && <strong>{step.title}</strong>}
-                {step.lines.map((line, j) => <p key={j}>{line.label && <span className={'guide-label ' + GUIDE_LABEL_CLASS[line.label]}>{line.label}</span>}{line.text}</p>)}
+                {step.lines.map((line, j) => <p key={j} className={line.label ? undefined : 'guide-action'}>{line.label && <span className={'guide-label ' + GUIDE_LABEL_CLASS[line.label]}>{line.label}</span>}{line.text}</p>)}
               </li>)}
             </ol>
             <p className="setup-hint">일반 조립 상식으로 작성한 안내에 이 견적의 호환 검사 결과를 붙였습니다. 부품별 제품 설명서를 함께 확인해주세요.</p>

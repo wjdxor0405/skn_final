@@ -80,6 +80,14 @@ def _text(doc_id: str) -> str | None:
     return doc["text"] if doc else None
 
 
+def _steps(doc_id: str) -> list[str]:
+    """문서의 행동 단위 목록(`steps`). 없으면 문단 하나를 한 단계로."""
+    doc = _docs().get(doc_id)
+    if not doc:
+        return []
+    return list(doc.get("steps") or [doc["text"]])
+
+
 def _caution(doc_id: str) -> str | None:
     """조립 시점(assembly·after) care 문서만. 구매 전 문구(purchase)는 조립 중에 읽을 말이 아니다(G2)."""
     doc = _docs().get(doc_id)
@@ -111,6 +119,9 @@ def memory_profile_name(cpu_name: str | None) -> str:
     return "XMP(인텔) 또는 EXPO(AMD)"
 
 
+_CIRCLED = "①②③④⑤⑥⑦⑧⑨⑩"
+
+
 class _Writer:
     def __init__(self) -> None:
         self.lines: list[str] = []
@@ -124,8 +135,29 @@ class _Writer:
         if text:
             self.lines.append(f"   {label}: {text}")
 
+    def actions(self, doc_id: str, header: str | None = None) -> None:
+        """문서를 `설치: 머리말` + 번호 붙은 행동 줄(①②…)로. 번호 줄은 라벨이 없어 화면이 일반 문장으로 보여 준다."""
+        steps = _steps(doc_id)
+        if header:
+            self.line("설치", header)
+        elif not steps:
+            return
+        for i, text in enumerate(steps):
+            self.lines.append(f"   {_CIRCLED[i] if i < len(_CIRCLED) else f'({i + 1})'} {text}")
+
     def text(self) -> str:
         return "\n".join(self.lines)
+
+
+def _install_doc(slot: str, rows: dict[str, dict]) -> str:
+    """부품 설치 문서 id. 저장장치는 호환 검사가 알려 주는 종류(M.2·SATA)로 고르고, 모르면 둘 다 담은 문서."""
+    if slot == "저장장치":
+        m2 = rows.get("m2") or {}
+        if m2.get("state") == "skipped" and "M.2 슬롯을 쓰지 않아" in (m2.get("detail") or ""):
+            return "install_storage_sata"
+        if m2.get("state") in ("ok", "fail") or (m2.get("detail") or "").startswith("SSD는 PCIe"):
+            return "install_storage_m2"
+    return INSTALL_DOC[slot]
 
 
 def _part_label(slot: str, parts: dict[str, dict]) -> str:
@@ -173,19 +205,23 @@ def _build(parts: dict[str, dict], compat_rows: list[dict], lead: list[str] | No
     rows = _rows_by_axis(compat_rows)
     w = _Writer()
     _notices(w, rows, {axis: spec["title"] for spec in BUILD_STEPS for axis in spec["axes"]})
+    sata = _install_doc("저장장치", rows) == "install_storage_sata"     # SATA는 보드가 아니라 케이스 드라이브 베이에 단다
     for spec in BUILD_STEPS:
-        slots = [s for s in spec["slots"]]
+        slots = [s for s in spec["slots"] if not (sata and s == "저장장치")]
+        if sata and spec["title"] == "메인보드 장착·배선":
+            slots.append("저장장치")
         title = spec["title"] + (f" — {'·'.join(slots)}" if len(slots) > 1 else "")
         w.step(title)
         if spec["doc"] == "step_prep":
             for doc_id in lead or ():
-                w.line("설치", _text(doc_id))
-        w.line("설치", _text(spec["doc"]) if spec["doc"] else None)
+                w.actions(doc_id)
+        if spec["doc"]:
+            w.actions(spec["doc"])
         if spec["doc"] == "step_prep":
             for label, text in lead_lines or ():
                 w.line(label, text)
         for slot in slots:
-            w.line("설치", f"{_part_label(slot, parts)} — {_text(INSTALL_DOC[slot])}")
+            w.actions(_install_doc(slot, rows), header=_part_label(slot, parts))
         if spec["title"] == "파워 장착":
             w.line("이 조합", f"파워에서 뽑아 둘 케이블 — {cable_list(rows)}")
         for axis in spec["axes"]:
@@ -207,13 +243,13 @@ def _upgrade(parts: dict[str, dict], compat_rows: list[dict]) -> str:
     _notices(w, rows, {axis: "새 부품 장착" for axis in AXIS_SLOTS} | ({"bios": "교체 전에"} if "CPU" in replaced else {}),
              group_missing=True)
     w.step("준비")
-    w.line("설치", _text("upgrade_prep"))
+    w.actions("upgrade_prep")
 
     pre = [s for s in replaced if s in UPGRADE_PRE]
     if pre:
         w.step("교체 전에 — " + "·".join(pre))
         for slot in pre:
-            w.line("설치", f"{slot}: {_text(UPGRADE_PRE[slot])}")
+            w.actions(UPGRADE_PRE[slot], header=slot)
             if slot == "CPU" and "bios" in rows:
                 w.line("이 조합", compat_line(rows["bios"]))
 
@@ -223,12 +259,12 @@ def _upgrade(parts: dict[str, dict], compat_rows: list[dict]) -> str:
         remove.insert(remove.index("CPU"), "쿨러")
     w.step("기존 부품 분리 — " + "·".join(remove))
     for slot in remove:
-        w.line("설치", f"{slot}: {_text(UPGRADE_REMOVE[slot])}")
+        w.actions(UPGRADE_REMOVE[slot], header=slot)
 
     w.step("새 부품 장착 — " + "·".join(replaced))
     placed: set[str] = {"bios"} if pre and "CPU" in pre else set()
     for slot in replaced:
-        w.line("설치", f"{_part_label(slot, parts)} — {_text(INSTALL_DOC[slot])}")
+        w.actions(_install_doc(slot, rows), header=_part_label(slot, parts))
         if slot == "GPU":
             w.line("이 조합", f"연결할 케이블 — {gpu_cable(rows.get('gpu_connector'))}")
         elif slot == "파워":
@@ -242,7 +278,7 @@ def _upgrade(parts: dict[str, dict], compat_rows: list[dict]) -> str:
                     continue
                 w.line("이 조합", compat_line(row))
     if "CPU" in replaced and "쿨러" not in replaced:
-        w.line("설치", f"쿨러(기존) — {_text('install_cooler')}")
+        w.actions("install_cooler", header="쿨러(기존) 다시 달기")
 
     w.step("교체 뒤 확인")
     for slot in replaced:

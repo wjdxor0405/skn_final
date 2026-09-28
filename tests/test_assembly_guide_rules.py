@@ -116,6 +116,36 @@ def test_first_boot_names_the_memory_profile_by_cpu_vendor(cpu, profile):
     assert any(line.startswith("확인:") and f"BIOS에서 {profile}" in line for line in boot)
 
 
+def test_install_documents_are_split_into_numbered_actions():
+    """4번: 긴 문단 대신 머리말(부품) + ①②… 한 줄에 한 동작."""
+    gpu = _step(ag.build("build", _items(*SLOTS))["text"], "그래픽카드 장착")
+    assert gpu[0] == "설치: GPU 테스트 GPU"
+    assert gpu[1].startswith("① ") and gpu[2].startswith("② ")
+
+
+def test_step_documents_keep_text_in_sync_and_actions_short():
+    """steps 가 원본이고 text 는 이어 붙인 것(검색·옛 경로용). 한 동작은 한 줄에 읽히는 길이."""
+    docs = json.loads(ag.ASSEMBLY_STEPS_JSON.read_text(encoding="utf-8")) + json.loads(CARE_GUIDES_JSON.read_text(encoding="utf-8"))
+    with_steps = [d for d in docs if "steps" in d]
+    assert {d["id"] for d in with_steps} >= set(ag.INSTALL_DOC.values()) - {"install_mainboard"}
+    for d in with_steps:
+        assert d["text"] == " ".join(d["steps"]), d["id"]
+        assert all(len(step) <= 110 for step in d["steps"]), d["id"]
+
+
+@pytest.mark.parametrize(("m2_row", "has", "lacks"), [
+    ({"axis": "m2", "state": "ok", "detail": "M.2 슬롯 1개"}, "비스듬히", "SATA"),
+    ({"axis": "m2", "state": "skipped", "detail": "SSD(2.5인치 SATA)는 M.2 슬롯을 쓰지 않아 검사하지 않았습니다."}, "SATA 데이터 케이블", "비스듬히"),
+])
+def test_storage_steps_follow_the_ssd_type(m2_row, has, lacks):
+    text = ag.build("build", _items(*SLOTS), [m2_row])["text"]
+    where = "보드 밖 조립" if m2_row["state"] == "ok" else "메인보드 장착"      # SATA는 케이스 드라이브 베이에 단다
+    body = "\n".join(_step(text, where))
+    storage = body.split("설치: 저장장치", 1)[1].split("설치: 쿨러", 1)[0]
+    assert has in storage and lacks not in storage
+    assert ("저장장치" in _titles(text)[1]) == (m2_row["state"] == "ok")
+
+
 def test_same_input_same_text():
     """G7: 인쇄할 때마다 같은 문장."""
     assert ag.build("build", _items(*SLOTS), ROWS) == ag.build("build", _items(*SLOTS), ROWS)
@@ -180,6 +210,6 @@ def test_quote_review_origin_is_guided_as_a_new_build_not_an_upgrade():
     outside = _step(text, "보드 밖 조립")
     assert any(line.startswith("설치: CPU 라이젠 5 7600 (받은 견적 부품 — 따로 구매)") for line in outside)
     assert any(line.startswith("설치: RAM DDR5 16GB (받은") for line in outside)      # 견적 원문의 가격은 뗀다
-    assert any(line.startswith("설치: GPU 테스트 GPU —") for line in _step(text, "그래픽카드 장착"))
+    assert "설치: GPU 테스트 GPU" in _step(text, "그래픽카드 장착")
     assert any(line.startswith("확인: 받은 견적 부품끼리의 호환") for line in _step(text, "준비"))
     assert any("BIOS에서 EXPO" in line for line in _step(text, "첫 부팅"))     # "라이젠" 도 AMD

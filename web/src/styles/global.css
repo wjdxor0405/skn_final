@@ -687,4 +687,5 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .guide-label.install { color: var(--mint); border-color: var(--mint); }
 .guide-label.caution { color: #f1c76b; border-color: #b98a2e; }
 .guide-label.combo { color: #8fb8ff; border-color: #4a6fa8; }
+.guide-action { padding-left: 14px; margin-top: 2px; }
 .guide-label.after-check { color: #c9d4da; border-color: #5b6b73; }
