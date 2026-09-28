@@ -56,16 +56,42 @@ def test_new_build_is_task_ordered_board_outside_first():
 def test_compat_rows_become_this_combo_lines_with_the_computed_numbers():
     text = ag.build("build", _items(*SLOTS), ROWS)["text"]
     gpu = _step(text, "그래픽카드 장착")
-    assert "이 조합: GPU 길이 — GPU 길이 305mm ≤ 케이스 허용 400mm" in gpu
-    assert any(line.startswith("이 조합: GPU 두께") and line.endswith("제품 설명서에서 직접 확인하세요.") for line in gpu)
+    assert "이 조합: GPU 길이 — 그래픽카드 길이 305mm, 케이스 허용 400mm — 95mm 여유가 있어 들어갑니다." in gpu
+    assert "이 조합: GPU 두께 — GPU 두께 정보가 없어 확인하지 못했습니다. 설명서에서 직접 확인하세요." in gpu
     assert any("확정 전 호환 검사에서 맞지 않는 것으로 나왔습니다" in line and "AM5" in line
                for line in _step(text, "보드 밖 조립"))
     assert "예산" not in text and "바뀌는 부품이 아니라" not in text     # 비호환 항목·skipped 는 싣지 않는다
 
 
+def test_attention_items_are_gathered_first_with_the_step_they_belong_to():
+    text = ag.build("build", _items(*SLOTS), ROWS)["text"]
+    assert _titles(text)[0] == "조립 전에 알아둘 것"
+    first = _step(text, "조립 전에 알아둘 것")
+    assert len(first) == 2          # fail(소켓) + unknown(GPU 두께). ok·skipped·예산은 없다
+    assert any(line.startswith("주의: 소켓 — 확정 전") and line.endswith("(보드 밖 조립 단계)") for line in first)
+    assert any(line.startswith("주의: GPU 두께") and line.endswith("(그래픽카드 장착 단계)") for line in first)
+
+
+def test_all_ok_means_no_attention_step():
+    ok_rows = [r for r in ROWS if r["state"] == "ok"]
+    assert _titles(ag.build("build", _items(*SLOTS), ok_rows)["text"])[0] == "준비"
+
+
+def test_cable_list_is_in_the_psu_step():
+    rows = [{"axis": "gpu_connector", "label": "GPU 전원", "state": "ok",
+             "detail": "GPU 1× 8-pin — 필요 PCIe 커넥터 1개 ≤ 파워 제공 4개"},
+            {"axis": "m2", "label": "M.2", "state": "ok", "detail": "M.2 슬롯 1개"}]
+    psu = _step(ag.build("build", _items(*SLOTS), rows)["text"], "파워 장착")
+    cable = next(line for line in psu if "뽑아 둘 케이블" in line)
+    assert "메인보드 24핀 1개" in cable and "그래픽카드 PCIe 전원 1개(파워에 4개 있음)" in cable
+    assert "M.2 SSD는 케이블이 필요 없음" in cable
+
+
 def test_no_compat_rows_still_builds_the_guide_without_combo_lines():
     text = ag.build("build", _items(*SLOTS), None)["text"]
-    assert "이 조합:" not in text and "설치:" in text
+    combo = [line for line in text.splitlines() if "이 조합:" in line]
+    assert len(combo) == 1 and "뽑아 둘 케이블" in combo[0]      # 검사가 없으면 케이블 목록만(개수는 추측하지 않는다)
+    assert "카드 옆면 커넥터 수만큼" in combo[0] and "설치:" in text
 
 
 def test_only_assembly_time_care_documents_are_quoted():
@@ -108,12 +134,15 @@ def test_peripherals_are_ignored_and_no_pc_parts_means_no_guide():
 
 def test_upgrade_is_prepare_remove_install_check():
     text = ag.build("upgrade", _items("GPU"), ROWS, current_specs={"CPU": "라이젠 5 5600"})["text"]
-    assert _titles(text) == ["준비", "교체 전에 — GPU", "기존 부품 분리 — GPU", "새 부품 장착 — GPU", "교체 뒤 확인"]
+    assert _titles(text) == ["조립 전에 알아둘 것", "준비", "교체 전에 — GPU", "기존 부품 분리 — GPU", "새 부품 장착 — GPU",
+                             "교체 뒤 확인"]
     install = _step(text, "새 부품 장착")
-    assert "이 조합: GPU 길이 — GPU 길이 305mm ≤ 케이스 허용 400mm" in install
+    assert "이 조합: GPU 길이 — 그래픽카드 길이 305mm, 케이스 허용 400mm — 95mm 여유가 있어 들어갑니다." in install
+    assert any(line.startswith("이 조합: 연결할 케이블 — ") for line in install)
     assert "라이젠 5 5600" not in text     # 유지 부품은 단계로 만들지 않는다
-    # 스펙이 없어 못 본 항목은 줄마다 흩지 않고 한 줄로 묶는다
-    assert "이 조합: 스펙 정보가 없어 확인하지 못한 항목 — GPU 두께. 기존 부품과 새 부품의 설명서에서 직접 확인하세요." in install
+    # 스펙이 없어 못 본 항목은 줄마다 흩지 않고 맨 앞 요약에 한 줄로 묶는다
+    assert ("주의: 스펙 정보가 없어 확인하지 못한 항목 — GPU 두께. 기존 부품과 새 부품의 설명서에서 직접 확인하세요."
+            in _step(text, "조립 전에 알아둘 것"))
     assert not any(line.startswith("이 조합: GPU 두께") for line in install)
 
 
@@ -122,7 +151,7 @@ def test_cpu_upgrade_updates_bios_first_and_reseats_the_cooler():
     pre = _step(text, "교체 전에")
     assert any("BIOS를 새 CPU를 지원하는 버전으로 먼저 업데이트" in line for line in pre)
     assert any(line.startswith("이 조합: BIOS") and "출고 BIOS 버전" in line for line in pre)
-    assert _titles(text)[2] == "기존 부품 분리 — 쿨러·CPU"     # CPU를 바꾸면 쿨러를 떼었다 다시 단다
+    assert "기존 부품 분리 — 쿨러·CPU" in _titles(text)     # CPU를 바꾸면 쿨러를 떼었다 다시 단다
     assert any(line.startswith("설치: 쿨러(기존)") for line in _step(text, "새 부품 장착"))
     assert not any("BIOS" in line for line in _step(text, "새 부품 장착") if line.startswith("이 조합"))
 

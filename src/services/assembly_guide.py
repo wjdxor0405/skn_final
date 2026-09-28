@@ -18,6 +18,7 @@ import re
 from functools import lru_cache
 
 from src.config import CARE_GUIDES_JSON, DATA_DIR
+from src.services.assembly_guide_wording import cable_list, gpu_cable, plain
 
 ASSEMBLY_STEPS_JSON = DATA_DIR / "pc_assembly_steps.json"
 
@@ -86,8 +87,11 @@ def _caution(doc_id: str) -> str | None:
 
 
 def compat_line(row: dict) -> str | None:
-    """호환 검사 한 행 → `이 조합` 줄 본문. 검사 문장(detail)은 코드가 아는 값만 담고 있어 그대로 옮긴다."""
+    """호환 검사 한 행 → `이 조합` 줄 본문. 검사 문장(detail)의 값만 쓴다 — 사람 말 틀(assembly_guide_wording)에
+    맞으면 그 문장, 안 맞으면 검사 문장 그대로."""
     state, label, detail = row.get("state"), row.get("label") or row.get("axis"), (row.get("detail") or "").strip()
+    if state in ("ok", "unknown") and (sentence := plain(row)):
+        return f"{label} — {sentence}"
     if state == "ok":
         return f"{label} — {detail}"
     if state == "unknown":
@@ -136,6 +140,30 @@ def _rows_by_axis(compat_rows: list[dict]) -> dict[str, dict]:
     return {r["axis"]: r for r in compat_rows if r.get("axis") in AXIS_SLOTS}
 
 
+def _needs_attention(row: dict) -> bool:
+    """조립 전에 알아야 할 행 — 맞지 않음, 확인 못 함, 어댑터가 필요함(unknown 에 들어 있다)."""
+    return row.get("state") in ("fail", "unknown")
+
+
+def _notices(w: _Writer, rows: dict[str, dict], step_of: dict[str, str], group_missing: bool = False) -> None:
+    """확인이 필요한 호환 항목을 맨 앞 단계로 모은다. 모두 괜찮으면 단계를 만들지 않는다.
+    group_missing: 스펙이 없어 못 본 항목을 한 줄로(업그레이드 — 기존 부품 스펙을 모르는 경우가 많다)."""
+    attention = [(axis, row) for axis, row in rows.items() if _needs_attention(row)]
+    if not attention:
+        return
+    w.step("조립 전에 알아둘 것")
+    missing: list[str] = []
+    for axis, row in attention:
+        label = row.get("label") or axis
+        if group_missing and row.get("state") == "unknown" and "확인하지 못했" in (row.get("detail") or ""):
+            missing.append(label)
+            continue
+        where = f" ({step_of[axis]} 단계)" if axis in step_of else ""
+        w.line("주의", f"{compat_line(row)}{where}")
+    if missing:
+        w.line("주의", f"스펙 정보가 없어 확인하지 못한 항목 — {', '.join(missing)}. 기존 부품과 새 부품의 설명서에서 직접 확인하세요.")
+
+
 QUOTE_NOTE = ("받은 견적 부품끼리의 호환은 여기서 다시 적지 않았습니다 — 견적 점검 결과의 호환 검사를 참고하세요. "
               "아래 '이 조합' 줄은 새로 산 부품이 관련된 검사만입니다.")
 
@@ -144,6 +172,7 @@ def _build(parts: dict[str, dict], compat_rows: list[dict], lead: list[str] | No
            lead_lines: list[tuple[str, str]] | None = None) -> str:
     rows = _rows_by_axis(compat_rows)
     w = _Writer()
+    _notices(w, rows, {axis: spec["title"] for spec in BUILD_STEPS for axis in spec["axes"]})
     for spec in BUILD_STEPS:
         slots = [s for s in spec["slots"]]
         title = spec["title"] + (f" — {'·'.join(slots)}" if len(slots) > 1 else "")
@@ -157,6 +186,8 @@ def _build(parts: dict[str, dict], compat_rows: list[dict], lead: list[str] | No
                 w.line(label, text)
         for slot in slots:
             w.line("설치", f"{_part_label(slot, parts)} — {_text(INSTALL_DOC[slot])}")
+        if spec["title"] == "파워 장착":
+            w.line("이 조합", f"파워에서 뽑아 둘 케이블 — {cable_list(rows)}")
         for axis in spec["axes"]:
             if axis in rows:
                 w.line("이 조합", compat_line(rows[axis]))
@@ -173,6 +204,8 @@ def _upgrade(parts: dict[str, dict], compat_rows: list[dict]) -> str:
     replaced = [s for s in UPGRADE_ORDER if parts.get(s, {}).get("source") == "bought"]
     rows = _rows_by_axis(compat_rows)
     w = _Writer()
+    _notices(w, rows, {axis: "새 부품 장착" for axis in AXIS_SLOTS} | ({"bios": "교체 전에"} if "CPU" in replaced else {}),
+             group_missing=True)
     w.step("준비")
     w.line("설치", _text("upgrade_prep"))
 
@@ -196,19 +229,18 @@ def _upgrade(parts: dict[str, dict], compat_rows: list[dict]) -> str:
     placed: set[str] = {"bios"} if pre and "CPU" in pre else set()
     for slot in replaced:
         w.line("설치", f"{_part_label(slot, parts)} — {_text(INSTALL_DOC[slot])}")
-        # 업그레이드에서는 기존 부품 스펙을 모르는 경우가 많다 — 스펙이 없어 못 본 항목은 한 줄로 묶는다.
-        unchecked: list[str] = []
+        if slot == "GPU":
+            w.line("이 조합", f"연결할 케이블 — {gpu_cable(rows.get('gpu_connector'))}")
+        elif slot == "파워":
+            w.line("이 조합", f"새 파워에서 연결할 케이블 — {cable_list(rows)}")
+        # 업그레이드에서는 기존 부품 스펙을 모르는 경우가 많다 — 스펙이 없어 못 본 항목은 맨 앞 요약에 한 줄로만 둔다.
         for axis, slots in AXIS_SLOTS.items():
             if slot in slots and axis in rows and axis not in placed:
                 row = rows[axis]
                 placed.add(axis)
                 if row.get("state") == "unknown" and "확인하지 못했" in (row.get("detail") or ""):
-                    unchecked.append(row.get("label") or axis)
                     continue
                 w.line("이 조합", compat_line(row))
-        if unchecked:
-            w.line("이 조합", f"스펙 정보가 없어 확인하지 못한 항목 — {', '.join(unchecked)}. "
-                            "기존 부품과 새 부품의 설명서에서 직접 확인하세요.")
     if "CPU" in replaced and "쿨러" not in replaced:
         w.line("설치", f"쿨러(기존) — {_text('install_cooler')}")
 
