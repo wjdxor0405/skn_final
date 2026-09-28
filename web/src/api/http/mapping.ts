@@ -1,6 +1,6 @@
 // 화면 모델(CurrentPlan · SavedSetup)과 백엔드 모델 사이의 순수 변환 함수 모음.
 // 프레임워크·네트워크에 기대지 않아 Node 로 바로 테스트한다(web/tests/mapping.test.mjs) — 그래서 타입만 import 한다.
-import type { BudgetNotice, BudgetWarning, ChatChoice, CheckDraft, CompatCheck, CompatNotice, ConditionField, ContributionShare, CurrentPlan, DeskState, GuideStep, PartKey, PlanItem, PlanMode, ReviewRow, SavedSetup } from '../../state/types'
+import type { BudgetNotice, BudgetWarning, ChatChoice, CheckDraft, CompatCheck, CompatNotice, ConditionField, ContributionShare, CurrentPlan, DeskState, GuideLine, GuideStep, PartKey, PlanItem, PlanMode, ReviewRow, SavedSetup } from '../../state/types'
 import type { UpgradeSuggestion } from '../types'
 import type { WireCompatCheck, WireConditionState, WireField, WireItem, WireNextQuestion, WireOwnedPartsPreviewRow, WireReport, WireReportItem, WireResult, WireReview, WireText } from './wire'
 
@@ -322,10 +322,10 @@ export function guideStepsFromWire(guide: WireReport['care_guide']): GuideStep[]
   for (const raw of guide.text.split(/\r?\n/)) {
     const line = raw.replace(/\*\*/g, '').trim()
     if (!line) continue
-    const detail = line.match(/^[-*•]?\s*(설치|확인)\s*[:：]\s*(.+)$/)
+    const detail = line.match(/^[-*•]?\s*(설치|이 조합|주의|확인)\s*[:：]\s*(.+)$/)
     if (detail) {
       if (!steps.length) steps.push({ title: '', lines: [] })
-      steps[steps.length - 1].lines.push({ label: detail[1] as '설치' | '확인', text: detail[2].trim() })
+      steps[steps.length - 1].lines.push({ label: detail[1] as GuideLine['label'], text: detail[2].trim() })
       continue
     }
     const title = line.match(/^\d+[.)]\s*(.+)$/)

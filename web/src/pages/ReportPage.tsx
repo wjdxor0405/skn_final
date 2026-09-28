@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
-import type { SavedSetup } from '../state/types'
+import type { GuideLine, SavedSetup } from '../state/types'
 import { useSetups } from '../state/SetupsContext'
 import { usePlan } from '../state/PlanContext'
 import { planTotal, reportText } from '../state/planModel'
@@ -19,6 +19,10 @@ export function ReportPage() {
   if (loading) return <PageLoading />
   if (!report) return <MissingPage title="저장된 리포트를 찾을 수 없습니다." description={storageError || (isMockApi ? '이 브라우저에 저장되지 않았거나 삭제된 구성입니다. 플래너의 내 구성 메뉴에서 저장 목록을 확인해주세요.' : '로그인하지 않았거나 삭제된 구성입니다. 로그인한 뒤 플래너의 내 구성 메뉴에서 저장 목록을 확인해주세요.')} />
   return <ReportView key={report.id} report={report} />
+}
+
+const GUIDE_LABEL_CLASS: Record<GuideLine['label'], string> = {
+  '설치': 'install', '이 조합': 'combo', '주의': 'caution', '확인': 'after-check', '': '',
 }
 
 function ReportView({ report }: { report: SavedSetup }) {
@@ -91,16 +95,13 @@ function ReportView({ report }: { report: SavedSetup }) {
         <div className="report-panel">
           <h2>조립·설치 가이드</h2>
           {report.careGuide?.length ? <>
-            <p>{report.plan.mode === 'upgrade'
-              ? 'PC 전원을 끄고 전원 케이블을 분리한 뒤 정전기를 방전하고 케이스 옆면을 여세요. 교체하는 부품은 기존 부품의 케이블과 고정 나사를 풀어 분리한 다음, 아래 순서로 장착합니다.'
-              : '정전기 방지 장갑을 착용하거나 금속 부분을 만져 정전기를 방전하고, 케이스를 평평한 곳에 놓고 시작하세요. 아래 순서대로 조립합니다.'}</p>
             <ol className="guide-steps">
               {report.careGuide.map((step, i) => <li key={i}>
                 {step.title && <strong>{step.title}</strong>}
-                {step.lines.map((line, j) => <p key={j}>{line.label && <span className={'guide-label ' + (line.label === '확인' ? 'caution' : 'install')}>{line.label}</span>}{line.text}</p>)}
+                {step.lines.map((line, j) => <p key={j}>{line.label && <span className={'guide-label ' + GUIDE_LABEL_CLASS[line.label]}>{line.label}</span>}{line.text}</p>)}
               </li>)}
             </ol>
-            <p className="setup-hint">부품 설치·주의사항 문서를 검색해 만든 안내입니다. 부품별 제품 설명서를 함께 확인해주세요.</p>
+            <p className="setup-hint">일반 조립 상식으로 작성한 안내에 이 견적의 호환 검사 결과를 붙였습니다. 부품별 제품 설명서를 함께 확인해주세요.</p>
           </> : <>
             {assemblyGuide(report.plan).map((step, i) => <p key={i}>{i + 1}. {step}</p>)}
             <p>{isMockApi ? '(목업 예시 문장입니다)' : '(일반 조립 안내입니다. 부품별 설명서를 함께 확인해주세요.)'}</p>

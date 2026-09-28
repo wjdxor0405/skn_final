@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
@@ -18,6 +19,8 @@ from src.repo.plan_repo import PlanRepo
 from src.repo.user_repo import UserRepo
 from src.services import auth_service, feedback_service, recommendation_service
 from src.services.session_service import _owned, _token_hash
+
+log = logging.getLogger(__name__)
 
 _DEFAULT_NAME_BY_CATEGORY = {"computer": "컴퓨터 장바구니"}
 _PLACEHOLDER_NAMES = {"새 추천", ""}
@@ -180,6 +183,26 @@ def confirm(conn, list_id: UUID, principal: Principal, *, name: str, planned_pur
     return get_report(conn, list_id, principal)
 
 
+def _assembly_guide(conn, prepo: PlanRepo, revision: dict, items: list[dict]) -> dict:
+    """확정 품목 + 계획 조건(mode·유지 부품·출처) + 결과 화면과 같은 호환 검사 → 조립 가이드."""
+    from src.services import assembly_guide
+
+    values = {row["condition_key"]: row["value"] for row in prepo.load_full(revision["id"])["conditions"]}
+    value = lambda key: (values.get(key) or {}).get("value")  # noqa: E731
+    compat_rows: list[dict] = []
+    if revision["category"] == "computer":
+        try:
+            stored = recommendation_service.get_stored_result(conn, revision["id"])
+            compat_rows = (stored or {}).get("compat_checks") or []
+        except Exception:  # noqa: BLE001 — 검사를 못 붙여도 가이드 자체는 낸다(`이 조합` 줄만 빠진다)
+            log.exception("assembly guide: compat checks unavailable for revision %s", revision["id"])
+    return assembly_guide.build(
+        value("mode") or "build",
+        [{"slot": it["slot"], "product": it["product"]} for it in items if it["product"]],
+        compat_rows, current_specs=value("current_specs"), origin=value("plan_origin"),
+    )
+
+
 def get_report(conn, list_id: UUID, principal: Principal) -> dict:
     user_id = _require_login(conn, principal)
     prepo = PlanRepo(conn)
@@ -203,9 +226,8 @@ def get_report(conn, list_id: UUID, principal: Principal) -> dict:
     # 조립 가이드 — 리포트를 열 때마다 그 자리에서 만든다(확정 시점에 미리 만들어 저장하지
     # 않는다 — 브라우저의 "리포트 인쇄/PDF"(window.print())가 이 섹션까지 그대로 PDF로
     # 담아주므로, 서버가 PDF를 따로 만들 필요가 없다는 게 이 기능의 핵심 결정이다).
-    from src.agent.assembly_guide_agent import build_guide
-    guide_items = [{"slot": it["slot"], "product": it["product"]} for it in items if it["product"]]
-    care_guide = build_guide(guide_items)
+    # 규칙으로만 만들어 열 때마다 같은 문장이 나온다(docs/조립가이드_기획.md 4.5).
+    care_guide = _assembly_guide(conn, prepo, revision, items)
 
     return {
         "list_id": str(list_id),

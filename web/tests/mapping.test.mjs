@@ -304,6 +304,18 @@ test('조립·설치 가이드: 서버 문장을 단계(제목 + 설치/확인 �
   ])
 })
 
+test('조립·설치 가이드: 이 조합·주의 줄도 라벨로 나누고, 0번 준비 단계도 단계로 읽는다', () => {
+  const text = '0. 준비\n   설치: 정전기를 방전하세요.\n1. 그래픽카드 장착\n   이 조합: GPU 길이 — GPU 길이 305mm ≤ 케이스 허용 400mm\n   주의: 케이블을 정리하세요.\n   확인: 드라이버를 설치하세요.'
+  assert.deepEqual(guideStepsFromWire({ status: 'ready', text }), [
+    { title: '준비', lines: [{ label: '설치', text: '정전기를 방전하세요.' }] },
+    { title: '그래픽카드 장착', lines: [
+      { label: '이 조합', text: 'GPU 길이 — GPU 길이 305mm ≤ 케이스 허용 400mm' },
+      { label: '주의', text: '케이블을 정리하세요.' },
+      { label: '확인', text: '드라이버를 설치하세요.' },
+    ] },
+  ])
+})
+
 test('조립·설치 가이드: 에이전트식 마크다운·글머리·모르는 줄도 버리지 않는다', () => {
   const text = '1) **CPU — Ryzen 7**\n- 설치: 삼각형 표시를 맞추세요\n※ 핀을 만지지 마세요'
   assert.deepEqual(guideStepsFromWire({ status: 'ready', text }), [

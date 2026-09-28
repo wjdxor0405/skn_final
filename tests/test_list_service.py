@@ -151,6 +151,12 @@ def test_confirm_then_report_round_trip(ctx):
     fetched = list_service.get_report(ctx.conn, uuid.UUID(list_id), principal)
     assert fetched["total"] == report["total"]
 
+    # 조립 가이드는 규칙으로 만든다 — 작업 단위 단계, 결과 화면과 같은 호환 검사 줄, 열 때마다 같은 문장.
+    guide = fetched["care_guide"]
+    assert guide["status"] == "ready" and guide["text"].startswith("0. 준비")
+    assert "이 조합: " in guide["text"]
+    assert guide == report["care_guide"]
+
     summaries = list_service.list_conversations(ctx.conn, principal)
     assert any(item["list_id"] == list_id and item["stage"] == "report" for item in summaries)
 

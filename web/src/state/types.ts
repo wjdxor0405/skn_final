@@ -62,9 +62,10 @@ export interface ChatMessage {
   choices?: ChatChoice[]
 }
 
-/** 조립·설치 가이드 한 줄. label 은 서버가 "설치:"·"확인:" 으로 나눈 것, 못 나눈 문장은 빈 문자열. */
-export interface GuideLine { label: '설치' | '확인' | ''; text: string }
-/** 조립·설치 가이드 한 단계(부품 하나). 서버가 표준 조립 순서로 정렬해서 준다. */
+/** 조립·설치 가이드 한 줄. label 은 서버가 나눈 줄 종류 — 설치(작업 방법)·이 조합(호환 검사 결과)·주의·확인(조립 뒤 점검).
+ *  못 나눈 문장은 빈 문자열. */
+export interface GuideLine { label: '설치' | '이 조합' | '주의' | '확인' | ''; text: string }
+/** 조립·설치 가이드 한 단계(작업 단위). 서버가 순서대로 준다. */
 export interface GuideStep { title: string; lines: GuideLine[] }
 
 export interface SavedSetup {
