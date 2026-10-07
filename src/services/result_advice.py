@@ -363,12 +363,19 @@ def _upgrade_order(ctx: _Ctx, slots: list[str]) -> list[str]:
     return sorted(slots, key=gap, reverse=True)
 
 
-def upgrade_options(conn, revision_id: UUID, budget: int | None = None) -> str:
+def upgrade_options(conn, revision_id: UUID, budget: int | None = None, new_budget: int | None = None) -> str:
     """`budget`(기본: 예산 잔여) 안에서 CPU·GPU 성능 등급, RAM 용량을 올릴 수 있는 후보. 한 번에 한 부품씩 바꾼다고
-    가정하고, 이 견적의 요구 사양과 지금 구성과의 호환(확정 비호환 없음)을 통과한 것만 낸다."""
+    가정하고, 이 견적의 요구 사양과 지금 구성과의 호환(확정 비호환 없음)을 통과한 것만 낸다.
+    `new_budget`(사용자가 말한 새 총예산)을 주면 새 예산 - 총액 안에서 찾고, '바꾼 뒤 잔여'도 새 예산으로 계산한다 —
+    원래 예산으로 계산하면 후보 잔여가 음수로 나와 모델이 "새 예산 초과"로 옮긴다(10/7 베이스라인 비사실)."""
     ctx = _context(conn, revision_id)
     total = ctx.total()
-    if budget is None:
+    cap = ctx.budget_max                     # '바꾼 뒤 잔여'의 기준 예산
+    if new_budget is not None:
+        cap = new_budget
+        budget = new_budget - total
+        head = f"새 예산 {fmt_money(new_budget)} · 총액 {fmt_money(total)} · 잔여 {fmt_money(budget)} 안에서 올릴 수 있는 부품"
+    elif budget is None:
         if not ctx.budget_max:
             return "예산 상한이 없는 견적이라 '남은 예산'을 계산할 수 없습니다. 쓸 수 있는 금액을 알려 주시면 그 안에서 찾습니다."
         budget = ctx.budget_max - total
@@ -376,7 +383,7 @@ def upgrade_options(conn, revision_id: UUID, budget: int | None = None) -> str:
     else:
         head = f"추가 금액 {fmt_money(budget)} 안에서 올릴 수 있는 부품 (지금 총액 {fmt_money(total)})"
     if budget <= 0:
-        return (f"예산 {fmt_money(ctx.budget_max)} 중 총액 {fmt_money(total)} — 남은 예산이 없습니다."
+        return (f"예산 {fmt_money(cap)} 중 총액 {fmt_money(total)} — 남은 예산이 없습니다."
                 " 더 쓸 수 있는 금액을 말씀해 주시면 그 안에서 찾습니다.")
     ideals = _ideal_tiers(ctx)
     present = [s for s in _UPGRADE_SLOTS if ctx.row(s) is not None]
@@ -412,7 +419,7 @@ def upgrade_options(conn, revision_id: UUID, budget: int | None = None) -> str:
         lines.append(f"- {slot}: 지금 {cur.name} {_metric_text(slot, m0)}{basis}")
         for label, (m1, delta, cand) in picks:
             after = total + delta
-            left = f", 바꾼 뒤 잔여 {fmt_money(ctx.budget_max - after)}" if ctx.budget_max else ""
+            left = f", 바꾼 뒤 잔여 {fmt_money(cap - after)}" if cap else ""
             lines.append(f"    · {label}: {cand.name} {_metric_text(slot, m1)} · {fmt_money(_price(cand))}"
                          f" (추가 {fmt_money(delta)}, 바꾼 뒤 총액 {fmt_money(after)}{left}) · candidate_id={cand.variant_id}")
     if not found:

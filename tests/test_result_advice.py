@@ -70,9 +70,6 @@ def test_upgrade_options_lists_only_better_compatible_parts_within_budget(conn):
     assert _snapshot(conn, revision_id) == before
 
 
-@pytest.mark.xfail(strict=True, reason="알려진 실패(10/7 베이스라인 비사실 1건의 원인) — 새 총예산을 말해도 후보마다 "
-                                       "'바꾼 뒤 잔여'를 원래 예산으로 계산해 음수가 나오고, 모델이 그걸 '200만원 초과'로 "
-                                       "옮겼다. 고치면 이 표시를 지운다")
 def test_upgrade_options_with_new_budget_reports_remaining_against_the_new_budget(conn):
     from src.agent.result_agent import ResultSession
     revision_id = _build(conn)                       # 예산 150만

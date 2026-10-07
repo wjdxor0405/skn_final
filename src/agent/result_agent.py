@@ -255,19 +255,18 @@ class ResultSession:
         call = f"upgrade_options(extra={extra!r}, new_budget={new_budget!r})"
         if (no := self._pc_only(call)) is not None:
             return no
-        budget = None
+        budget, total = None, None
         if new_budget.strip():
             total = _parse_amount(new_budget)
             if not total:
                 return self._record(call, "오류: new_budget 은 금액(예: 2000000, 200만원)")
-            budget = total - int((self.result.get("totals") or {}).get("selected_price") or 0)
-            if budget <= 0:
+            if total - int((self.result.get("totals") or {}).get("selected_price") or 0) <= 0:
                 return self._record(call, f"새 예산 {_won(total)}이 지금 총액 {_won((self.result.get('totals') or {}).get('selected_price'))} 이하라 올릴 여유가 없습니다.")
         elif extra.strip():
             budget = _parse_amount(extra)
             if not budget:
                 return self._record(call, "오류: extra 는 금액(예: 100000, 10만원)")
-        return self._record(call, result_advice.upgrade_options(self.conn, self.revision_id, budget))
+        return self._record(call, result_advice.upgrade_options(self.conn, self.revision_id, budget, new_budget=total))
 
     def savings_options(self, target: str = "") -> str:
         from src.agent.conditions_agent import _parse_amount
