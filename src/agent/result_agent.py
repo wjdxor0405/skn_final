@@ -108,7 +108,10 @@ class ResultSession:
         rows = list_alternatives(self.conn, self.revision_id, UUID(it["item_id"]))["items"]
         if not rows:
             return self._record(call, f"{it['slot']}: 다른 후보 없음")
+        from src.services import result_advice
         pmin = self._perf_min_by_slot().get(it["slot"])
+        short = result_advice.requirement_shortfalls(self.conn, self.revision_id, it["slot"],
+                                                     [r["candidate_id"] for r in rows])
         lines = [f"{it['slot']} 현재: {it['product']['name']} {_won(it['price'])}"
                  + (f" · 요구 성능 티어 ≥ {pmin}" if pmin is not None else "")]
         for i, r in enumerate(rows, 1):
@@ -118,7 +121,10 @@ class ResultSession:
                     tier = int(r["product"]["spec_summary"].split("티어")[1])
                 except ValueError:
                     tier = None
-            flag = " ⚠ 요구 사양 미달" if (pmin is not None and tier is not None and tier < pmin) else ""
+            if (why := short.get(str(r["candidate_id"]))) is not None:
+                flag = f" ⚠ 요구 사양 미달({why})"
+            else:
+                flag = " ⚠ 요구 사양 미달" if (pmin is not None and tier is not None and tier < pmin) else ""
             lines.append(f"{i}. candidate_id={r['candidate_id']} · {r['product']['name']} · {_won(r['price'])}"
                          f" ({r['price_delta']:+,}원) · {r['label']}"
                          + (f" · 성능 티어 {tier}" if tier is not None else "") + flag)
@@ -136,6 +142,14 @@ class ResultSession:
             cid = UUID(candidate_id)
         except ValueError:
             return self._record(call, "오류: candidate_id 는 list_alternatives 가 돌려준 값이어야 합니다.")
+        from src.services import result_advice
+        if (why := result_advice.requirement_shortfalls(self.conn, self.revision_id, it["slot"], [cid]).get(str(cid))):
+            # 프롬프트 규칙("⚠ 후보로 바꾸지 않음")만으로는 모델이 8GB 램으로 바꿨다(10/7 수정 전 측정 2/6) — 도구가 막는다.
+            # 사용자가 알고도 원하면 화면의 후보 목록에서 직접 고른다(그 경로는 막지 않는다).
+            return self._record(call, (
+                f"바꾸지 않음: 이 후보는 이 견적의 요구 사양에 못 미칩니다({why}). 사용자에게 그 사실을 알리고 요구를 채우는"
+                " 후보(list_alternatives 에서 ⚠ 없는 것)를 권하세요. 그래도 그 부품을 원하면 구성표의 후보 목록에서 직접"
+                " 고를 수 있다고 안내하세요."))
         before = it["product"]["name"], it["price"]
         try:
             self.result = swap_item(self.conn, self.revision_id, UUID(it["item_id"]), cid, user_id=self.user_id)

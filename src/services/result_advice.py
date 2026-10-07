@@ -154,6 +154,23 @@ def _reason_text(reasons: list[str]) -> str:
     return ", ".join(dict.fromkeys(out))
 
 
+def requirement_shortfalls(conn, revision_id: UUID, slot: str, variant_ids) -> dict[str, str]:
+    """후보마다 이 견적의 요구 사양(성능 등급·용량·파워 용량 …)을 못 채우면 그 이유 문구 — 채우거나 판정할 수 없으면 빠진다.
+    교체 후보 목록의 ⚠ 와 교체 거절에 쓴다. 성능 등급만 보던 목록이 RAM 용량 미달(32GB → 8GB)을 못 잡았다(10/3 리허설 실패 7)."""
+    if not is_pc(conn, revision_id):
+        return {}
+    ctx = _context(conn, revision_id)
+    out = {}
+    for vid in variant_ids:
+        cand = ctx.by_variant.get(str(vid))
+        if cand is None or cand.slot != slot:
+            continue
+        verdict, reasons = _requirement_verdict(ctx, slot, cand)
+        if verdict == "Fail":
+            out[str(vid)] = _reason_text(reasons) or "요구 사양 미달"
+    return out
+
+
 def _qty(row: dict) -> int:
     return int(row.get("qty") or 1)
 
