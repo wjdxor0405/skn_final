@@ -182,6 +182,21 @@ def test_rule_path_turn_is_logged_with_path_and_latency(ctx):
     assert isinstance(log["latency_ms"], int) and log["latency_ms"] >= 0
 
 
+def test_condition_change_request_saves_the_notice_and_logs_it(ctx):
+    """"우선순위를 성능으로 바꿔줘" — 결과 채팅은 조건을 안 바꾼다. 저장되는 답(대화 복원에 쓰이는 것)에도 안내가 있어야 한다."""
+    from src.agent.result_agent import CONDITION_NOTICE
+    principal = ctx.signup(_unique_email())
+    list_id = ctx.recommended_list(principal)
+    revision_id = PlanRepo(ctx.conn).get_current_revision(uuid.UUID(list_id))["id"]
+
+    turn = recommendation_service.handle_result_message(ctx.conn, revision_id, "우선순위를 성능으로 바꿔줘")
+
+    assert turn["reply"].endswith(CONDITION_NOTICE)
+    rows = ConversationRepo(ctx.conn).messages(_conversation_id(ctx.conn, list_id))
+    assert rows[-1]["content"] == turn["reply"]
+    assert _last_turn_log(ctx.conn, list_id)["notice"] == "conditions"
+
+
 def test_agent_turn_logs_tools_guard_tokens_and_full_outputs_but_not_to_the_screen(ctx, monkeypatch):
     from src.agent import result_agent
 

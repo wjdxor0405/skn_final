@@ -512,6 +512,28 @@ def _search_confirmed(pairs: list[tuple[str, str]], text: str) -> bool:
     return is_search_confirmation(last_reply, text)
 
 
+# 조건(예산·우선순위·용도…)을 바꾸라는 말 — 결과 채팅은 부품만 바꾼다. "남은 예산으로", "예산 안에서", "예산 넘어도"는
+# 조건을 쓰는 말이지 바꾸라는 말이 아니라서 뺀다. 사이에 부품 이름이 있으면("예산 맞춰서 그래픽카드 올려줘") 부품 요청이다.
+_CONDITION_CHANGE_RE = re.compile(
+    r"(?:예산|우선순위|용도|목적|해상도)(?!\s*(?:으로|로|안|내|에서|에|초과|넘|잔여|남|대비))([^,.!?\n]{0,12}?)" + _CHANGE_VERB)
+CONDITION_NOTICE = "예산·우선순위·용도 같은 조건은 이 채팅에서 바뀌지 않아요. 화면의 '조건 바꾸기'를 누르면 조건 대화로 돌아가 바꿀 수 있습니다."
+
+
+def is_condition_change_request(text: str) -> bool:
+    from src.engine.brands import SLOT_SYNONYMS
+    low = text.lower()
+    return any(not any(k in m.group(1) for k in SLOT_SYNONYMS) for m in _CONDITION_CHANGE_RE.finditer(low))
+
+
+def with_condition_notice(text: str, reply: str) -> str:
+    """조건을 바꾸라는 말이면 답 끝에 '조건 바꾸기' 안내를 붙인다(이미 있으면 그대로). 프롬프트 규칙만으로는 "가격에
+    맞게 예산 줄여줘"가 부품 절약 조합으로 오독되고(10/7 수정 전 측정 2/3), "우선순위를 성능으로 바꿔줘"에 조건이
+    안 바뀌는데 반영된 것처럼 읽혔다(팀원 관찰 10/7). 모델 경로·규칙 경로 모두 여기를 지난다."""
+    if not is_condition_change_request(text) or "조건 바꾸기" in reply:
+        return reply
+    return f"{reply.rstrip()}\n\n{CONDITION_NOTICE}" if reply.strip() else CONDITION_NOTICE
+
+
 def _is_ask(low: str) -> bool:
     return bool(_ASK_RE.search(low) or (_ASK_LOOSE_RE.search(low) and re.search(_CHANGE_VERB, low)))
 
@@ -579,7 +601,7 @@ def system_prompt(result: dict, user_text: str, history: list[dict], prefetched:
         "5. '바꿔도 돼?', '바꾸면 괜찮을까?', '올려도 문제없어?', '32기가로 늘려도 돼?' 처럼 **바꿔도 되는지 묻는 말은 교체 요청이 아닙니다**. "
         "preview_swap(특정 제품이면 candidate_id, '더 좋은 걸로/한 단계 올리면'이면 direction='up')으로 가정 결과만 확인해 차액·예산 초과 여부·요구 사양·호환 점검(전력 포함) 결과를 전한 뒤 '바꿔 드릴까요?'로 묻습니다. swap·set_qty 를 부르지 않습니다.",
         "6. '돈 남았는데 뭐 바꿀까', '남은 예산으로 업그레이드', 'N만원 더 쓰면' → upgrade_options. '예산을 N원으로 늘려줘'처럼 새 총예산을 말하면 upgrade_options(new_budget=N) — "
-        "조건의 예산 자체는 이 화면에서 못 바꾼다고 한 번 말하고 그 금액 기준 후보를 보여 줍니다. 결과의 순서와 후보를 그대로 전하고, 사용자가 고르기 전에는 바꾸지 않습니다.",
+        "조건의 예산 자체는 이 화면에서 못 바꾸고 화면의 '조건 바꾸기'에서 바꾼다고 한 번 말하고 그 금액 기준 후보를 보여 줍니다. 결과의 순서와 후보를 그대로 전하고, 사용자가 고르기 전에는 바꾸지 않습니다.",
         "7. '뭘 바꾸면 싸져?', 'N만원 줄이고 싶어' → savings_options(target). 금액을 말했으면 '→ … 성능을 가장 적게 잃는 조합' 줄을 먼저 전합니다 "
         "— 가장 많이 줄어드는 후보를 대신 권하지 않습니다. 요구 사양을 낮춰야 하는 항목은 그 사실(⚠)과 함께 전합니다.",
         "8. '파워 충분해?', '호환 문제 없어?', '이대로 사도 돼?', 'CPU가 발목 잡아?(병목)' → check_build. '쿨러 꼭 사야 돼?', '기본 쿨러 들어 있어?' → explain('쿨러') 의 'CPU 기본 쿨러' 값으로 답합니다. 이 게임 돌아가? → game_check(게임 이름). 도구 결과에 있는 항목만 말하고 fps·체감 성능은 말하지 않습니다.",

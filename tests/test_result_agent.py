@@ -300,3 +300,20 @@ def test_search_unavailable_part_busy_lookup_is_a_sentence_not_an_exception(monk
 
     out = s.search_unavailable_part("GPU", "RTX 6090")
     assert "몰려 있어요" in out and "가져오지 못했습니다" in out
+
+
+@pytest.mark.parametrize("text", ["가격에 맞게 예산 줄여줘", "우선순위를 성능으로 바꿔줘", "예산 200만원으로 늘려줘",
+                                  "용도를 영상 편집으로 바꿔줘"])
+def test_condition_change_request_gets_the_conditions_screen_notice(text):
+    """결과 채팅은 조건을 바꾸지 않는다 — 실패 5("예산 줄여줘"가 부품 절약으로 오독)와 팀원 관찰("우선순위를 성능으로
+    바꿔줘"가 반영된 것처럼 읽힘). 모델이 안내를 빠뜨려도 코드가 '조건 바꾸기'를 붙인다."""
+    reply = ra.with_condition_notice(text, "부품 후보는 다음과 같습니다.")
+    assert reply.startswith("부품 후보는") and reply.endswith(ra.CONDITION_NOTICE)
+    assert ra.with_condition_notice(text, reply) == reply                       # 이미 있으면 다시 붙이지 않는다
+
+
+@pytest.mark.parametrize("text", ["남은 예산으로 할 만한 업그레이드 있어?", "예산 조금 넘어도 괜찮아, 그걸로 바꿔줘",
+                                  "예산 안에서 그래픽카드 바꿔줘", "예산 맞춰서 그래픽카드 올려줘", "남은 예산 얼마야?",
+                                  "예산 초과 안 되게 램 바꿔줘", "CPU를 한 단계 낮추면 얼마나 아껴?"])
+def test_part_requests_that_mention_the_budget_get_no_notice(text):
+    assert ra.with_condition_notice(text, "답") == "답"

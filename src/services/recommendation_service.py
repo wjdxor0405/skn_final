@@ -1084,6 +1084,10 @@ def handle_result_message(conn, revision_id: UUID, text: str, user_id: UUID | No
     turn_log: dict = {"path": "rules"}
     started = time.perf_counter()
     turn = _handle_result_message_inner(conn, revision_id, text, user_id=user_id, turn_log=turn_log)
+    from src.agent.result_agent import with_condition_notice
+    noticed = with_condition_notice(text, turn["reply"])
+    if noticed != turn["reply"]:
+        turn["reply"], turn_log["notice"] = noticed, "conditions"
     turn_log["latency_ms"] = round((time.perf_counter() - started) * 1000)
     convo.add_message(conversation_id, "assistant", turn["reply"], metadata={"turn": turn_log})
     return turn
