@@ -278,6 +278,13 @@ def test_highest_price_word_is_not_evaluative():
     assert ra.evaluative_words("최고의 선택입니다") == ["최고"]
 
 
+def test_evaluative_words_from_the_users_own_message_are_not_flagged():
+    """잘못된 전제("RTX 4090이니까 4K 최고 옵션도 되지?")를 정정하는 답은 사용자 말을 옮긴다 — 막으면 정정이 사라진다."""
+    reply = "현재 그래픽카드는 RTX 4090이 아니라 RX 7600이라 4K 최고 옵션은 확인되지 않습니다."
+    assert ra.evaluative_words(reply, "그래픽카드가 RTX 4090이니까 4K 최고 옵션도 되지?") == []
+    assert ra.evaluative_words(reply + " 압도적인 구성입니다.", "4K 최고 옵션도 되지?") == ["압도적"]
+
+
 def test_search_unavailable_part_busy_lookup_is_a_sentence_not_an_exception(monkeypatch):
     from src.errors import ServiceUnavailable
 

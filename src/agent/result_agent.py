@@ -653,9 +653,12 @@ def _numbers(text: str) -> set[str]:
 _EVALUATIVE = ("강력", "뛰어나", "최고", "압도적", "완벽", "훌륭", "우수", "극대화")
 
 
-def evaluative_words(reply: str) -> list[str]:
-    """답변 속 평가어. '최고가'(가장 비싼 가격)는 평가가 아니다 — "최고가 후보로 바꿨다"가 버려지던 것."""
-    return [w for w in _EVALUATIVE if re.search(w + ("(?!가)" if w == "최고" else ""), reply)]
+def evaluative_words(reply: str, user_text: str = "") -> list[str]:
+    """답변 속 평가어. '최고가'(가장 비싼 가격)는 평가가 아니다 — "최고가 후보로 바꿨다"가 버려지던 것.
+    사용자 말에 있던 낱말은 빼다 — "4K 최고 옵션도 되지?"의 전제를 정정하려고 '최고 옵션'을 옮긴 답이 3/3 버려지고,
+    대체 문장은 전제를 정정하지 않았다(10/7 수정 전 측정). 이 가드는 모델이 스스로 붙인 과장어를 막는 것이다."""
+    return [w for w in _EVALUATIVE
+            if re.search(w + ("(?!가)" if w == "최고" else ""), reply) and w not in user_text]
 
 
 def _reply_within(reply: str, allowed_sources: list[str]) -> tuple[bool, set[str]]:
@@ -757,7 +760,7 @@ def run_turn(conn, revision_id: UUID, result: dict, text: str, user_id: UUID | N
     else:
         # 수치 가드 — 답변의 숫자는 전부 입력에 있던 것이어야 한다. 아니면 LLM 문장을 버리고 코드 문장으로.
         ok, outside = _reply_within(reply, [prompt, text, *session.outputs])
-        bad_words = evaluative_words(reply)
+        bad_words = evaluative_words(reply, text)
         if not ok or bad_words:
             log.warning("result agent reply rejected (numbers %s, words %s) — replaced: %r", sorted(outside), bad_words, reply[:120])
             guard = {"numbers": sorted(outside), "words": bad_words}
