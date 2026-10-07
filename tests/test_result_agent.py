@@ -214,10 +214,19 @@ def test_classify_other_does_not_open_write_tools(text):
     assert ra.classify_intent(text) == "other"
 
 
-@pytest.mark.xfail(strict=True, reason="알려진 실패(실패 6, 10/3 리허설) — '넘어도 괜찮아'의 '도 괜찮'이 묻는 말로 "
-                                       "먼저 잡혀 바꾸는 도구가 닫히고 되묻는다. P1-6에서 고치면 이 표시를 지운다")
-def test_permission_plus_imperative_is_a_change_request():
-    assert ra.classify_intent("예산 조금 넘어도 괜찮아, 그걸로 바꿔줘") == "change"
+@pytest.mark.parametrize("text", [
+    "예산 조금 넘어도 괜찮아, 그걸로 바꿔줘",                       # 실패 6 (10/3 리허설)
+    "예산 조금 넘어도 괜찮아, 그래픽카드 한 단계 좋은 걸로 바꿔줘",
+    "비싸도 상관없어. 4070으로 바꿔줘",
+])
+def test_permission_plus_imperative_is_a_change_request(text):
+    """허락('넘어도 괜찮아')이 묻는 말로 먼저 잡혀 바꾸는 도구가 닫히고 되묻던 것 — 명령이 든 절이 따로 있으면 바꾼다."""
+    assert ra.classify_intent(text) == "change"
+
+
+@pytest.mark.parametrize("text", ["바꿔줘도 괜찮아?", "예산 조금 넘어도 괜찮아?", "그래픽카드 바꿔줘도 돼?"])
+def test_imperative_inside_a_question_stays_a_question(text):
+    assert ra.classify_intent(text) != "change"
 
 
 def test_read_only_turn_refuses_writes_without_touching_db():

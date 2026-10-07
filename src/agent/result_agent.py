@@ -493,10 +493,13 @@ _ASK_RE = re.compile(
     r"|ㄱㄱ\s*\?"
 )
 _ASK_LOOSE_RE = re.compile(r"ㄱㅊ|괜찮음|괜춘|무방|어케\s*생각|어떻게\s*생각|어떰|어떨까|나을까|낫나|좋을까")
+_IMPERATIVE = (r"(?:바꿔|교체해|변경해|빼|넣어|담아|올려|내려|늘려|줄여|적용해|진행해|업글해|업그레이드해|로\s*해|로\s*가자|로\s*할게|로\s*갈게)"
+               r"\s*(?:줘|주세요|줄래|주라|줄\s*수|주셈|주삼|주쇼|쥬|줭|봐|요|라)")
+_IMPERATIVE_RE = re.compile(_IMPERATIVE)
+_CLAUSE_SPLIT = re.compile(r"[,.!?\n]+")
 _CHANGE_RE = re.compile(
-    r"(?:바꿔|교체해|변경해|빼|넣어|담아|올려|내려|늘려|줄여|적용해|진행해|업글해|업그레이드해|로\s*해|로\s*가자|로\s*할게|로\s*갈게)"
-    r"\s*(?:줘|주세요|줄래|주라|줄\s*수|주셈|주삼|주쇼|쥬|줭|봐|요|라)"
-    r"|(?:로\s*해|로\s*할게|로\s*갈게|로\s*가자)\b"
+    _IMPERATIVE
+    + r"|(?:로\s*해|로\s*할게|로\s*갈게|로\s*가자)\b"
     r"|(?:으)?로\s*[요.!~]*\s*$"                              # "7600X로", "SSD 2개로", "더 싼 걸로" — 말줄임 요청
     r"|^\s*(?:응|ㅇㅇ|ㅇㅋ|오케이|ok|okay|네|넵|예|그래|좋아|콜|ㄱㄱ|고고|부탁해|그렇게\s*해)(?:\s|[.!~,]|$)"
     r"|ㄱㄱ(?!\s*\?)"
@@ -509,10 +512,18 @@ def _search_confirmed(pairs: list[tuple[str, str]], text: str) -> bool:
     return is_search_confirmation(last_reply, text)
 
 
+def _is_ask(low: str) -> bool:
+    return bool(_ASK_RE.search(low) or (_ASK_LOOSE_RE.search(low) and re.search(_CHANGE_VERB, low)))
+
+
 def classify_intent(text: str) -> str:
     """'change'(바꾸라는 말) / 'ask'(바꿔도 되는지 묻는 말) / 'other'. 구성표를 바꾸는 도구는 'change'에서만 열린다."""
     low = text.lower().strip()
-    if _ASK_RE.search(low) or (_ASK_LOOSE_RE.search(low) and re.search(_CHANGE_VERB, low)):
+    # 허락 + 명령("예산 조금 넘어도 괜찮아, 그걸로 바꿔줘") — 앞 절의 허락('도 괜찮')이 묻는 말로 먼저 잡혀 되묻던 것
+    # (10/3 리허설 실패 6). 묻는 말 표시가 없는 절에 바꾸라는 명령이 있으면 바꾸라는 말이다.
+    if any(_IMPERATIVE_RE.search(c) and not _is_ask(c) for c in _CLAUSE_SPLIT.split(low)):
+        return "change"
+    if _is_ask(low):
         return "ask"
     if _CHANGE_RE.search(low):
         return "change"
